@@ -1,0 +1,38 @@
+.main {
+  min-height: calc(100vh - var(--header-height));
+  padding: var(--space-2xl) 0;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
+  animation: fadeIn 0.4s ease-out;
+}
+
+.container.wide {
+  max-width: var(--max-width-wide);
+}
+
+.title {
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-lg);
+}
+
+.titleNumber {
+  color: var(--color-text-muted);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

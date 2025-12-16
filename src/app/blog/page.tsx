@@ -1,0 +1,47 @@
+import type { Metadata } from 'next';
+import { PageLayout } from '@/components/layout';
+import { ArrowLink } from '@/components/ui';
+import { blogPosts } from '@/data/blog';
+import styles from './page.module.css';
+
+export const metadata: Metadata = {
+  title: 'blog',
+  description: 'posts about various topics.',
+};
+
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', {
+    month: '2-digit',
+    day: '2-digit',
+    year: 'numeric',
+  });
+}
+
+export default function BlogPage() {
+  return (
+    <PageLayout title={`blog[${blogPosts.length}]`}>
+      <section className={styles.content}>
+        <div className={styles.header}>
+          <a href="/blog/rss.xml" className={styles.rss}>rss</a>
+        </div>
+        
+        <div className={styles.postList}>
+          {blogPosts.map((post, index) => (
+            <article 
+              key={post.slug} 
+              className={styles.postCard}
+              style={{ animationDelay: `${index * 0.05}s` }}
+            >
+              <span className={styles.date}>{formatDate(post.date)}</span>
+              <ArrowLink href={`/blog/${post.slug}`}>
+                <span className={styles.postTitle}>{post.title}</span>
+              </ArrowLink>
+              <p className={styles.postDescription}>{post.description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+    </PageLayout>
+  );
+}

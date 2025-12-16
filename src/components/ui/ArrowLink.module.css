@@ -1,0 +1,39 @@
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  color: var(--color-text);
+  font-size: var(--text-base);
+  transition: color var(--transition-fast);
+  text-decoration: none;
+  flex-wrap: nowrap;
+}
+
+.link:hover {
+  color: var(--color-accent);
+}
+
+.link:hover .arrow {
+  transform: translateX(3px);
+}
+
+.arrow {
+  color: var(--color-accent);
+  transition: transform var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.1em;
+  line-height: 1;
+}
+
+/* Internal links: arrow before */
+.link .arrow:first-child {
+  margin-right: 0.3em;
+}
+
+/* External links: arrow after */
+.link .arrow:last-child {
+  margin-left: 0.3em;
+}

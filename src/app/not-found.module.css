@@ -1,0 +1,52 @@
+.main {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  text-align: center;
+}
+
+.code {
+  font-family: var(--font-mono);
+  font-size: 6rem;
+  font-weight: 400;
+  color: var(--color-accent);
+  margin: 0;
+  line-height: 1;
+}
+
+.message {
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+  margin: var(--space-md) 0 var(--space-xl);
+}
+
+.homeLink {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-base);
+  color: var(--color-text);
+  transition: color 0.2s;
+}
+
+.homeLink:hover {
+  color: var(--color-accent);
+}
+
+.arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.3em;
+  font-size: 1.1em;
+  line-height: 1;
+  transition: transform 0.2s;
+}
+
+.homeLink:hover .arrow {
+  transform: translateX(-0.3em);
+}

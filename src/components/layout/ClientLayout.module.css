@@ -1,0 +1,49 @@
+.layoutWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--header-padding);
+  height: var(--header-height);
+  overflow: hidden;
+  transition: transform 0.1s ease;
+  transform: translateY(0);
+  flex-shrink: 0;
+}
+
+.header.home {
+  transform: translateY(-70%);
+}
+
+/* Grid container for overlapping pages during transition */
+.container {
+  flex: 1;
+  display: grid;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch; /* Momentum scrolling on iOS */
+}
+
+/* Both pages occupy same grid cell for simultaneous animation */
+.transition {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+  min-width: 0;
+}
+
+/* Mobile: hide nav, show hamburger menu instead */
+@media (max-width: 700px) {
+  .header nav {
+    display: none;
+  }
+}

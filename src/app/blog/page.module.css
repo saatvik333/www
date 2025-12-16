@@ -1,0 +1,81 @@
+.content {
+  animation: fadeIn 0.5s ease-out 0.1s both;
+}
+
+.header {
+  margin-bottom: var(--space-lg);
+}
+
+.rss {
+  font-size: var(--text-sm);
+  color: var(--color-accent);
+  padding: 2px 8px;
+  border: 1px solid var(--color-accent);
+  border-radius: var(--border-radius);
+  transition: background-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.rss:hover {
+  background-color: var(--color-accent);
+  color: var(--color-bg);
+}
+
+.postList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.postCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid var(--color-border);
+  animation: fadeInUp 0.4s ease-out both;
+}
+
+.postCard:last-child {
+  border-bottom: none;
+}
+
+.date {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  display: block;
+}
+
+.postTitle {
+  font-weight: 500;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.postDescription {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin: var(--space-xs) 0 0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

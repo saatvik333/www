@@ -1,0 +1,40 @@
+.calendarWrapper {
+  margin: var(--space-lg) 0;
+  margin-bottom: var(--space-xl);
+  width: 100%;
+  max-width: 100%;
+  overflow: visible;
+  padding-bottom: 8px;
+  contain: layout style;
+  min-height: 140px;
+}
+
+.placeholder {
+  height: 120px;
+  width: 100%;
+}
+
+/* Force the SVG to respect container width */
+.calendarWrapper > div {
+  max-width: 100%;
+}
+
+.calendarWrapper svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Text styling */
+:global(.react-activity-calendar__footer) {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted) !important;
+}
+
+:global(text) {
+  fill: var(--color-text-muted) !important;
+}
+
+/* Add padding to the SVG calendar */
+:global(.react-activity-calendar__calendar) {
+  padding: 4px;
+}

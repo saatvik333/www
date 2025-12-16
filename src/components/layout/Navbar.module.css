@@ -1,0 +1,110 @@
+/* Row containing logo */
+.row {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.logo {
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  font-weight: 400;
+  color: var(--color-text);
+  transition: color 0.2s;
+}
+
+.logo:hover {
+  color: var(--color-accent);
+}
+
+/* Navigation */
+.nav {
+  display: flex;
+  gap: var(--gap-nav);
+}
+
+.navLink {
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  transition: color 0.3s;
+  position: relative;
+}
+
+.navLink:hover {
+  color: var(--color-accent);
+}
+
+/* Container for the slash/arrow transition */
+.symbolWrapper {
+  position: relative;
+  display: inline-flex;
+  width: 1.25em;
+  height: 1.5em;
+  align-items: center;
+  justify-content: center;
+  margin-right: -0.1em;
+}
+
+/* Slash - visible by default */
+.slash {
+  color: inherit;
+  position: absolute;
+  transition: transform 0.6s cubic-bezier(0.2, 0, 0, 1), opacity 0.2s ease;
+  font-size: 1.1em;
+  transform-origin: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Arrow - hidden by default */
+.arrow {
+  color: var(--color-accent);
+  position: absolute;
+  opacity: 0;
+  transition: transform 0.6s cubic-bezier(0.2, 0, 0, 1), opacity 0.2s ease;
+  font-size: 1.1em;
+  transform-origin: center;
+  /* Start rotated -45deg */
+  transform: rotate(-45deg) translateY(0) translateX(-0.1em);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0;
+}
+
+/* On hover: Momentum Morph - slash rotates out, arrow rotates in */
+.navLink:hover .slash {
+  transform: rotate(45deg) scale(0.8);
+  opacity: 0;
+}
+
+.navLink:hover .arrow {
+  transform: rotate(0deg) translateY(1px) translateX(0);
+  opacity: 1;
+}
+
+/* Active state */
+.active {
+  color: var(--color-accent);
+}
+
+.active .slash {
+  transform: rotate(45deg) scale(0.8);
+  opacity: 0;
+}
+
+.active .arrow {
+  transform: rotate(0deg) translateY(1px);
+  opacity: 1;
+}
+
+/* Only hide nav on mobile - clamp() handles all other scaling */
+@media (max-width: 700px) {
+  .nav {
+    display: none;
+  }
+}

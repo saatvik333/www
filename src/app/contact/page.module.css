@@ -1,0 +1,185 @@
+.content {
+  animation: fadeIn 0.5s ease-out 0.1s both;
+}
+
+.description {
+  font-size: var(--text-base);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-lg);
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-2xl);
+}
+
+.linkRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--text-base);
+  color: var(--color-text-muted);
+}
+
+.linkIcon {
+  font-size: 1.2em;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.linkValue {
+  color: var(--color-text);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  flex: 1;
+}
+
+.linkValue:hover {
+  color: var(--color-accent);
+}
+
+.copyButton {
+  background: none;
+  border: none;
+  padding: var(--space-xs);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.copyIcon {
+  color: var(--color-text-muted);
+  font-size: 1.1em;
+  opacity: 0.6;
+  transition: opacity var(--transition-fast), color var(--transition-fast);
+}
+
+.copyButton:hover .copyIcon {
+  opacity: 1;
+  color: var(--color-accent);
+}
+
+.formSection {
+  margin-top: var(--space-xl);
+}
+
+.formTitle {
+  font-size: var(--text-lg);
+  font-weight: 500;
+  color: var(--color-text);
+  margin-bottom: var(--space-md);
+  /* Original seems to use a monospace font for title too */
+  font-family: var(--font-mono);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.input,
+.textarea {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: var(--text-base);
+  padding: var(--space-md); /* Original has more padding */
+  background: var(
+    --color-bg-secondary
+  ); /* Original looks slightly lighter than pure black */
+  border: 1px solid var(--color-border);
+  border-radius: 0; /* Strict TUI sharp corners */
+  color: var(--color-text);
+  transition: border-color var(--transition-fast);
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(
+    --color-text-muted
+  ); /* Original seems to have subtle focus */
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.5;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 150px; /* Taller textarea */
+}
+
+.submitButton {
+  width: 100%; /* Full width as in original */
+  font-family: var(--font-mono);
+  font-size: var(--text-base); /* Standard size */
+  padding: var(--space-md);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 0;
+  color: var(--color-text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  transition: all var(--transition-fast);
+  margin-top: var(--space-sm);
+}
+
+.submitButton:hover {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-text);
+}
+
+.buttonArrow {
+  font-size: 1.1em; /* Requested 1.1em size */
+  transition: transform var(--transition-fast);
+}
+
+.submitButton:hover .buttonArrow {
+  transform: translateX(4px);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .linkRow {
+    flex-wrap: wrap;
+  }
+
+  .input,
+  .textarea {
+    padding: var(--space-sm);
+    font-size: var(--text-sm);
+  }
+
+  .submitButton {
+    padding: var(--space-sm);
+  }
+
+  .formTitle {
+    font-size: var(--text-base);
+  }
+}
