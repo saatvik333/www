@@ -10,8 +10,8 @@ const nextConfig: NextConfig = {
   
   // Experimental features for maximum speed
   experimental: {
-    // Optimize package imports
-    optimizePackageImports: ['framer-motion', 'react-icons'],
+    // Optimize package imports - reduce bundle size
+    optimizePackageImports: ['framer-motion', 'react-icons', 'date-fns'],
   },
   
   // Image optimization
@@ -20,15 +20,61 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 31536000, // 1 year cache
   },
   
-  // Headers for caching
+  // Headers for caching and security
   async headers() {
     return [
+      // Static asset caching
       {
-        source: '/:all*(svg|jpg|png|webp|avif|woff|woff2)',
+        source: '/:all*(svg|jpg|png|webp|avif|woff|woff2|ico)',
         headers: [
           {
             key: 'Cache-Control',
             value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      // Security headers for all pages
+      {
+        source: '/:path*',
+        headers: [
+          // Prevent clickjacking
+          {
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN',
+          },
+          // Prevent MIME type sniffing
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          // XSS Protection (legacy browsers)
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
+          },
+          // Referrer policy
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+          // Permissions policy
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=()',
+          },
+          // HSTS - enforce HTTPS (only enable in production with valid SSL)
+          // {
+          //   key: 'Strict-Transport-Security',
+          //   value: 'max-age=31536000; includeSubDomains',
+          // },
+          // Cross-Origin policies
+          {
+            key: 'Cross-Origin-Opener-Policy',
+            value: 'same-origin',
+          },
+          {
+            key: 'Cross-Origin-Embedder-Policy',
+            value: 'credentialless',
           },
         ],
       },
@@ -50,6 +96,9 @@ const nextConfig: NextConfig = {
   
   // Power by header off for slightly smaller responses
   poweredByHeader: false,
+  
+  // Generate source maps for production (helps with debugging)
+  productionBrowserSourceMaps: true,
 };
 
 const pwaConfig = withPWA({

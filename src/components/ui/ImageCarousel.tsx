@@ -163,11 +163,17 @@ export function ImageCarousel({ images, alt }: ImageCarouselProps) {
 
   // Init
   const initScroll = useCallback(() => {
-    if (!containerRef.current || isMobile || images.length === 0) return;
+    if (!containerRef.current || images.length === 0) return;
+    
+    // On mobile, we don't need fancy centering - just show the carousel
+    if (isMobile) {
+      setIsReady(true);
+      return;
+    }
+    
     const container = containerRef.current;
     
-    // Hide initially
-    // Calculated centered position
+    // Calculated centered position for desktop
     const targetPos = getScrollPositionForSlide(middleSetStart);
     container.scrollLeft = targetPos;
     
@@ -309,6 +315,65 @@ export function ImageCarousel({ images, alt }: ImageCarouselProps) {
     );
     
   }, [getCenteredSlideIndex, getScrollPositionForSlide, middleSetStart, middleSetEnd, setLength, teleportToMiddleSet]);
+
+  // Custom wheel handler for consistent cross-browser scrolling
+  const wheelTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const accumulatedDeltaRef = useRef(0);
+  
+  const handleWheel = useCallback((e: WheelEvent) => {
+    if (!containerRef.current || isMobile) return;
+    
+    // Normalize delta based on deltaMode (0=pixel, 1=line, 2=page)
+    // Firefox uses lines (1), Chrome uses pixels (0)
+    const PIXEL_STEP = 1;
+    const LINE_STEP = 40;
+    const PAGE_STEP = 800;
+    
+    let normalize = PIXEL_STEP;
+    if (e.deltaMode === 1) normalize = LINE_STEP;
+    if (e.deltaMode === 2) normalize = PAGE_STEP;
+    
+    // Detect horizontal scroll (deltaX) or shift+vertical scroll (shiftKey + deltaY)
+    const deltaX = e.deltaX * normalize;
+    const deltaY = (e.shiftKey ? e.deltaY : 0) * normalize;
+    const totalDelta = deltaX || deltaY;
+    
+    // Only intercept if there's meaningful horizontal intent
+    if (Math.abs(totalDelta) < 10) return;
+    
+    // Prevent native scroll - we'll handle it ourselves
+    e.preventDefault();
+    
+    // Accumulate delta for debounced navigation
+    accumulatedDeltaRef.current += totalDelta;
+    
+    // Clear existing timeout
+    if (wheelTimeoutRef.current) {
+      clearTimeout(wheelTimeoutRef.current);
+    }
+    
+    // Debounce: wait for wheel to settle, then navigate based on accumulated direction
+    wheelTimeoutRef.current = setTimeout(() => {
+      const accumulated = accumulatedDeltaRef.current;
+      accumulatedDeltaRef.current = 0;
+      
+      // Threshold: need at least 40px worth of accumulated scroll to trigger navigation
+      if (Math.abs(accumulated) > 40) {
+        const direction = accumulated > 0 ? 'right' : 'left';
+        navigate(direction);
+      }
+    }, 60); // Faster debounce (60ms) for better responsiveness
+    
+  }, [isMobile, navigate]);
+
+  // Attach wheel listener with passive: false to allow preventDefault
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    
+    container.addEventListener('wheel', handleWheel, { passive: false });
+    return () => container.removeEventListener('wheel', handleWheel);
+  }, [handleWheel]);
 
   if (images.length === 0) {
     return null;

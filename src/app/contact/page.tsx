@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { PageLayout } from '@/components/layout';
+import { CopyButton } from '@/components/ui';
 import { FaDiscord } from 'react-icons/fa';
-import { MdEmail, MdContentCopy } from 'react-icons/md';
+import { MdEmail } from 'react-icons/md';
 import { GoArrowRight } from 'react-icons/go';
 import styles from './page.module.css';
 
@@ -22,9 +23,7 @@ export default function ContactPage() {
             <a href="mailto:saatvik333@example.com" className={styles.linkValue}>
               saatvik333@example.com
             </a>
-            <button className={styles.copyButton} aria-label="Copy email">
-              <MdContentCopy className={styles.copyIcon} />
-            </button>
+            <CopyButton text="saatvik333@example.com" label="Copy email" />
           </div>
           
           <div className={styles.linkRow}>
@@ -37,9 +36,7 @@ export default function ContactPage() {
             >
               saatvik333
             </a>
-            <button className={styles.copyButton} aria-label="Copy Discord handle">
-              <MdContentCopy className={styles.copyIcon} />
-            </button>
+            <CopyButton text="saatvik333" label="Copy Discord handle" />
           </div>
         </div>
 
