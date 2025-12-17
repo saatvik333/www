@@ -2,10 +2,6 @@
   animation: fadeIn 0.5s ease-out 0.1s both;
 }
 
-.header {
-  margin-bottom: var(--space-lg);
-}
-
 .rss {
   font-size: var(--text-sm);
   color: var(--color-accent);

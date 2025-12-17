@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { PageLayout } from '@/components/layout';
-import { ArrowLink } from '@/components/ui';
-import { projects } from '@/data/projects';
+import { ProjectCard } from '@/components/ui';
+import { getAllProjects } from '@/lib/content';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
@@ -10,28 +10,21 @@ export const metadata: Metadata = {
 };
 
 export default function ProjectsPage() {
+  const projects = getAllProjects();
+
   return (
     <PageLayout title={`projects[${projects.length}]`} wide>
       <section className={styles.content}>
-        <div className={styles.projectList}>
+        <div className={styles.projectGrid}>
           {projects.map((project, index) => (
-            <article 
-              key={project.slug} 
-              className={styles.projectCard}
-              style={{ animationDelay: `${index * 0.05}s` }}
-            >
-              <ArrowLink href={`/projects/${project.slug}`}>
-                <span className={styles.projectTitle}>{project.title}</span>
-              </ArrowLink>
-              <p className={styles.projectDescription}>{project.description}</p>
-              {project.tags && (
-                <div className={styles.tags}>
-                  {project.tags.map((tag) => (
-                    <span key={tag} className={styles.tag}>{tag}</span>
-                  ))}
-                </div>
-              )}
-            </article>
+            <ProjectCard
+              key={project.slug}
+              slug={project.slug}
+              title={project.title}
+              description={project.description}
+              thumbnail={project.thumbnail}
+              index={index}
+            />
           ))}
         </div>
       </section>

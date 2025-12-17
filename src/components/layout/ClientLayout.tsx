@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Navbar } from './Navbar';
 import { useNavigation } from '@/context/NavigationContext';
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 import styles from './ClientLayout.module.css';
 
 // Navigation order matching refact0r.dev
@@ -28,6 +28,12 @@ export function ClientLayout({ children }: ClientLayoutProps) {
   const { previousPath } = useNavigation();
   const isHomepage = pathname === '/';
   const wasHomepage = previousPath === '/';
+
+  // Respect user's motion preferences
+  const prefersReducedMotion = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }, []);
 
   // Calculate transition exactly like refact0r.dev
   const getAnimationValues = () => {
@@ -65,6 +71,10 @@ export function ClientLayout({ children }: ClientLayoutProps) {
   const isHomepageTransition = isHomepage || wasHomepage;
   const moveScale = isHomepageTransition ? 15 : 20; // vh
 
+  // Reduced motion: instant transitions
+  const duration = prefersReducedMotion ? 0 : 0.25;
+  const exitDuration = prefersReducedMotion ? 0 : 0.2;
+
   return (
     <div className={styles.layoutWrapper}>
       <header className={`${styles.header} ${isHomepage ? styles.home : ''}`}>
@@ -76,6 +86,7 @@ export function ClientLayout({ children }: ClientLayoutProps) {
           <motion.div
             key={pathname}
             className={styles.transition}
+            style={{ willChange: 'transform, opacity' }}
             initial={{ 
               x: `${xDiff * moveScale}vh`, 
               y: `${yDiff * moveScale}vh`, 
@@ -86,8 +97,8 @@ export function ClientLayout({ children }: ClientLayoutProps) {
               y: 0, 
               opacity: 1,
               transition: {
-                duration: 0.25,
-                delay: 0.03,
+                duration,
+                delay: prefersReducedMotion ? 0 : 0.03,
                 ease: smoothEase,
               }
             }}
@@ -96,7 +107,7 @@ export function ClientLayout({ children }: ClientLayoutProps) {
               y: `${-yDiff * moveScale}vh`, 
               opacity: 0,
               transition: {
-                duration: 0.2,
+                duration: exitDuration,
                 delay: 0,
                 ease: smoothEase,
               }

@@ -35,6 +35,16 @@ const nextConfig: NextConfig = {
     ];
   },
   
+  // Rewrites to serve content directory images
+  async rewrites() {
+    return [
+      {
+        source: '/content/:path*',
+        destination: '/api/content/:path*',
+      },
+    ];
+  },
+  
   // Compress responses
   compress: true,
   

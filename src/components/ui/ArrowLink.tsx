@@ -18,7 +18,7 @@ export function ArrowLink({ href, children, className = '', external = false }: 
         className={`${styles.link} ${className}`}
       >
         {children}
-        <span className={styles.arrow}>/&gt;</span>
+        <span className={styles.arrow}>&gt;</span>
       </a>
     );
   }

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { PageLayout } from '@/components/layout';
 import { ArrowLink } from '@/components/ui';
-import { blogPosts } from '@/data/blog';
+import { getAllBlogs } from '@/lib/content';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
@@ -19,13 +19,14 @@ function formatDate(dateString: string): string {
 }
 
 export default function BlogPage() {
+  const blogPosts = getAllBlogs();
+
   return (
-    <PageLayout title={`blog[${blogPosts.length}]`}>
+    <PageLayout 
+      title={`blog[${blogPosts.length}]`}
+      actions={<a href="/blog/rss.xml" className={styles.rss}>rss</a>}
+    >
       <section className={styles.content}>
-        <div className={styles.header}>
-          <a href="/blog/rss.xml" className={styles.rss}>rss</a>
-        </div>
-        
         <div className={styles.postList}>
           {blogPosts.map((post, index) => (
             <article 

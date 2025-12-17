@@ -2,7 +2,8 @@ import styles from './PageLayout.module.css';
 
 interface PageLayoutProps {
   children: React.ReactNode;
-  title: string;
+  title?: string;
+  actions?: React.ReactNode;
   wide?: boolean;
 }
 
@@ -19,11 +20,16 @@ function formatTitle(title: string) {
   return title;
 }
 
-export function PageLayout({ children, title, wide = false }: PageLayoutProps) {
+export function PageLayout({ children, title, actions, wide = false }: PageLayoutProps) {
   return (
     <main className={styles.main}>
       <div className={`${styles.container} ${wide ? styles.wide : ''}`}>
-        <h1 className={styles.title}>{formatTitle(title)}</h1>
+        {(title || actions) && (
+          <div className={styles.header}>
+            {title && <h1 className={styles.title}>{formatTitle(title)}</h1>}
+            {actions && <div className={styles.actions}>{actions}</div>}
+          </div>
+        )}
         {children}
       </div>
     </main>

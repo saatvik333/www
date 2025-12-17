@@ -15,11 +15,25 @@
   max-width: var(--max-width-wide);
 }
 
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-lg);
+}
+
 .title {
   font-size: var(--text-2xl);
   font-weight: 600;
   color: var(--color-text);
-  margin-bottom: var(--space-lg);
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-md);
 }
 
 .titleNumber {

@@ -1,0 +1,191 @@
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
+import { remark } from 'remark';
+import html from 'remark-html';
+
+const contentDirectory = path.join(process.cwd(), 'content');
+const projectsDirectory = path.join(contentDirectory, 'projects');
+const blogsDirectory = path.join(contentDirectory, 'blogs');
+
+// Project types
+export interface ProjectMeta {
+  slug: string;
+  title: string;
+  description: string;
+  tags?: string[];
+  github?: string;
+  site?: string;
+  thumbnail?: string;
+  images: string[];
+}
+
+export interface Project extends ProjectMeta {
+  content: string;
+}
+
+// Blog types
+export interface BlogMeta {
+  slug: string;
+  title: string;
+  description: string;
+  date: string;
+}
+
+export interface BlogPost extends BlogMeta {
+  content: string;
+}
+
+// Get all project slugs (folder names)
+export function getProjectSlugs(): string[] {
+  if (!fs.existsSync(projectsDirectory)) {
+    return [];
+  }
+  return fs.readdirSync(projectsDirectory).filter((name) => {
+    const fullPath = path.join(projectsDirectory, name);
+    return fs.statSync(fullPath).isDirectory();
+  });
+}
+
+// Get all blog slugs (file names without .md)
+export function getBlogSlugs(): string[] {
+  if (!fs.existsSync(blogsDirectory)) {
+    return [];
+  }
+  return fs
+    .readdirSync(blogsDirectory)
+    .filter((name) => name.endsWith('.md'))
+    .map((name) => name.replace(/\.md$/, ''));
+}
+
+// Get project images for carousel (from public/projects/[slug]/images/)
+function getProjectImages(slug: string): string[] {
+  const imagesDir = path.join(process.cwd(), 'public', 'projects', slug, 'images');
+  if (!fs.existsSync(imagesDir)) {
+    return [];
+  }
+  const files = fs.readdirSync(imagesDir);
+  return files
+    .filter((file) => /\.(png|jpg|jpeg|webp|gif)$/i.test(file))
+    .sort()
+    .map((file) => `/projects/${slug}/images/${file}`);
+}
+
+// Check if project has a thumbnail (from public/projects/[slug]/)
+function getProjectThumbnail(slug: string): string | undefined {
+  const projectDir = path.join(process.cwd(), 'public', 'projects', slug);
+  const possibleExtensions = ['png', 'jpg', 'jpeg', 'webp'];
+  
+  for (const ext of possibleExtensions) {
+    const thumbnailPath = path.join(projectDir, `thumbnail.${ext}`);
+    if (fs.existsSync(thumbnailPath)) {
+      return `/projects/${slug}/thumbnail.${ext}`;
+    }
+  }
+  return undefined;
+}
+
+// Get all projects metadata (for listing page)
+export function getAllProjects(): ProjectMeta[] {
+  const slugs = getProjectSlugs();
+  
+  const projects = slugs.map((slug) => {
+    const indexPath = path.join(projectsDirectory, slug, 'index.md');
+    if (!fs.existsSync(indexPath)) {
+      return null;
+    }
+    
+    const fileContents = fs.readFileSync(indexPath, 'utf8');
+    const { data } = matter(fileContents);
+    
+    return {
+      slug,
+      title: data.title || slug,
+      description: data.description || '',
+      tags: data.tags || [],
+      github: data.github,
+      site: data.site,
+      thumbnail: getProjectThumbnail(slug),
+      images: getProjectImages(slug),
+    } as ProjectMeta;
+  });
+  
+  return projects.filter((p): p is ProjectMeta => p !== null);
+}
+
+// Get single project with content
+export async function getProject(slug: string): Promise<Project | null> {
+  const indexPath = path.join(projectsDirectory, slug, 'index.md');
+  
+  if (!fs.existsSync(indexPath)) {
+    return null;
+  }
+  
+  const fileContents = fs.readFileSync(indexPath, 'utf8');
+  const { data, content } = matter(fileContents);
+  
+  // Convert markdown to HTML
+  const processedContent = await remark()
+    .use(html)
+    .process(content);
+  const contentHtml = processedContent.toString();
+  
+  return {
+    slug,
+    title: data.title || slug,
+    description: data.description || '',
+    tags: data.tags || [],
+    github: data.github,
+    site: data.site,
+    thumbnail: getProjectThumbnail(slug),
+    images: getProjectImages(slug),
+    content: contentHtml,
+  };
+}
+
+// Get all blogs metadata (for listing page)
+export function getAllBlogs(): BlogMeta[] {
+  const slugs = getBlogSlugs();
+  
+  const blogs = slugs.map((slug) => {
+    const filePath = path.join(blogsDirectory, `${slug}.md`);
+    const fileContents = fs.readFileSync(filePath, 'utf8');
+    const { data } = matter(fileContents);
+    
+    return {
+      slug,
+      title: data.title || slug,
+      description: data.description || '',
+      date: data.date || '',
+    } as BlogMeta;
+  });
+  
+  // Sort by date (newest first)
+  return blogs.sort((a, b) => (a.date > b.date ? -1 : 1));
+}
+
+// Get single blog with content
+export async function getBlog(slug: string): Promise<BlogPost | null> {
+  const filePath = path.join(blogsDirectory, `${slug}.md`);
+  
+  if (!fs.existsSync(filePath)) {
+    return null;
+  }
+  
+  const fileContents = fs.readFileSync(filePath, 'utf8');
+  const { data, content } = matter(fileContents);
+  
+  // Convert markdown to HTML
+  const processedContent = await remark()
+    .use(html)
+    .process(content);
+  const contentHtml = processedContent.toString();
+  
+  return {
+    slug,
+    title: data.title || slug,
+    description: data.description || '',
+    date: data.date || '',
+    content: contentHtml,
+  };
+}
