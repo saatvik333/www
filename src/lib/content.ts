@@ -58,9 +58,9 @@ export function getBlogSlugs(): string[] {
     .map((name) => name.replace(/\.md$/, ''));
 }
 
-// Get project images for carousel (from public/projects/[slug]/images/)
+// Get project images for carousel (from content/projects/[slug]/images/)
 function getProjectImages(slug: string): string[] {
-  const imagesDir = path.join(process.cwd(), 'public', 'projects', slug, 'images');
+  const imagesDir = path.join(projectsDirectory, slug, 'images');
   if (!fs.existsSync(imagesDir)) {
     return [];
   }
@@ -68,18 +68,18 @@ function getProjectImages(slug: string): string[] {
   return files
     .filter((file) => /\.(png|jpg|jpeg|webp|gif)$/i.test(file))
     .sort()
-    .map((file) => `/projects/${slug}/images/${file}`);
+    .map((file) => `/api/content/projects/${slug}/images/${file}`);
 }
 
-// Check if project has a thumbnail (from public/projects/[slug]/)
+// Check if project has a thumbnail (from content/projects/[slug]/)
 function getProjectThumbnail(slug: string): string | undefined {
-  const projectDir = path.join(process.cwd(), 'public', 'projects', slug);
+  const projectDir = path.join(projectsDirectory, slug);
   const possibleExtensions = ['png', 'jpg', 'jpeg', 'webp'];
   
   for (const ext of possibleExtensions) {
     const thumbnailPath = path.join(projectDir, `thumbnail.${ext}`);
     if (fs.existsSync(thumbnailPath)) {
-      return `/projects/${slug}/thumbnail.${ext}`;
+      return `/api/content/projects/${slug}/thumbnail.${ext}`;
     }
   }
   return undefined;
