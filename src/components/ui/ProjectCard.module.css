@@ -13,19 +13,21 @@
 .imageWrapper {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 10;
-  border-radius: 4px;
+  aspect-ratio: 16 / 9;
+  border-radius: 0;
   overflow: hidden;
   background: var(--color-bg-secondary);
+  outline: 2px solid transparent;
+  outline-offset: 4px;
+  transition: outline-color var(--transition-fast);
+}
+
+.card:hover .imageWrapper {
+  outline-color: var(--color-accent);
 }
 
 .image {
   object-fit: cover;
-  transition: transform var(--transition-base);
-}
-
-.card:hover .image {
-  transform: scale(1.02);
 }
 
 .placeholder {
@@ -48,10 +50,32 @@
 }
 
 .title {
+  display: flex;
+  align-items: center;
+  gap: 0;
   font-size: var(--text-base);
   font-weight: 500;
   color: var(--color-text);
   margin-bottom: var(--space-xs);
+  transition: color var(--transition-fast);
+}
+
+.card:hover .title {
+  color: var(--color-accent);
+}
+
+.arrow {
+  opacity: 0;
+  color: var(--color-accent);
+  font-size: 1.1em;
+  margin-left: 0.3em;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  transform: translateX(-4px);
+}
+
+.card:hover .arrow {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .description {

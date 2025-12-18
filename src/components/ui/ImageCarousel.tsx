@@ -10,51 +10,51 @@ interface ImageCarouselProps {
   alt: string;
 }
 
-// Custom cubic-bezier easing function: cubic-bezier(0.25, 1, 0.5, 1) - "Soft Out"
-// Adjusted for a premium, responsive feel (fast start, smooth end)
-function cubicBezier(t: number, p1x: number, p1y: number, p2x: number, p2y: number): number {
-  let x = t;
-  // Newton-Raphson
-  for (let i = 0; i < 8; i++) {
-    const cx = 3 * (1 - x) * (1 - x) * x * p1x + 3 * (1 - x) * x * x * p2x + x * x * x - t;
-    if (Math.abs(cx) < 0.001) break;
-    const d = 3 * (1 - x) * (1 - x) * p1x + 6 * (1 - x) * x * (p2x - p1x) + 3 * x * x * (1 - p2x); 
-    // Simplified derivative approx for the typical range
-    if (Math.abs(d) < 0.001) break;
-    x -= cx / d;
-  }
-  const oneMinusX = 1 - x;
-  return 3 * oneMinusX * oneMinusX * x * p1y + 3 * oneMinusX * x * x * p2y + x * x * x;
-}
-
-function smoothScrollTo(
-  element: HTMLElement,
-  targetPosition: number,
-  duration: number,
-  onComplete?: () => void
-): () => void {
+// Physics-based spring solver for Apple-like feel
+// Stiffness: 150 (snappy), Damping: 20 (bouncy but controlled), Mass: 1
+function springScrollTo({
+  element,
+  targetPosition,
+  onComplete,
+}: {
+  element: HTMLElement;
+  targetPosition: number;
+  onComplete?: () => void;
+}): () => void {
   const startPosition = element.scrollLeft;
   const distance = targetPosition - startPosition;
-  const startTime = performance.now();
+  const stiffness = 150;
+  const damping = 20;
+  const mass = 1;
+  const epsilon = 0.5; // Stop when within 0.5px
+
+  let velocity = 0;
+  let currentPos = startPosition;
   let animationId: number;
   let isCancelled = false;
-
-  // Premium easing curve: cubic-bezier(0.25, 1, 0.5, 1) - "Soft Out"
-  const easeValue = (t: number) => cubicBezier(t, 0.25, 1, 0.5, 1);
+  let lastTime = performance.now();
 
   function animate(currentTime: number) {
     if (isCancelled) return;
-    
-    const elapsed = currentTime - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    const easedProgress = easeValue(progress);
 
-    element.scrollLeft = startPosition + distance * easedProgress;
+    const deltaTime = Math.min((currentTime - lastTime) / 1000, 0.05); // Cap dt
+    lastTime = currentTime;
 
-    if (progress < 1) {
-      animationId = requestAnimationFrame(animate);
-    } else {
+    const force = -stiffness * (currentPos - targetPosition);
+    const acceleration = force / mass;
+    const friction = -damping * velocity;
+
+    velocity += (acceleration + friction) * deltaTime;
+    currentPos += velocity * deltaTime;
+
+    element.scrollLeft = currentPos;
+
+    // Check if stopped
+    if (Math.abs(velocity) < 1 && Math.abs(currentPos - targetPosition) < epsilon) {
+      element.scrollLeft = targetPosition;
       onComplete?.();
+    } else {
+      animationId = requestAnimationFrame(animate);
     }
   }
 
@@ -70,11 +70,11 @@ export function ImageCarousel({ images, alt }: ImageCarouselProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [isReady, setIsReady] = useState(false);
-  
-  // Quintuple buffer: [Set 1] [Set 2] [Set 3 (Middle)] [Set 4] [Set 5]
-  const extendedImages = [...images, ...images, ...images, ...images, ...images];
-  const middleSetStart = images.length * 2;
-  const middleSetEnd = images.length * 3 - 1;
+
+  // Triple buffer: [Set 1] [Set 2 (Middle)] [Set 3] - sufficient for seamless infinite loop
+  const extendedImages = [...images, ...images, ...images];
+  const middleSetStart = images.length;
+  const middleSetEnd = images.length * 2 - 1;
   const setLength = images.length;
 
   // Animation state
@@ -92,17 +92,13 @@ export function ImageCarousel({ images, alt }: ImageCarouselProps) {
   const getCenteredSlideIndex = useCallback(() => {
     if (!containerRef.current) return middleSetStart;
     const container = containerRef.current;
-    
-    // Simple logic: index = round((scrollLeft + width/2) / slideWidth) 
-    // IF absolute positioning. But here slides can be flexible.
-    // Iteration is safer.
+
     const slides = Array.from(container.children) as HTMLElement[];
     const center = container.scrollLeft + container.clientWidth / 2;
-    
+
     let closestIndex = 0;
     let minDiff = Infinity;
-    
-    // Optimization: start search from expected area if possible, but linear is fine for < 100 items
+
     slides.forEach((slide, index) => {
       const slideCenter = slide.offsetLeft + slide.offsetWidth / 2;
       const diff = Math.abs(slideCenter - center);
@@ -111,7 +107,7 @@ export function ImageCarousel({ images, alt }: ImageCarouselProps) {
         closestIndex = index;
       }
     });
-    
+
     return closestIndex;
   }, [middleSetStart]);
 
@@ -125,58 +121,53 @@ export function ImageCarousel({ images, alt }: ImageCarouselProps) {
   }, []);
 
   // Teleport the CURRENT VIEWPORT (and destination) to the middle set
-  // Returns the new equivalent index
   const teleportToMiddleSet = useCallback((currentVisualIndex: number) => {
     if (!containerRef.current) return currentVisualIndex;
     const container = containerRef.current;
-    
+
     if (currentVisualIndex >= middleSetStart && currentVisualIndex <= middleSetEnd) {
       return currentVisualIndex;
     }
-    
+
     const relativeIndex = currentVisualIndex % setLength;
     const targetIndex = middleSetStart + relativeIndex;
-    
-    // Calculate precise offset to maintain sub-pixel position
+
     const currentSlidePos = getScrollPositionForSlide(currentVisualIndex);
     const currentScroll = container.scrollLeft;
     const offset = currentScroll - currentSlidePos;
-    
+
     const targetSlidePos = getScrollPositionForSlide(targetIndex);
     const newScroll = targetSlidePos + offset;
-    
-    // Disable Snap & Smooth
+
+    // Temporarily disable snap/scroll-behavior for instant teleport
     container.style.scrollSnapType = 'none';
     container.style.scrollBehavior = 'auto';
-    
+
     container.scrollLeft = newScroll;
-    
+
     // Force reflow
     void container.offsetWidth;
-    
-    // Re-enable (will be done by animation function or timeout)
+
+    // Re-enable snap
     container.style.scrollSnapType = 'x mandatory';
     container.style.scrollBehavior = '';
-    
+
     return targetIndex;
   }, [setLength, middleSetStart, middleSetEnd, getScrollPositionForSlide]);
 
   // Init
   const initScroll = useCallback(() => {
     if (!containerRef.current || images.length === 0) return;
-    
-    // On mobile, we don't need fancy centering - just show the carousel
+
     if (isMobile) {
       setIsReady(true);
       return;
     }
-    
+
     const container = containerRef.current;
-    
-    // Calculated centered position for desktop
     const targetPos = getScrollPositionForSlide(middleSetStart);
     container.scrollLeft = targetPos;
-    
+
     requestAnimationFrame(() => setIsReady(true));
   }, [images.length, isMobile, middleSetStart, getScrollPositionForSlide]);
 
@@ -185,199 +176,112 @@ export function ImageCarousel({ images, alt }: ImageCarouselProps) {
     return () => clearTimeout(timer);
   }, [initScroll]);
 
-  const handleScrollEnd = useCallback(() => {
-    if (isAnimating.current) return;
-    
-    // Check if we effectively scrolled out of bounds using touchpad
-    const currentIndex = getCenteredSlideIndex();
-    if (currentIndex < setLength || currentIndex >= setLength * 4) {
-      // Teleport back to middle if we drift too far (Sets 1 or 5)
-      teleportToMiddleSet(currentIndex);
-    }
-  }, [getCenteredSlideIndex, setLength, teleportToMiddleSet]);
-
-  // Debounced scroll handler for idle snap
+  // Debounced scroll handler to maintain infinite loop
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  
-  const handleScroll = useCallback(() => {
-    if (isAnimating.current || !containerRef.current) return;
-    
-    // 1. Debounce for "Snap to center" logic when scroll stops
-    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
-    scrollTimeoutRef.current = setTimeout(handleScrollEnd, 150);
 
-    // 2. IMMEDIATE "Wall Avoidance" Check
-    // If we are getting too close to the physical edge during a continuous scroll,
-    // we must teleport immediately to avoid hitting the wall.
-    // We are in a 5x buffer. Middle is Set 3.
-    // If we enter Set 1 (too far left) or Set 5 (too far right), jump back to Set 3.
-    
+  const handleScroll = useCallback(() => {
+    if (!containerRef.current) return;
     const container = containerRef.current;
-    
-    // Efficient approximate index calculation to avoid heavy loop every frame
-    // (Assuming equal widths roughly, but we can just use the center point)
+
+    // We only care about teleporting when scroll effectively STOPS or hits edges
+    // Native momentum might still be going!
+    // But we must teleport if we hit the physical edges or drift too far.
+
+    // 1. Debounce for "Snap to center" logic cleanup
+    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+
+    // Check limits periodically
+    scrollTimeoutRef.current = setTimeout(() => {
+      if (isAnimating.current) return;
+      const currentIndex = getCenteredSlideIndex();
+
+      // Teleport if we are in the buffer sets (Set 1 or Set 3)
+      if (currentIndex < setLength || currentIndex >= setLength * 2) {
+        teleportToMiddleSet(currentIndex);
+      }
+    }, 150);
+
+    // 2. SAFETY CHECK: If close to physical limit, teleport IMMEDIATELY
+    // This allows continuing momentum without hitting a wall
     const center = container.scrollLeft + container.clientWidth / 2;
     const scrollWidth = container.scrollWidth;
     const approxProgress = center / scrollWidth; // 0 to 1
-    
-    // 5 Sets. Set 1 is 0.0-0.2. Set 2 is 0.2-0.4. Set 3 is 0.4-0.6. Set 4 is 0.6-0.8. Set 5 is 0.8-1.0.
-    // If we are in Set 1 (< 0.2) or Set 5 (> 0.8), TELEPORT.
-    const isTooFarLeft = approxProgress < 0.22; // In Set 1 or start of Set 2
-    const isTooFarRight = approxProgress > 0.78; // In Set 5 or end of Set 4
-    
-    if (isTooFarLeft || isTooFarRight) {
-       // We perform a more precise check and teleport
-       const currentIndex = getCenteredSlideIndex();
-       
-       // Only teleport if we are actually OUTSIDE the safe middle zone (Set 3 and neighbors)
-       // Let's be aggressive: Keep user in Sets 2, 3, 4.
-       // logic: if index < 2L (Set 1 or 2) OR index >= 3L (Set 4 or 5)
-       // Wait, we want to allow Set 2 and 4 to exist as buffers. 
-       // Only reset if we hit Set 1 or Set 5.
-       
-       if (currentIndex < setLength || currentIndex >= setLength * 4) {
-          teleportToMiddleSet(currentIndex);
-       }
+
+    // If < 15% (Start of Set 1) or > 85% (End of Set 3)
+    if (approxProgress < 0.15 || approxProgress > 0.85) {
+      const currentIndex = getCenteredSlideIndex();
+      // Only teleport if we are actually significantly off-center
+      if (currentIndex < setLength || currentIndex >= setLength * 2) {
+        teleportToMiddleSet(currentIndex);
+      }
     }
-  }, [handleScrollEnd, getCenteredSlideIndex, teleportToMiddleSet, setLength]);
+  }, [getCenteredSlideIndex, teleportToMiddleSet, setLength]);
 
   const navigate = useCallback((direction: 'left' | 'right') => {
     if (!containerRef.current) return;
     const container = containerRef.current;
-    
-    // Temporarily disable scroll snap for the duration of the JS animation
+
+    // Temporarily disable scroll snap for the spring animation
     container.style.scrollSnapType = 'none';
-    
-    // Cancel existing animation if any
+
     if (animationRef.current) {
       animationRef.current();
       animationRef.current = null;
     }
-    
-    // ALWAYS get the current visual center - this is the ground truth
-    // Even if we were animating, we now use where we ACTUALLY are, not where we intended to go
+
     let baseIndex = getCenteredSlideIndex();
-    
-    // If we have a pending destination AND we're close to it, use that instead
-    // This handles the case of very rapid clicking where visual hasn't caught up
+
+    // If animating and close to destination, use that as base
     if (isAnimating.current && destinationIndexRef.current !== null) {
       const destPos = getScrollPositionForSlide(destinationIndexRef.current);
       const currentPos = container.scrollLeft;
       const distToDestination = Math.abs(destPos - currentPos);
-      
-      // If we're more than 2/3 of the way to destination, use destination as base
       const slideWidth = container.children[0]?.clientWidth || 300;
-      if (distToDestination < slideWidth * 0.33) {
+
+      if (distToDestination < slideWidth * 0.4) {
         baseIndex = destinationIndexRef.current;
       }
     }
-       
-    // Boundary check for baseIndex
-    if (baseIndex < setLength * 1 || baseIndex >= setLength * 4) {
-       const currentVisual = getCenteredSlideIndex();
-       const newVisual = teleportToMiddleSet(currentVisual);
-       const diff = baseIndex - currentVisual;
-       baseIndex = newVisual + diff;
+
+    // Boundary check for infinite navigation
+    if (baseIndex < setLength || baseIndex >= setLength * 2) {
+      const currentVisual = getCenteredSlideIndex();
+      const newVisual = teleportToMiddleSet(currentVisual);
+      const diff = baseIndex - currentVisual;
+      baseIndex = newVisual + diff;
     }
-    
+
+    // Ensure snap is disabled before animation starts
+    // (teleportToMiddleSet re-enables it, which causes the skip glitch)
+    container.style.scrollSnapType = 'none';
+
     let targetIndex = direction === 'right' ? baseIndex + 1 : baseIndex - 1;
-    
-    // Update ref
+
     destinationIndexRef.current = targetIndex;
     isAnimating.current = true;
-    
+
     const targetPos = getScrollPositionForSlide(targetIndex);
-    
-    // Adaptive duration: longer for bigger distances, shorter for small ones
-    const distance = Math.abs(targetPos - container.scrollLeft);
-    const baseDuration = 350; // Minimum duration
-    const maxDuration = 800;  // Maximum duration
-    const adaptiveDuration = Math.min(Math.max(baseDuration, distance * 0.6), maxDuration);
-    
-    animationRef.current = smoothScrollTo(
-      container,
-      targetPos,
-      adaptiveDuration,
-      () => {
+
+    animationRef.current = springScrollTo({
+      element: container,
+      targetPosition: targetPos,
+      onComplete: () => {
         isAnimating.current = false;
         animationRef.current = null;
         destinationIndexRef.current = null;
-        
-        // Re-enable snap
+
         container.style.scrollSnapType = 'x mandatory';
-        
-        // Post-animation boundary check
+
         const finalIndex = getCenteredSlideIndex();
         if (finalIndex < middleSetStart || finalIndex > middleSetEnd) {
-           teleportToMiddleSet(finalIndex);
+          teleportToMiddleSet(finalIndex);
         }
-      }
-    );
-    
+      },
+    });
+
   }, [getCenteredSlideIndex, getScrollPositionForSlide, middleSetStart, middleSetEnd, setLength, teleportToMiddleSet]);
 
-  // Custom wheel handler for consistent cross-browser scrolling
-  const wheelTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const accumulatedDeltaRef = useRef(0);
-  
-  const handleWheel = useCallback((e: WheelEvent) => {
-    if (!containerRef.current || isMobile) return;
-    
-    // Normalize delta based on deltaMode (0=pixel, 1=line, 2=page)
-    // Firefox uses lines (1), Chrome uses pixels (0)
-    const PIXEL_STEP = 1;
-    const LINE_STEP = 40;
-    const PAGE_STEP = 800;
-    
-    let normalize = PIXEL_STEP;
-    if (e.deltaMode === 1) normalize = LINE_STEP;
-    if (e.deltaMode === 2) normalize = PAGE_STEP;
-    
-    // Detect horizontal scroll (deltaX) or shift+vertical scroll (shiftKey + deltaY)
-    const deltaX = e.deltaX * normalize;
-    const deltaY = (e.shiftKey ? e.deltaY : 0) * normalize;
-    const totalDelta = deltaX || deltaY;
-    
-    // Only intercept if there's meaningful horizontal intent
-    if (Math.abs(totalDelta) < 10) return;
-    
-    // Prevent native scroll - we'll handle it ourselves
-    e.preventDefault();
-    
-    // Accumulate delta for debounced navigation
-    accumulatedDeltaRef.current += totalDelta;
-    
-    // Clear existing timeout
-    if (wheelTimeoutRef.current) {
-      clearTimeout(wheelTimeoutRef.current);
-    }
-    
-    // Debounce: wait for wheel to settle, then navigate based on accumulated direction
-    wheelTimeoutRef.current = setTimeout(() => {
-      const accumulated = accumulatedDeltaRef.current;
-      accumulatedDeltaRef.current = 0;
-      
-      // Threshold: need at least 40px worth of accumulated scroll to trigger navigation
-      if (Math.abs(accumulated) > 40) {
-        const direction = accumulated > 0 ? 'right' : 'left';
-        navigate(direction);
-      }
-    }, 60); // Faster debounce (60ms) for better responsiveness
-    
-  }, [isMobile, navigate]);
-
-  // Attach wheel listener with passive: false to allow preventDefault
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-    
-    container.addEventListener('wheel', handleWheel, { passive: false });
-    return () => container.removeEventListener('wheel', handleWheel);
-  }, [handleWheel]);
-
-  if (images.length === 0) {
-    return null;
-  }
+  if (images.length === 0) return null;
 
   return (
     <div className={`${styles.carousel} ${isReady ? styles.ready : ''}`}>
@@ -387,8 +291,8 @@ export function ImageCarousel({ images, alt }: ImageCarouselProps) {
         onScroll={handleScroll}
       >
         {extendedImages.map((image, index) => (
-          <div 
-            key={`${index}-${image}`} 
+          <div
+            key={`${index}-${image}`}
             className={styles.slide}
           >
             <Image

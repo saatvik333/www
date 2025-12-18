@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { GoArrowRight } from 'react-icons/go';
 import styles from './ProjectCard.module.css';
 
 interface ProjectCardProps {
@@ -12,8 +13,8 @@ interface ProjectCardProps {
 
 export function ProjectCard({ slug, title, description, thumbnail, index = 0 }: ProjectCardProps) {
   return (
-    <Link 
-      href={`/projects/${slug}`} 
+    <Link
+      href={`/projects/${slug}`}
       className={styles.card}
       style={{ animationDelay: `${index * 0.05}s` }}
     >
@@ -33,7 +34,10 @@ export function ProjectCard({ slug, title, description, thumbnail, index = 0 }: 
         )}
       </div>
       <div className={styles.content}>
-        <h3 className={styles.title}>{title}</h3>
+        <h3 className={styles.title}>
+          {title}
+          <GoArrowRight className={styles.arrow} />
+        </h3>
         <p className={styles.description}>{description}</p>
       </div>
     </Link>

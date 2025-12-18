@@ -74,7 +74,7 @@ function getProjectImages(slug: string): string[] {
 // Check if project has a thumbnail (from content/projects/[slug]/)
 function getProjectThumbnail(slug: string): string | undefined {
   const projectDir = path.join(projectsDirectory, slug);
-  const possibleExtensions = ['png', 'jpg', 'jpeg', 'webp'];
+  const possibleExtensions = ['png', 'jpg', 'jpeg', 'webp', 'gif'];
   
   for (const ext of possibleExtensions) {
     const thumbnailPath = path.join(projectDir, `thumbnail.${ext}`);

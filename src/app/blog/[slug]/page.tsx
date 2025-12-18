@@ -18,7 +18,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params;
   const post = await getBlog(slug);
-  
+
   if (!post) {
     return { title: 'Post Not Found' };
   }
@@ -62,7 +62,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </header>
 
         {/* Content */}
-        <div 
+        <div
           className={styles.content}
           dangerouslySetInnerHTML={{ __html: post.content }}
         />

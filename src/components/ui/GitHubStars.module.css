@@ -1,0 +1,45 @@
+.stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  padding: 0.2em 0.6em;
+  background: var(--color-bg-secondary);
+  border: 1px solid transparent;
+  border-radius: var(--border-radius);
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.stars:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.icon {
+  font-size: 1em;
+  color: var(--color-accent);
+}
+
+.count {
+  font-weight: 500;
+}
+
+.skeleton {
+  display: inline-block;
+  width: 3em;
+  height: 1.5em;
+  background: var(--color-bg-secondary);
+  border-radius: var(--border-radius);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}

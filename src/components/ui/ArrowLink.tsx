@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { GoArrowRight } from 'react-icons/go';
 import styles from './ArrowLink.module.css';
 
 interface ArrowLinkProps {
@@ -25,7 +26,7 @@ export function ArrowLink({ href, children, className = '', external = false }: 
 
   return (
     <Link href={href} className={`${styles.link} ${className}`}>
-      <span className={styles.arrow}>-&gt;</span>
+      <GoArrowRight className={styles.arrow} />
       {children}
     </Link>
   );

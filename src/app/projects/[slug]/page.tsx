@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { GoArrowLeft } from 'react-icons/go';
 import { PageLayout } from '@/components/layout';
-import { ImageCarousel, ArrowLink } from '@/components/ui';
+import { ImageCarousel, ArrowLink, GitHubStars } from '@/components/ui';
 import { getProject, getProjectSlugs } from '@/lib/content';
 import styles from './page.module.css';
 
@@ -19,7 +19,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
   const { slug } = await params;
   const project = await getProject(slug);
-  
+
   if (!project) {
     return { title: 'Project Not Found' };
   }
@@ -49,8 +49,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         {/* Header */}
         <header className={styles.header}>
           <div className={styles.titleRow}>
-            <h1 className={styles.title}>{project.title}</h1>
-            
+            <h1 className={styles.title}>
+              {project.title}
+              {project.github && <GitHubStars githubUrl={project.github} />}
+            </h1>
+
             {/* External links */}
             <div className={styles.links}>
               {project.site && (
@@ -76,7 +79,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         )}
 
         {/* Content */}
-        <div 
+        <div
           className={styles.content}
           dangerouslySetInnerHTML={{ __html: project.content }}
         />

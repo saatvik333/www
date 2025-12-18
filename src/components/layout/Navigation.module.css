@@ -21,7 +21,7 @@
 }
 
 /* Mobile: vertical stacking for horizontal nav */
-@media (max-width: 640px) {
+@media (max-width: 40rem) {
   .horizontalList {
     flex-direction: column;
     gap: var(--space-sm);
@@ -71,23 +71,16 @@
   color: var(--color-accent);
   position: absolute;
   opacity: 0;
-  /* Smoother natural ease */
   transition: transform 0.5s cubic-bezier(0.2, 0, 0, 1), opacity 0.2s ease;
-  font-size: 1.1em; /* Reduced to 1.1em as requested */
+  font-size: 1.1em;
   transform-origin: center;
-  /* Start rotated -45deg */
   transform: rotate(-45deg) translateY(0) translateX(-0.1em);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 0;
 }
 
-/* On hover: 
-   Momentum Morph: Both rotate Clockwise +45deg
-   Slash: 0 -> 45
-   Arrow: -45 -> 0
-*/
+/* On hover: slash rotates out, arrow rotates in */
 .navLink:hover .slash {
   transform: rotate(45deg) scale(0.8);
   opacity: 0;

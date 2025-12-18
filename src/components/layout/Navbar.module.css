@@ -68,12 +68,10 @@
   transition: transform 0.6s cubic-bezier(0.2, 0, 0, 1), opacity 0.2s ease;
   font-size: 1.1em;
   transform-origin: center;
-  /* Start rotated -45deg */
   transform: rotate(-45deg) translateY(0) translateX(-0.1em);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 0;
 }
 
 /* On hover: Momentum Morph - slash rotates out, arrow rotates in */
@@ -103,7 +101,7 @@
 }
 
 /* Only hide nav on mobile - clamp() handles all other scaling */
-@media (max-width: 700px) {
+@media (max-width: 43.75rem) {
   .nav {
     display: none;
   }

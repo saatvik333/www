@@ -97,8 +97,8 @@ const nextConfig: NextConfig = {
   // Power by header off for slightly smaller responses
   poweredByHeader: false,
   
-  // Generate source maps for production (helps with debugging)
-  productionBrowserSourceMaps: true,
+  // Source maps disabled in production (reduces build size, hides source code)
+  productionBrowserSourceMaps: false,
 };
 
 const pwaConfig = withPWA({

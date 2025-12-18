@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import styles from './Navigation.module.css';
 import { GoArrowRight } from 'react-icons/go';
+import styles from './Navigation.module.css';
 
 interface NavLink {
   href: string;
@@ -32,9 +32,8 @@ export function Navigation({ horizontal = false }: NavigationProps) {
           <li key={link.href}>
             <Link
               href={link.href}
-              className={`${styles.navLink} ${
-                pathname === link.href ? styles.active : ''
-              }`}
+              className={`${styles.navLink} ${pathname === link.href ? styles.active : ''
+                }`}
             >
               <span className={styles.symbolWrapper}>
                 <span className={styles.slash}>/</span>

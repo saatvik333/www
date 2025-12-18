@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { jetbrainsMono, inter } from '@/lib/fonts';
+import { jetbrainsMono } from '@/lib/fonts';
 import { NavigationProvider } from '@/context/NavigationContext';
 import { ClientLayout } from '@/components/layout/ClientLayout';
 import './globals.css';
@@ -38,16 +38,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${jetbrainsMono.variable} ${inter.variable}`}>
+    <html lang="en" className={jetbrainsMono.variable}>
       <head>
         {/* DNS Prefetch for faster external resource loading */}
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
         <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-        
+
         {/* Preconnect for critical external domains */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        
+
         {/* PWA Manifest */}
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#121218" />

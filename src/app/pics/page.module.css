@@ -8,63 +8,69 @@
   margin-bottom: var(--space-lg);
 }
 
+/* Full viewport width wrapper */
+.galleryWrapper {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  padding: 0 var(--space-lg);
+}
+
+/* Masonry layout using CSS columns */
 .gallery {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-sm);
+  column-count: 3;
+  column-gap: var(--space-sm);
+  max-width: 100%;
 }
 
-/* Tablet */
-@media (max-width: 1024px) {
+/* Tablet: 2 columns */
+@media (max-width: 64rem) {
   .gallery {
-    grid-template-columns: repeat(3, 1fr);
+    column-count: 2;
   }
 }
 
-/* Mobile */
-@media (max-width: 640px) {
+/* Mobile: 1 column */
+@media (max-width: 40rem) {
   .gallery {
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-xs);
+    column-count: 1;
+  }
+
+  .galleryWrapper {
+    padding: 0 var(--space-sm);
   }
 }
 
-.photoWrapper {
-  aspect-ratio: 1;
-  border-radius: var(--border-radius);
-  overflow: hidden;
-  animation: fadeIn 0.4s ease-out both;
-  transition: transform var(--transition-fast),
-    box-shadow var(--transition-fast);
-  cursor: pointer;
-}
-
-.photoWrapper:hover {
-  transform: scale(1.02);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-}
-
-.photoPlaceholder {
-  width: 100%;
-  height: 100%;
+/* Empty state */
+.emptyState {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 12.5rem;
+  background: var(--color-bg-secondary);
+  border: 1px dashed var(--color-border);
 }
 
-.photoNumber {
-  font-size: var(--text-lg);
-  color: rgba(255, 255, 255, 0.3);
-  font-weight: 600;
+.emptyText {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  text-align: center;
+  margin: 0;
+}
+
+.emptyText code {
+  background: var(--color-bg-tertiary);
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.9em;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: translateY(0.5rem);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: translateY(0);
   }
 }

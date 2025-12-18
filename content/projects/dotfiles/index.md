@@ -2,7 +2,7 @@
 title: "dotfiles"
 description: "my niri/wayland linux configuration"
 tags: ["linux", "wayland", "rice"]
-github: "https://github.com/saatvik333/dotfiles"
+github: "https://github.com/saatvik333/niri-dotfiles"
 ---
 
 my personal dotfiles for a wayland-based linux desktop, featuring niri as the compositor.

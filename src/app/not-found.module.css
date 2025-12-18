@@ -11,7 +11,7 @@
 
 .code {
   font-family: var(--font-mono);
-  font-size: 6rem;
+  font-size: clamp(4rem, 10vw, 6rem);
   font-weight: 400;
   color: var(--color-accent);
   margin: 0;

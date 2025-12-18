@@ -12,6 +12,7 @@
   --color-text-dim: hsl(220, 11%, 35%);
   --color-text-bright: hsl(220, 45%, 90%);
   --color-accent: hsl(240, 80%, 66%);
+  --color-accent-hover: hsl(240, 85%, 72%);
   --color-accent-pink: hsl(279, 80%, 66%);
   --color-accent-blue: hsl(190, 70%, 50%);
   --color-border: hsl(220, 10%, 16%);
@@ -23,14 +24,14 @@
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
 
-  /* Font Sizes - Fluid Typography */
-  --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
-  --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
-  --text-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
-  --text-lg: clamp(1.125rem, 1rem + 0.6vw, 1.25rem);
-  --text-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
-  --text-2xl: clamp(1.5rem, 1.3rem + 1vw, 2rem);
-  --text-3xl: clamp(2rem, 1.7rem + 1.5vw, 2.5rem);
+  /* Font Sizes - Fluid Typography (optimized for 1080p) */
+  --text-xs: clamp(0.75rem, 0.65rem + 0.3vw, 0.9375rem);
+  --text-sm: clamp(0.875rem, 0.75rem + 0.4vw, 1.0625rem);
+  --text-base: clamp(1rem, 0.85rem + 0.5vw, 1.25rem);
+  --text-lg: clamp(1.125rem, 0.95rem + 0.6vw, 1.375rem);
+  --text-xl: clamp(1.25rem, 1rem + 0.75vw, 1.625rem);
+  --text-2xl: clamp(1.5rem, 1.2rem + 1vw, 2.125rem);
+  --text-3xl: clamp(2rem, 1.6rem + 1.5vw, 2.75rem);
 
   /* Spacing - Fluid */
   --space-xs: clamp(0.25rem, 0.2rem + 0.25vw, 0.4rem);
@@ -72,7 +73,7 @@
 
 html {
   font-size: 16px;
-  scroll-behavior: smooth;
+  /* Smooth scroll handled by JS where needed - avoiding conflicts with animated transitions */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
@@ -167,8 +168,8 @@ main {
    ======================================== */
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 0.5rem;
+  height: 0.5rem;
 }
 
 ::-webkit-scrollbar-track {
@@ -189,8 +190,8 @@ main {
    ======================================== */
 
 :focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
+  outline: 0.125rem solid var(--color-accent);
+  outline-offset: 0.125rem;
 }
 
 /* ========================================

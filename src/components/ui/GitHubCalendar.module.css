@@ -4,13 +4,13 @@
   width: 100%;
   max-width: 100%;
   overflow: visible;
-  padding-bottom: 8px;
+  padding-bottom: 0.5rem;
   contain: layout style;
-  min-height: 140px;
+  min-height: 8.75rem;
 }
 
 .placeholder {
-  height: 120px;
+  height: 7.5rem;
   width: 100%;
 }
 
@@ -55,5 +55,5 @@
 
 /* Add padding to the SVG calendar */
 :global(.react-activity-calendar__calendar) {
-  padding: 4px;
+  padding: 0.25rem;
 }

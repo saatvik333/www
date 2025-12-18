@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
 import { Navbar } from './Navbar';
 import { useNavigation } from '@/context/NavigationContext';
 import { ReactNode, useMemo } from 'react';
@@ -80,42 +80,44 @@ export function ClientLayout({ children }: ClientLayoutProps) {
       <header className={`${styles.header} ${isHomepage ? styles.home : ''}`}>
         <Navbar />
       </header>
-      
+
       <div className={styles.container}>
-        <AnimatePresence mode="popLayout" initial={false}>
-          <motion.div
-            key={pathname}
-            className={styles.transition}
-            style={{ willChange: 'transform, opacity' }}
-            initial={{ 
-              x: `${xDiff * moveScale}vh`, 
-              y: `${yDiff * moveScale}vh`, 
-              opacity: 0 
-            }}
-            animate={{ 
-              x: 0, 
-              y: 0, 
-              opacity: 1,
-              transition: {
-                duration,
-                delay: prefersReducedMotion ? 0 : 0.03,
-                ease: smoothEase,
-              }
-            }}
-            exit={{ 
-              x: `${-xDiff * moveScale}vh`, 
-              y: `${-yDiff * moveScale}vh`, 
-              opacity: 0,
-              transition: {
-                duration: exitDuration,
-                delay: 0,
-                ease: smoothEase,
-              }
-            }}
-          >
-            {children}
-          </motion.div>
-        </AnimatePresence>
+        <LazyMotion features={domAnimation}>
+          <AnimatePresence mode="popLayout" initial={false}>
+            <m.div
+              key={pathname}
+              className={styles.transition}
+              style={{ willChange: 'transform, opacity' }}
+              initial={{
+                x: `${xDiff * moveScale}vh`,
+                y: `${yDiff * moveScale}vh`,
+                opacity: 0
+              }}
+              animate={{
+                x: 0,
+                y: 0,
+                opacity: 1,
+                transition: {
+                  duration,
+                  delay: prefersReducedMotion ? 0 : 0.03,
+                  ease: smoothEase,
+                }
+              }}
+              exit={{
+                x: `${-xDiff * moveScale}vh`,
+                y: `${-yDiff * moveScale}vh`,
+                opacity: 0,
+                transition: {
+                  duration: exitDuration,
+                  delay: 0,
+                  ease: smoothEase,
+                }
+              }}
+            >
+              {children}
+            </m.div>
+          </AnimatePresence>
+        </LazyMotion>
       </div>
     </div>
   );

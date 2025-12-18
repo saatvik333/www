@@ -42,7 +42,7 @@
 }
 
 /* Mobile */
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .container {
     padding: 0 var(--space-md);
   }

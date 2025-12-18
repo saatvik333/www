@@ -95,7 +95,7 @@
   background: var(
     --color-bg-secondary
   ); /* Original looks slightly lighter than pure black */
-  border: 1px solid var(--color-border);
+  border: 0.125rem solid var(--color-border);
   border-radius: 0; /* Strict TUI sharp corners */
   color: var(--color-text);
   transition: border-color var(--transition-fast);
@@ -117,7 +117,7 @@
 
 .textarea {
   resize: vertical;
-  min-height: 150px; /* Taller textarea */
+  min-height: 9.375rem; /* Taller textarea */
 }
 
 .submitButton {
@@ -126,7 +126,7 @@
   font-size: var(--text-base); /* Standard size */
   padding: var(--space-md);
   background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
+  border: 0.125rem solid var(--color-border);
   border-radius: 0;
   color: var(--color-text);
   cursor: pointer;
@@ -140,7 +140,7 @@
 
 .submitButton:hover {
   background: var(--color-bg-secondary);
-  border: 1px solid var(--color-accent);
+  border: 0.125rem solid var(--color-accent);
 }
 
 .buttonArrow {
@@ -164,7 +164,7 @@
 }
 
 /* Mobile responsiveness */
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .linkRow {
     flex-wrap: wrap;
   }
