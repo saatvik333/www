@@ -47,7 +47,7 @@
   justify-content: center;
   min-height: 12.5rem;
   background: var(--color-bg-secondary);
-  border: 1px dashed var(--color-border);
+  border: 2px dashed var(--color-border);
 }
 
 .emptyText {

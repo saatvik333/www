@@ -168,21 +168,12 @@ main {
    ======================================== */
 
 ::-webkit-scrollbar {
-  width: 0.5rem;
-  height: 0.5rem;
+  display: none;
 }
 
-::-webkit-scrollbar-track {
-  background: var(--color-bg-secondary);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 0;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-muted);
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 /* ========================================

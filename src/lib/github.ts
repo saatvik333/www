@@ -54,3 +54,67 @@ export async function getRepoStars(owner: string, repo: string): Promise<number 
     return null;
   }
 }
+
+export interface ContributionDay {
+  contributionCount: number;
+  date: string;
+  color: string;
+  contributionLevel: 'NONE' | 'FIRST_QUARTILE' | 'SECOND_QUARTILE' | 'THIRD_QUARTILE' | 'FOURTH_QUARTILE';
+}
+
+export interface ContributionWeek {
+  contributionDays: ContributionDay[];
+}
+
+export interface ContributionCalendar {
+  totalContributions: number;
+  weeks: ContributionWeek[];
+}
+
+export async function getContributions(username: string): Promise<ContributionCalendar | null> {
+  const query = `
+    query($username: String!) {
+      user(login: $username) {
+        contributionsCollection {
+          contributionCalendar {
+            totalContributions
+            weeks {
+              contributionDays {
+                contributionCount
+                date
+                color
+                contributionLevel
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  try {
+    const response = await fetch('https://api.github.com/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
+      },
+      body: JSON.stringify({
+        query,
+        variables: { username },
+      }),
+      next: { revalidate: 3600 * 24 }, // Cache for 24 hours
+    });
+
+    if (!response.ok) {
+      console.error(`GitHub GraphQL API error: ${response.status}`);
+      return null;
+    }
+
+    const data = await response.json();
+    return data.data?.user?.contributionsCollection?.contributionCalendar ?? null;
+  } catch (error) {
+    console.error('Failed to fetch GitHub contributions:', error);
+    return null;
+  }
+}

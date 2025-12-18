@@ -159,10 +159,8 @@ export function ImageCarousel({ images, alt }: ImageCarouselProps) {
   const initScroll = useCallback(() => {
     if (!containerRef.current || images.length === 0) return;
 
-    if (isMobile) {
-      setIsReady(true);
-      return;
-    }
+    // Remove isMobile check to ensure we always start in the middle set
+    // if (isMobile) { ... } 
 
     const container = containerRef.current;
     const targetPos = getScrollPositionForSlide(middleSetStart);

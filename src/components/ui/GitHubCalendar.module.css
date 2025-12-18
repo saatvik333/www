@@ -1,59 +1,113 @@
+/* GitHub Calendar TUI Style */
 .calendarWrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
   margin: var(--space-lg) 0;
   margin-bottom: var(--space-xl);
-  width: 100%;
-  max-width: 100%;
-  overflow: visible;
+}
+
+/* Default: Desktop (Clip old data, align right) */
+.graphContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow: hidden;
   padding-bottom: 0.5rem;
-  contain: layout style;
-  min-height: 8.75rem;
+  align-items: flex-end;
 }
 
-.placeholder {
-  height: 7.5rem;
-  width: 100%;
+/* Custom Scrollbar Styling (Sleek & Boxy) */
+/* Custom Scrollbar Styling (Sleek & Boxy) */
+.graphContainer {
+  /* Re-enable standard scrollbar */
+  scrollbar-width: thin !important; /* "thin" looks better than "auto" for TUI, and definitely enables it */
+  scrollbar-color: var(--fg-secondary) var(--bg-secondary); /* Firefox native styling */
+  -ms-overflow-style: auto !important;
 }
 
-/* Fade-in animation for smooth calendar appearance */
-.calendarLoaded {
-  animation: fadeIn 0.3s ease-out forwards;
+.graphContainer::-webkit-scrollbar {
+  height: 0.375rem; /* Horizontal scrollbar thickness */
+  width: 0.375rem; /* Vertical scrollbar thickness (if ever needed) */
+  display: block !important; /* Force display override */
+  background: var(--bg-secondary); /* Ensure track is visible */
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
+.graphContainer::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: 0; /* Boxy */
+}
+
+.graphContainer::-webkit-scrollbar-thumb {
+  background: var(--fg-secondary);
+  border-radius: 0; /* Boxy */
+}
+
+.graphContainer::-webkit-scrollbar-thumb:hover {
+  background: var(--fg-primary);
+}
+
+/* Mobile: Allow scrolling, Right-to-Left direction forces scroll to start at end */
+@media (max-width: 768px) {
+  .graphContainer {
+    overflow-x: auto !important;
+    direction: rtl; /* This triggers "start from right" scroll behavior */
+    align-items: flex-start; /* Reset from flex-end */
   }
-  to {
-    opacity: 1;
+
+  .graph {
+    direction: ltr; /* Reset visual direction to Left-to-Right */
   }
 }
 
-/* Force the SVG to respect container width */
-.calendarWrapper > div {
-  max-width: 100%;
+.graph {
+  display: flex;
+  gap: 0.125rem; /* Smaller gap */
+  width: fit-content;
 }
 
-.calendarWrapper svg {
-  max-width: 100%;
-  height: auto;
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem; /* Smaller gap */
 }
 
-/* Ensure calendar blocks start with correct colors, not white */
-:global(.react-activity-calendar) rect {
-  transition: none;
+.cell {
+  width: 0.5625rem; /* Smaller cells to fit year */
+  height: 0.5625rem;
+  background-color: var(--bg-secondary);
 }
 
-/* Text styling */
-:global(.react-activity-calendar__footer) {
-  font-size: var(--text-sm);
-  color: var(--color-text-muted) !important;
+.cell:hover {
+  outline: 1px solid var(--fg-primary);
+  z-index: 10;
 }
 
-:global(text) {
-  fill: var(--color-text-muted) !important;
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--fg-secondary);
+  font-family: var(--font-mono);
+  width: 100%; /* Ensure footer spans width */
 }
 
-/* Add padding to the SVG calendar */
-:global(.react-activity-calendar__calendar) {
-  padding: 0.25rem;
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 0.1875rem;
+}
+
+.legendCell {
+  width: 0.5625rem;
+  height: 0.5625rem;
+}
+
+.error {
+  color: var(--error);
+  border: 1px solid var(--error);
+  padding: 1rem;
+  font-family: var(--font-mono);
 }
