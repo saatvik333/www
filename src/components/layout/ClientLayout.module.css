@@ -3,6 +3,7 @@
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
+  position: relative;
 }
 
 .header {
@@ -14,24 +15,34 @@
   margin: 0 auto;
   padding: 0 var(--header-padding);
   height: var(--header-height);
-  overflow: hidden;
-  transition: transform 0.1s ease;
+  /* Only animate transform and opacity - GPU composited */
+  transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
+    opacity 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
   transform: translateY(0);
+  opacity: 1;
   flex-shrink: 0;
+  will-change: transform, opacity;
 }
 
 .header.home {
-  transform: translateY(-70%);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
 }
 
-/* Grid container for overlapping pages during transition */
+/* Container adjusts for header presence */
 .container {
   flex: 1;
   display: grid;
   overflow-y: auto;
   overflow-x: hidden;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch; /* Momentum scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
+  /* Smooth transition when header appears/disappears */
+  transition: margin-top 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 /* Both pages occupy same grid cell for simultaneous animation */
@@ -39,6 +50,14 @@
   grid-column: 1 / 2;
   grid-row: 1 / 2;
   min-width: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-bg);
+  isolation: isolate;
+  /* GPU acceleration for butter-smooth transitions - Firefox compatible */
+  will-change: opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 /* Mobile: hide nav, show hamburger menu instead */

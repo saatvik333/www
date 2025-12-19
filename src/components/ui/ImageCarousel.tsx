@@ -129,7 +129,8 @@ export function ImageCarousel({ images, alt }: ImageCarouselProps) {
       return currentVisualIndex;
     }
 
-    const relativeIndex = currentVisualIndex % setLength;
+    // Handle negative indices properly (JavaScript % can return negative)
+    const relativeIndex = ((currentVisualIndex % setLength) + setLength) % setLength;
     const targetIndex = middleSetStart + relativeIndex;
 
     const currentSlidePos = getScrollPositionForSlide(currentVisualIndex);
@@ -159,15 +160,12 @@ export function ImageCarousel({ images, alt }: ImageCarouselProps) {
   const initScroll = useCallback(() => {
     if (!containerRef.current || images.length === 0) return;
 
-    // Remove isMobile check to ensure we always start in the middle set
-    // if (isMobile) { ... } 
-
     const container = containerRef.current;
     const targetPos = getScrollPositionForSlide(middleSetStart);
     container.scrollLeft = targetPos;
 
     requestAnimationFrame(() => setIsReady(true));
-  }, [images.length, isMobile, middleSetStart, getScrollPositionForSlide]);
+  }, [images.length, middleSetStart, getScrollPositionForSlide]);
 
   useEffect(() => {
     const timer = setTimeout(initScroll, 50);

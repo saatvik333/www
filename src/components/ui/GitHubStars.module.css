@@ -27,8 +27,8 @@
 
 .skeleton {
   display: inline-block;
-  width: 3em;
-  height: 1.5em;
+  width: 2.5em;
+  height: 1.3em;
   background: var(--color-bg-secondary);
   border-radius: var(--border-radius);
   animation: pulse 1.5s ease-in-out infinite;

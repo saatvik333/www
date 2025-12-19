@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { GoArrowRight } from 'react-icons/go';
+import { Logo } from '@/components/ui';
 import styles from './Navbar.module.css';
 
 interface NavLink {
@@ -25,6 +26,7 @@ export function Navbar() {
     <>
       <div className={styles.row}>
         <Link href="/" className={styles.logo}>
+          <Logo className={styles.navLogo} />
           saatvik333
         </Link>
       </div>

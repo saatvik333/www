@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { jetbrainsMono } from '@/lib/fonts';
-import { NavigationProvider } from '@/context/NavigationContext';
 import { ClientLayout } from '@/components/layout/ClientLayout';
 import './globals.css';
 
@@ -50,14 +49,12 @@ export default function RootLayout({
 
         {/* PWA Manifest */}
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#121218" />
+        <meta name="theme-color" content="#171717" />
       </head>
       <body>
-        <NavigationProvider>
-          <ClientLayout>
-            {children}
-          </ClientLayout>
-        </NavigationProvider>
+        <ClientLayout>
+          {children}
+        </ClientLayout>
       </body>
     </html>
   );

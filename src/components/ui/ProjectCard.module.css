@@ -2,12 +2,6 @@
   display: block;
   text-decoration: none;
   color: inherit;
-  animation: fadeInUp 0.4s ease-out both;
-  transition: transform var(--transition-fast);
-}
-
-.card:hover {
-  transform: translateY(-4px);
 }
 
 .imageWrapper {
@@ -83,15 +77,4 @@
   color: var(--color-text-muted);
   margin: 0;
   line-height: 1.4;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }

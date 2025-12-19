@@ -103,7 +103,7 @@ export async function getContributions(username: string): Promise<ContributionCa
         query,
         variables: { username },
       }),
-      next: { revalidate: 3600 * 24 }, // Cache for 24 hours
+      next: { revalidate: 3600 * 6 }, // Cache for 6 hours
     });
 
     if (!response.ok) {
