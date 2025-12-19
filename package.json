@@ -10,6 +10,8 @@
     "clean": "rm -rf .next node_modules tsconfig.tsbuildinfo"
   },
   "dependencies": {
+    "embla-carousel-react": "^8.6.0",
+    "embla-carousel-wheel-gestures": "^8.1.0",
     "framer-motion": "^12.23.26",
     "gray-matter": "^4.0.3",
     "image-size": "^2.0.2",

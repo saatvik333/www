@@ -2,7 +2,6 @@
   position: relative;
   width: 100vw;
   margin-left: calc(-50vw + 50%);
-  /* Fluid height: 17.5rem mobile → 25rem tablet → 31.25rem desktop */
   height: clamp(17.5rem, 35vw + 6.25rem, 31.25rem);
   opacity: 0;
   transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1);
@@ -12,57 +11,38 @@
   opacity: 1;
 }
 
-.container {
-  display: flex;
-  /* Fluid gap using design tokens */
-  gap: var(--space-lg);
+.viewport {
+  overflow: hidden;
   height: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  /* Fluid padding for centering edge slides */
-  padding: 0 clamp(var(--space-lg), 40vw, 50vw);
-  /* Performance optimizations */
-  contain: layout style;
-  -webkit-overflow-scrolling: touch;
 }
 
-.container::-webkit-scrollbar {
-  display: none;
+.container {
+  display: flex;
+  height: 100%;
+  will-change: transform;
 }
 
 .slide {
-  flex-shrink: 0;
+  flex: 0 0 auto;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  scroll-snap-align: center;
-  scroll-snap-stop: always;
-  position: relative;
-  /* GPU Acceleration for smooth scrolling */
-  will-change: transform;
-  transform: translateZ(0);
-  backface-visibility: hidden;
+  margin-right: var(--space-lg);
 }
 
 .image {
   height: 100%;
   width: auto;
-  /* Fluid max-width */
   max-width: clamp(17.5rem, 85vw, 90vw);
-  border-radius: 0;
   object-fit: contain;
 }
 
-/* Navigation arrows - Opaque & TUI styled with premium bezier transitions */
+/* Navigation arrows */
 .arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  /* Fluid arrow size: 2.25rem mobile → 3rem desktop */
   width: clamp(2.25rem, 3vw + 1.5rem, 3rem);
   height: clamp(2.25rem, 3vw + 1.5rem, 3rem);
   display: flex;
@@ -70,17 +50,12 @@
   justify-content: center;
   background: var(--color-bg);
   border: 2px solid var(--color-border);
-  border-radius: 0;
   color: var(--color-text);
   cursor: pointer;
-  /* Fluid font size */
   font-size: clamp(1.1rem, 1vw + 0.8rem, 1.5rem);
-  /* Premium cubic-bezier: smooth soft out */
   transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   z-index: 100;
-  /* Fluid shadow */
-  box-shadow: 0 clamp(0.0625rem, 0.2vw, 0.125rem) clamp(0.375rem, 1vw, 0.75rem)
-    rgba(0, 0, 0, 0.25);
+  box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.25);
 }
 
 .arrow:hover {
@@ -92,44 +67,32 @@
 
 .arrow:active {
   transform: translateY(-50%) scale(0.95);
-  transition: all 0.1s cubic-bezier(0.25, 1, 0.5, 1);
+  transition-duration: 0.1s;
 }
 
 .arrowLeft {
-  /* Fluid positioning */
   left: var(--space-lg);
 }
 
 .arrowRight {
-  /* Fluid positioning */
   right: var(--space-lg);
 }
 
-/* Responsive refinements for very small screens */
-/* Responsive refinements for mobile */
 @media (max-width: 768px) {
   .carousel {
     height: auto;
-    min-height: 12.5rem; /* Minimum height backup */
-  }
-
-  .container {
-    padding: 0 var(--space-md);
-    align-items: center; /* Align images to center vertically */
-    padding-bottom: var(
-      --space-lg
-    ); /* Space for arrows if needed, or visual breathing room */
+    min-height: 12.5rem;
   }
 
   .slide {
-    width: 85vw; /* Show part of next slide to encourage scroll, or 100%? User said "tallest image in project's page", likely wanting full usage. Let's stick closer to 90vw or 100% depending on design. Current was 100% in small query. */
+    flex: 0 0 85vw;
     height: auto;
+    margin-right: var(--space-md);
   }
 
   .image {
     width: 100%;
-    height: auto; /* Dynamic height based on aspect ratio */
+    height: auto;
     max-width: 100%;
-    object-fit: contain;
   }
 }
