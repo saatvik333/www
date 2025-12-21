@@ -1,5 +1,3 @@
-'use client';
-
 import Link from 'next/link';
 import { GoArrowLeft } from 'react-icons/go';
 import styles from './not-found.module.css';

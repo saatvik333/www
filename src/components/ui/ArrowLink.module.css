@@ -1,12 +1,9 @@
 .link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0;
+  display: inline;
   color: var(--color-text);
   font-size: var(--text-base);
   transition: color var(--transition-fast);
   text-decoration: none;
-  flex-wrap: nowrap;
 }
 
 .link:hover {
@@ -23,9 +20,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
   font-size: 1.1em;
   line-height: 1;
+  vertical-align: middle;
 }
 
 /* Internal links: arrow before */

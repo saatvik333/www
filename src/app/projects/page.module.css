@@ -4,12 +4,6 @@
   gap: var(--space-xl);
 }
 
-@media (max-width: 56.25rem) {
-  .projectGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
 @media (max-width: 40rem) {
   .projectGrid {
     grid-template-columns: 1fr;

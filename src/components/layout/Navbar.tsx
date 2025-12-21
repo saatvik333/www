@@ -4,20 +4,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { GoArrowRight } from 'react-icons/go';
 import { Logo } from '@/components/ui';
+import { navLinks } from '@/lib/navLinks';
 import styles from './Navbar.module.css';
-
-interface NavLink {
-  href: string;
-  label: string;
-}
-
-const navLinks: NavLink[] = [
-  { href: '/about', label: 'about' },
-  { href: '/projects', label: 'projects' },
-  { href: '/blog', label: 'blog' },
-  { href: '/pics', label: 'pics' },
-  { href: '/contact', label: 'contact' },
-];
+import linkStyles from './NavLink.module.css';
 
 export function Navbar() {
   const pathname = usePathname();
@@ -25,7 +14,7 @@ export function Navbar() {
   return (
     <>
       <div className={styles.row}>
-        <Link href="/" className={styles.logo}>
+        <Link href="/" className={styles.logo} aria-label="saatvik333 - Go to homepage">
           <Logo className={styles.navLogo} />
           saatvik333
         </Link>
@@ -35,12 +24,12 @@ export function Navbar() {
           <Link
             key={link.href}
             href={link.href}
-            className={`${styles.navLink} ${pathname === link.href || pathname.startsWith(link.href + '/') ? styles.active : ''
+            className={`${styles.navLink} ${linkStyles.navLink} ${pathname === link.href || pathname.startsWith(link.href + '/') ? `${styles.active} ${linkStyles.active}` : ''
               }`}
           >
-            <span className={styles.symbolWrapper}>
-              <span className={styles.slash}>/</span>
-              <span className={styles.arrow}>
+            <span className={linkStyles.symbolWrapper}>
+              <span className={linkStyles.slash}>/</span>
+              <span className={linkStyles.arrow}>
                 <GoArrowRight />
               </span>
             </span>

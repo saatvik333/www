@@ -41,7 +41,7 @@ export async function GitHubCalendar({ username }: GitHubCalendarProps) {
                   key={`${wIndex}-${dIndex}`}
                   className={styles.cell}
                   style={{ backgroundColor: getThemeColor(day.contributionLevel) }}
-                  title={`${day.contributionCount} contributions on ${day.date}`}
+                  title={`${day.contributionCount} on ${day.date}`}
                 />
               ))}
             </div>
@@ -50,7 +50,7 @@ export async function GitHubCalendar({ username }: GitHubCalendarProps) {
       </div>
 
       <div className={styles.footer}>
-        <span>{totalContributions} contributions in the last year</span>
+        <span>{totalContributions} in last year</span>
         <div className={styles.legend}>
           <span>less</span>
           <div className={styles.legendCell} style={{ backgroundColor: 'var(--bg-secondary)' }} />

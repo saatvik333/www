@@ -1,6 +1,7 @@
 .main {
   min-height: calc(100vh - var(--header-height));
   padding: var(--space-2xl) 0;
+  padding-bottom: var(--space-3xl);
 }
 
 .container {
@@ -37,4 +38,11 @@
 
 .titleNumber {
   color: var(--color-text-muted);
+}
+
+/* Mobile: extra bottom padding to avoid navigation bar */
+@media (max-width: 48rem) {
+  .main {
+    padding-bottom: 6rem;
+  }
 }

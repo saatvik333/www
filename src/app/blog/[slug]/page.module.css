@@ -86,11 +86,13 @@
 .content ul,
 .content ol {
   margin-bottom: var(--space-md);
-  padding-left: var(--space-lg);
+  padding-left: 1.75em;
+  list-style-position: outside;
 }
 
 .content li {
   margin-bottom: var(--space-xs);
+  padding-left: 0.25em;
 }
 
 .content a {
@@ -100,7 +102,7 @@
 }
 
 .content a:hover {
-  color: var(--color-accent-pink);
+  color: var(--color-accent);
 }
 
 .content code {

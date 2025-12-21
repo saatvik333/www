@@ -20,10 +20,15 @@ export function ImageCarousel({ images, alt }: ImageCarouselProps) {
       loop: true,
       align: 'center',
       containScroll: false,
-      dragFree: false,
-      duration: 25,
+      dragFree: true,
+      duration: 30, // Slower deceleration for smoother feel
+      skipSnaps: true, // Smoother free scrolling
     },
-    [WheelGesturesPlugin()]
+    [
+      WheelGesturesPlugin({
+        forceWheelAxis: 'x', // Force horizontal scrolling
+      }),
+    ]
   );
 
   useEffect(() => {

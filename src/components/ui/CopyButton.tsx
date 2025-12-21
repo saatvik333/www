@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { MdContentCopy, MdCheck } from 'react-icons/md';
-import styles from '@/app/contact/page.module.css';
+import styles from './CopyButton.module.css';
 
 interface CopyButtonProps {
   text: string;
@@ -19,7 +19,7 @@ function fallbackCopyToClipboard(text: string): boolean {
   document.body.appendChild(textArea);
   textArea.focus();
   textArea.select();
-  
+
   try {
     const successful = document.execCommand('copy');
     document.body.removeChild(textArea);
@@ -35,7 +35,7 @@ export function CopyButton({ text, label }: CopyButtonProps) {
 
   const handleCopy = async () => {
     let success = false;
-    
+
     // Try modern Clipboard API first (requires secure context)
     if (navigator.clipboard && window.isSecureContext) {
       try {
@@ -45,12 +45,12 @@ export function CopyButton({ text, label }: CopyButtonProps) {
         console.error('Clipboard API failed:', err);
       }
     }
-    
+
     // Fallback for HTTP/non-secure contexts
     if (!success) {
       success = fallbackCopyToClipboard(text);
     }
-    
+
     if (success) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -58,8 +58,8 @@ export function CopyButton({ text, label }: CopyButtonProps) {
   };
 
   return (
-    <button 
-      className={styles.copyButton} 
+    <button
+      className={styles.copyButton}
       onClick={handleCopy}
       aria-label={label}
     >

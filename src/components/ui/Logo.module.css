@@ -34,13 +34,13 @@
 
 /* Colors */
 .three:nth-child(1) path {
-  stroke: #DA0037;
+  stroke: #da0037;
 }
 .three:nth-child(2) path {
-  stroke: #DA0037;
+  stroke: #da0037;
 }
 .three:nth-child(3) path {
-  stroke: #DA0037;
+  stroke: #da0037;
 }
 
 /* Animations */
@@ -98,5 +98,48 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* Easter egg disperse animation */
+.dispersed .three:nth-child(1) {
+  animation: disperse1 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.dispersed .three:nth-child(2) {
+  animation: disperse2 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.dispersed .three:nth-child(3) {
+  animation: disperse3 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes disperse1 {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) rotate(0deg) translateX(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) rotate(30deg) translateX(160%);
+  }
+}
+
+@keyframes disperse2 {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) rotate(0deg) translateX(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) rotate(150deg) translateX(160%);
+  }
+}
+
+@keyframes disperse3 {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) rotate(0deg) translateX(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) rotate(-90deg) translateX(160%);
   }
 }

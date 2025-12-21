@@ -22,15 +22,15 @@ export default function BlogPage() {
   const blogPosts = getAllBlogs();
 
   return (
-    <PageLayout 
+    <PageLayout
       title={`blog[${blogPosts.length}]`}
-      actions={<a href="/blog/rss.xml" className={styles.rss}>rss</a>}
+      actions={<a href="/feed" className={styles.rss}>rss</a>}
     >
       <section className={styles.content}>
         <div className={styles.postList}>
           {blogPosts.map((post, index) => (
-            <article 
-              key={post.slug} 
+            <article
+              key={post.slug}
               className={styles.postCard}
               style={{ animationDelay: `${index * 0.05}s` }}
             >

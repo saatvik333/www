@@ -1,11 +1,17 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
 import { GoArrowLeft } from 'react-icons/go';
 import { PageLayout } from '@/components/layout';
-import { ImageCarousel, ArrowLink, GitHubStars } from '@/components/ui';
+import { ArrowLink, GitHubStars } from '@/components/ui';
 import { getProject, getProjectSlugs } from '@/lib/content';
 import styles from './page.module.css';
+
+// Dynamic import for ImageCarousel - reduces initial bundle size
+const ImageCarousel = dynamic(
+  () => import('@/components/ui/ImageCarousel').then((mod) => mod.ImageCarousel)
+);
 
 interface ProjectPageProps {
   params: Promise<{ slug: string }>;

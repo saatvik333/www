@@ -168,3 +168,32 @@
     font-size: var(--text-base);
   }
 }
+
+/* Form feedback messages */
+.successMessage {
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+  border: 0.125rem solid var(--color-accent);
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+.errorMessage {
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+  background: color-mix(in srgb, var(--color-error) 15%, transparent);
+  border: 0.125rem solid var(--color-error);
+  color: var(--color-error);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+/* Disabled states */
+.input:disabled,
+.textarea:disabled,
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

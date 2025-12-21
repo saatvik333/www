@@ -7,4 +7,4 @@ v3 of my portfolio website
 
 ## stack
 - nextjs
-- typescript
+- typescriptn

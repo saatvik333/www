@@ -25,7 +25,10 @@ export function ClientLayout({ children }: ClientLayoutProps) {
 
   return (
     <div className={styles.layoutWrapper}>
-      <header className={`${styles.header} ${isHomepage ? styles.home : ''}`}>
+      <header
+        className={`${styles.header} ${isHomepage ? styles.home : ''}`}
+        inert={isHomepage ? true : undefined}
+      >
         <Navbar />
       </header>
 

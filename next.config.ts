@@ -62,11 +62,11 @@ const nextConfig: NextConfig = {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=()',
           },
-          // HSTS - enforce HTTPS (only enable in production with valid SSL)
-          // {
-          //   key: 'Strict-Transport-Security',
-          //   value: 'max-age=31536000; includeSubDomains',
-          // },
+          // HSTS - enforce HTTPS
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=31536000; includeSubDomains',
+          },
           // Cross-Origin policies
           {
             key: 'Cross-Origin-Opener-Policy',

@@ -78,7 +78,7 @@
   right: var(--space-lg);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .carousel {
     height: auto;
     min-height: 12.5rem;
