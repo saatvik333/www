@@ -58,7 +58,6 @@ export async function getRepoStars(owner: string, repo: string): Promise<number 
 export interface ContributionDay {
   contributionCount: number;
   date: string;
-  color: string;
   contributionLevel: 'NONE' | 'FIRST_QUARTILE' | 'SECOND_QUARTILE' | 'THIRD_QUARTILE' | 'FOURTH_QUARTILE';
 }
 
@@ -72,6 +71,13 @@ export interface ContributionCalendar {
 }
 
 export async function getContributions(username: string): Promise<ContributionCalendar | null> {
+  // Validate token before making request
+  const token = process.env.GITHUB_TOKEN;
+  if (!token) {
+    console.error('GITHUB_TOKEN environment variable is not set');
+    return null;
+  }
+
   const query = `
     query($username: String!) {
       user(login: $username) {
@@ -82,7 +88,6 @@ export async function getContributions(username: string): Promise<ContributionCa
               contributionDays {
                 contributionCount
                 date
-                color
                 contributionLevel
               }
             }
@@ -97,7 +102,7 @@ export async function getContributions(username: string): Promise<ContributionCa
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({
         query,

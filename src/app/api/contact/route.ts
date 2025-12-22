@@ -8,18 +8,41 @@ interface ContactFormData {
   message: string;
 }
 
-// Create transporter for sending emails
-// Using Gmail SMTP - requires app password if 2FA is enabled
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.SMTP_EMAIL,
-    pass: process.env.SMTP_PASSWORD,
-  },
-});
+// Escape HTML entities to prevent XSS in emails
+function escapeHtml(text: string): string {
+  const htmlEntities: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  };
+  return text.replace(/[&<>"']/g, (char) => htmlEntities[char]);
+}
 
 export async function POST(request: NextRequest) {
   try {
+    // Validate SMTP credentials before proceeding
+    const smtpEmail = process.env.SMTP_EMAIL;
+    const smtpPassword = process.env.SMTP_PASSWORD;
+    
+    if (!smtpEmail || !smtpPassword) {
+      console.error('SMTP_EMAIL or SMTP_PASSWORD environment variables are not set');
+      return NextResponse.json(
+        { error: 'Email service is not configured' },
+        { status: 500 }
+      );
+    }
+
+    // Create transporter for sending emails
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: smtpEmail,
+        pass: smtpPassword,
+      },
+    });
+
     const body: ContactFormData = await request.json();
 
     // Validate required fields (email is now optional)
@@ -41,21 +64,24 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Prepare email content
+    // Prepare email content (sanitize for HTML to prevent XSS)
+    const safeName = escapeHtml(body.name);
+    const safeEmail = body.email ? escapeHtml(body.email) : 'Not provided';
+    const safeMessage = escapeHtml(body.message);
     const replyInfo = body.email ? `\n\nReply to: ${body.email}` : '\n\n(No email provided)';
 
     const mailOptions = {
-      from: process.env.SMTP_EMAIL,
+      from: smtpEmail,
       to: SITE_CONFIG.email,
       subject: `Contact Form: ${body.name}`,
       text: `Name: ${body.name}${replyInfo}\n\nMessage:\n${body.message}`,
       html: `
         <h2>New Contact Form Submission</h2>
-        <p><strong>Name:</strong> ${body.name}</p>
-        <p><strong>Email:</strong> ${body.email || 'Not provided'}</p>
+        <p><strong>Name:</strong> ${safeName}</p>
+        <p><strong>Email:</strong> ${safeEmail}</p>
         <hr />
         <p><strong>Message:</strong></p>
-        <p>${body.message.replace(/\n/g, '<br>')}</p>
+        <p>${safeMessage.replace(/\n/g, '<br>')}</p>
         <hr />
         <p><small>Sent from saatvik.xyz contact form</small></p>
       `,

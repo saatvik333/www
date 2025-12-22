@@ -6,6 +6,3 @@ export const ibmPlexMono = IBM_Plex_Mono({
   variable: '--font-mono',
   weight: ['400', '600'],
 });
-
-
-

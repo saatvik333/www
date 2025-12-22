@@ -10,8 +10,11 @@ const PhotoItem = dynamic(
 );
 
 export const metadata: Metadata = {
-  title: 'pics',
+  title: 'Pics',
   description: 'just some random photos.',
+  alternates: {
+    canonical: '/pics',
+  },
 };
 
 export default function PicsPage() {
