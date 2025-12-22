@@ -1,11 +1,14 @@
 .layoutWrapper {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
   position: relative;
+  isolation: isolate;
 }
 
+/*
+   Projects Page: Header is relative (in flow) and visible.
+*/
 .header {
   display: flex;
   justify-content: space-between;
@@ -16,15 +19,25 @@
   margin: 0 auto;
   padding: 0 var(--header-padding);
   height: var(--header-height);
-  /* Only animate transform and opacity - GPU composited */
+  
+  /* Smooth slide up/down animation */
   transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
-    opacity 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+              opacity 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+              visibility 0.4s;
   transform: translateY(0);
   opacity: 1;
+  visibility: visible;
+  
   flex-shrink: 0;
-  will-change: transform, opacity;
+  position: relative;
+  z-index: 100;
 }
 
+/*
+   Home Page: Header is absolute (overlay) and slid up.
+   Using absolute positioning ensures it doesn't take up layout space on Home,
+   which effectively "collapses" the header space as desired.
+*/
 .header.home {
   position: absolute;
   top: 0;
@@ -32,32 +45,24 @@
   right: 0;
   transform: translateY(-100%);
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
 }
 
-/* Container adjusts for header presence */
+/* Container just fills remaining space */
 .container {
   flex: 1;
-  display: grid;
-  overflow-y: auto;
-  overflow-x: hidden;
-  /* Smooth transition when header appears/disappears */
-  transition: margin-top 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
 }
 
 /* Both pages occupy same grid cell for simultaneous animation */
 .transition {
-  grid-column: 1 / 2;
-  grid-row: 1 / 2;
-  min-width: 0;
   width: 100%;
-  height: 100%;
+  flex: 1;
   background-color: var(--color-bg);
-  isolation: isolate;
-  /* GPU acceleration for butter-smooth transitions - Firefox compatible */
-  will-change: opacity;
-  transform: translateZ(0);
-  backface-visibility: hidden;
 }
 
 /* Mobile: hide nav, show hamburger menu instead */

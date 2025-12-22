@@ -7,6 +7,6 @@
 @media (max-width: 40rem) {
   .projectGrid {
     grid-template-columns: 1fr;
-    gap: var(--space-lg);
+    gap: var(--space-md);
   }
 }

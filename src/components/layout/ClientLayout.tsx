@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation';
 import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
 import { Navbar } from './Navbar';
-import { ReactNode, useState, useEffect } from 'react';
+import { ReactNode, useState, useEffect, useRef } from 'react';
 import styles from './ClientLayout.module.css';
 
 interface ClientLayoutProps {
@@ -12,23 +12,15 @@ interface ClientLayoutProps {
 
 export function ClientLayout({ children }: ClientLayoutProps) {
   const pathname = usePathname();
+  const headerRef = useRef<HTMLElement>(null);
+
+  // Simple pathname check is sufficient now that layout structure is fixed
   const isHomepage = pathname === '/';
-
-  // Respect user's motion preferences (client-side only to avoid hydration mismatch)
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-
-  useEffect(() => {
-    setPrefersReducedMotion(
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    );
-  }, []);
-
-  // Soft ease for gentle, buttery transitions
-  const ease: [number, number, number, number] = [0.25, 0.1, 0.25, 1];
 
   return (
     <div className={styles.layoutWrapper}>
       <header
+        ref={headerRef}
         className={`${styles.header} ${isHomepage ? styles.home : ''}`}
         inert={isHomepage ? true : undefined}
       >
@@ -45,8 +37,8 @@ export function ClientLayout({ children }: ClientLayoutProps) {
               animate={{
                 opacity: 1,
                 transition: {
-                  duration: prefersReducedMotion ? 0 : 0.45,
-                  ease: ease
+                  duration: 0.45,
+                  ease: [0.25, 0.1, 0.25, 1]
                 }
               }}
               exit={{
