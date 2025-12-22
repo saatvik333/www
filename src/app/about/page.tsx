@@ -1,14 +1,22 @@
 import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
 import { PageLayout } from '@/components/layout';
-import { GitHubCalendar } from '@/components/ui';
 import { SOCIAL_LINKS } from '@/lib/config';
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import styles from './page.module.css';
 
+// Dynamic import - defers loading until About page is visited
+const GitHubCalendar = dynamic(
+  () => import('@/components/ui/GitHubCalendar').then(mod => mod.GitHubCalendar)
+);
+
 export const metadata: Metadata = {
-  title: 'about',
-  description: 'info about me.',
+  title: 'About',
+  description: 'Learn more about Saatvik Sharma, a full-stack developer passionate about open source, design mechanics, and high-performance web apps.',
+  alternates: {
+    canonical: '/about',
+  },
 };
 
 const links = [

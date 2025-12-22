@@ -5,8 +5,11 @@ import { getAllProjects } from '@/lib/content';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
-  title: 'projects',
-  description: 'projects i have worked on.',
+  title: 'Projects',
+  description: 'A curated collection of my web development and design projects, featuring work with Next.js, React, and TypeScript.',
+  alternates: {
+    canonical: '/projects',
+  },
 };
 
 export default function ProjectsPage() {

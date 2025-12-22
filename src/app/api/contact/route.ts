@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
+import { SITE_CONFIG } from '@/lib/config';
 
 interface ContactFormData {
   name: string;
@@ -42,10 +43,10 @@ export async function POST(request: NextRequest) {
 
     // Prepare email content
     const replyInfo = body.email ? `\n\nReply to: ${body.email}` : '\n\n(No email provided)';
-    
+
     const mailOptions = {
       from: process.env.SMTP_EMAIL,
-      to: 'saatvik333sharma@gmail.com',
+      to: SITE_CONFIG.email,
       subject: `Contact Form: ${body.name}`,
       text: `Name: ${body.name}${replyInfo}\n\nMessage:\n${body.message}`,
       html: `

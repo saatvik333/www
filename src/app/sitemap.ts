@@ -1,7 +1,9 @@
 import { MetadataRoute } from 'next';
 import { getAllBlogs, getAllProjects } from '@/lib/content';
 
-const SITE_URL = 'https://saatvik.xyz';
+import { SITE_CONFIG } from '@/lib/config';
+
+const SITE_URL = SITE_CONFIG.url;
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const blogs = getAllBlogs();

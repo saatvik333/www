@@ -8,7 +8,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  align-items: center;
   animation: spin 20s linear infinite;
   --logo-offset: 5.4%;
 }
@@ -34,13 +33,13 @@
 
 /* Colors */
 .three:nth-child(1) path {
-  stroke: #da0037;
+  stroke: var(--color-accent);
 }
 .three:nth-child(2) path {
-  stroke: #da0037;
+  stroke: var(--color-accent);
 }
 .three:nth-child(3) path {
-  stroke: #da0037;
+  stroke: var(--color-accent);
 }
 
 /* Animations */

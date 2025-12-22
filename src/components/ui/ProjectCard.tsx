@@ -38,10 +38,10 @@ export function ProjectCard({ slug, title, description, thumbnail, index = 0 }: 
         )}
       </div>
       <div className={styles.content}>
-        <h3 className={styles.title}>
+        <h2 className={styles.title}>
           {title}
           <GoArrowRight className={styles.arrow} />
-        </h3>
+        </h2>
         <p className={styles.description}>{description}</p>
       </div>
     </Link>

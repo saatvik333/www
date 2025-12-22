@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, RefObject } from 'react';
+import { useEffect, useState, RefObject } from 'react';
 
 // Shared IntersectionObserver for all PhotoItem instances
 // Much more efficient than creating one observer per item

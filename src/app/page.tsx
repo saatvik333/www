@@ -4,8 +4,11 @@ import { Logo } from '@/components/ui';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
-  title: 'home',
-  description: 'hey there! i\'m saatvik, a developer interested in web dev, design, linux, and more. welcome to my website/portfolio/blog.',
+  title: 'Saatvik Sharma | Creative Developer & Designer',
+  description: 'Portfolio of Saatvik Sharma, a creative developer and designer based in India, specializing in React, Next.js, and modern web design.',
+  alternates: {
+    canonical: '/',
+  },
 };
 
 export default function HomePage() {

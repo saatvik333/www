@@ -17,8 +17,8 @@
 }
 
 .navLogo {
-  width: 2rem;
-  height: 2rem;
+  width: clamp(1.75rem, 1.5rem + 0.5vw, 2.25rem);
+  height: clamp(1.75rem, 1.5rem + 0.5vw, 2.25rem);
 }
 
 .logo:hover {

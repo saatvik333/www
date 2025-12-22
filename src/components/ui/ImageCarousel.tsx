@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
 import Image from 'next/image';
 import { GoArrowLeft, GoArrowRight } from 'react-icons/go';
 import useEmblaCarousel from 'embla-carousel-react';
-import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures';
 import styles from './ImageCarousel.module.css';
 
 interface ImageCarouselProps {
@@ -13,30 +12,16 @@ interface ImageCarouselProps {
 }
 
 export function ImageCarousel({ images, alt }: ImageCarouselProps) {
-  const [isReady, setIsReady] = useState(false);
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: true,
+    align: 'center',
+    containScroll: false,
+    dragFree: false,
+    duration: 30, // Slower deceleration for smoother feel
+    // skipSnaps: false, // Smoother free scrolling
+  });
 
-  const [emblaRef, emblaApi] = useEmblaCarousel(
-    {
-      loop: true,
-      align: 'center',
-      containScroll: false,
-      dragFree: true,
-      duration: 30, // Slower deceleration for smoother feel
-      skipSnaps: true, // Smoother free scrolling
-    },
-    [
-      WheelGesturesPlugin({
-        forceWheelAxis: 'x', // Force horizontal scrolling
-      }),
-    ]
-  );
-
-  useEffect(() => {
-    if (emblaApi) {
-      // Mark as ready once Embla is initialized
-      setIsReady(true);
-    }
-  }, [emblaApi]);
+  const isReady = !!emblaApi;
 
   const scrollPrev = useCallback(() => {
     if (emblaApi) emblaApi.scrollPrev();
@@ -67,20 +52,28 @@ export function ImageCarousel({ images, alt }: ImageCarouselProps) {
         </div>
       </div>
 
-      <button
-        onClick={scrollPrev}
-        className={`${styles.arrow} ${styles.arrowLeft}`}
-        aria-label="Previous image"
-      >
-        <GoArrowLeft />
-      </button>
-      <button
-        onClick={scrollNext}
-        className={`${styles.arrow} ${styles.arrowRight}`}
-        aria-label="Next image"
-      >
-        <GoArrowRight />
-      </button>
+      {images.length > 1 && (
+        <>
+          <div className={styles.navZoneLeft}>
+            <button
+              onClick={scrollPrev}
+              className={styles.arrow}
+              aria-label="Previous image"
+            >
+              <GoArrowLeft />
+            </button>
+          </div>
+          <div className={styles.navZoneRight}>
+            <button
+              onClick={scrollNext}
+              className={styles.arrow}
+              aria-label="Next image"
+            >
+              <GoArrowRight />
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }

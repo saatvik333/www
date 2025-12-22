@@ -38,11 +38,28 @@
   object-fit: contain;
 }
 
-/* Navigation arrows */
-.arrow {
+/* Navigation Zones */
+.navZoneLeft,
+.navZoneRight {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none; /* Allow clicks through on mobile */
+}
+
+.navZoneLeft {
+  left: var(--space-lg);
+}
+
+.navZoneRight {
+  right: var(--space-lg);
+}
+
+.arrow {
   width: clamp(2.25rem, 3vw + 1.5rem, 3rem);
   height: clamp(2.25rem, 3vw + 1.5rem, 3rem);
   display: flex;
@@ -54,28 +71,64 @@
   cursor: pointer;
   font-size: clamp(1.1rem, 1vw + 0.8rem, 1.5rem);
   transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-  z-index: 100;
-  box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.25);
+  /* Shadow is fine */
+  pointer-events: auto; /* Re-enable pointer events for the button */
 }
 
-.arrow:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-  background: var(--color-bg-secondary);
-  transform: translateY(-50%) scale(1.05);
+/* Desktop Hover Interaction */
+@media (hover: hover) {
+  .navZoneLeft,
+  .navZoneRight {
+    top: 0;
+    bottom: 0;
+    height: 100%;
+    width: 20%; /* Wider active zone */
+    transform: none;
+    pointer-events: auto; /* Enable hover detection on zone */
+  }
+
+  .navZoneLeft {
+    left: 0;
+    justify-content: flex-start;
+    padding-left: var(--space-xl); /* More padding */
+  }
+
+  .navZoneRight {
+    right: 0;
+    justify-content: flex-end;
+    padding-right: var(--space-xl); /* More padding */
+  }
+
+  /* Specific overriding styles for Desktop */
+  .arrow {
+    width: 4rem;
+    height: 4rem;
+    font-size: 2rem;
+    opacity: 0.6; /* Visible but dimmed by default */
+    background: var(--color-bg);
+    backdrop-filter: blur(4px);
+    border: 1px solid var(--color-border);
+  }
+
+  .navZoneLeft:hover .arrow,
+  .navZoneRight:hover .arrow {
+    opacity: 1;
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    background: var(--color-bg);
+  }
+
+  .arrow:active {
+    /* No scale transform */
+    background: var(--color-bg-secondary);
+  }
 }
 
-.arrow:active {
-  transform: translateY(-50%) scale(0.95);
-  transition-duration: 0.1s;
-}
-
-.arrowLeft {
-  left: var(--space-lg);
-}
-
-.arrowRight {
-  right: var(--space-lg);
+/* Fallback for Mobile / No-Hover */
+@media (hover: none) {
+  .arrow:active {
+    opacity: 0.8;
+  }
 }
 
 @media (max-width: 48rem) {

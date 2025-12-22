@@ -5,16 +5,39 @@
 :root {
   /* Colors - Custom palette */
   --color-bg: #171717;
-  --color-bg-secondary: #444444;
+  --color-bg-secondary: #333333;
   --color-bg-tertiary: #555555;
   --color-text: #ededed;
   --color-text-muted: #c4c4c4;
-  --color-text-dim: #8a8a8a;
+  --color-text-dim: #a0a0a0;
   --color-text-bright: #ffffff;
-  --color-accent: #da0037;
-  --color-accent-hover: #ff1a50;
-  --color-border: #444444;
+  --color-accent: #ef4444;
+  --color-accent-hover: color-mix(in oklch, var(--color-accent) 75%, white);
+  --color-border: #333333;
   --color-error: #f87171;
+
+  /* Accent color shades - auto-derived from base accent using color-mix() */
+  --color-accent-25: color-mix(
+    in oklch,
+    var(--color-accent) 25%,
+    var(--color-bg)
+  );
+  --color-accent-50: color-mix(
+    in oklch,
+    var(--color-accent) 50%,
+    var(--color-bg)
+  );
+  --color-accent-75: color-mix(
+    in oklch,
+    var(--color-accent) 75%,
+    var(--color-bg)
+  );
+
+  /* Legacy variable aliases - backward compatibility */
+  --bg-secondary: var(--color-bg-secondary);
+  --fg-primary: var(--color-text);
+  --fg-secondary: var(--color-text-muted);
+  --error: var(--color-error);
 
   /* Typography */
   --font-mono: "IBM Plex Mono", "SF Mono", "Fira Code", "Consolas", monospace;
@@ -181,8 +204,8 @@ main {
    ======================================== */
 
 :focus-visible {
-  outline: 0.125rem solid var(--color-accent);
-  outline-offset: 0.125rem;
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 
 /* ========================================

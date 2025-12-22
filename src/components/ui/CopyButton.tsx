@@ -24,7 +24,7 @@ function fallbackCopyToClipboard(text: string): boolean {
     const successful = document.execCommand('copy');
     document.body.removeChild(textArea);
     return successful;
-  } catch (err) {
+  } catch {
     document.body.removeChild(textArea);
     return false;
   }

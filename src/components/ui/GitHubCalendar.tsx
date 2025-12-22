@@ -22,11 +22,11 @@ export async function GitHubCalendar({ username }: GitHubCalendarProps) {
 
   const getThemeColor = (level: string) => {
     switch (level) {
-      case 'FIRST_QUARTILE': return '#4a1219';
-      case 'SECOND_QUARTILE': return '#7a1f2e';
-      case 'THIRD_QUARTILE': return '#b00030';
-      case 'FOURTH_QUARTILE': return '#DA0037';
-      default: return 'var(--bg-secondary)';
+      case 'FIRST_QUARTILE': return 'var(--color-accent-25)';
+      case 'SECOND_QUARTILE': return 'var(--color-accent-50)';
+      case 'THIRD_QUARTILE': return 'var(--color-accent-75)';
+      case 'FOURTH_QUARTILE': return 'var(--color-accent)';
+      default: return 'var(--color-bg-secondary)';
     }
   };
 
@@ -53,11 +53,11 @@ export async function GitHubCalendar({ username }: GitHubCalendarProps) {
         <span>{totalContributions} in last year</span>
         <div className={styles.legend}>
           <span>less</span>
-          <div className={styles.legendCell} style={{ backgroundColor: 'var(--bg-secondary)' }} />
-          <div className={styles.legendCell} style={{ backgroundColor: '#4a1219' }} />
-          <div className={styles.legendCell} style={{ backgroundColor: '#7a1f2e' }} />
-          <div className={styles.legendCell} style={{ backgroundColor: '#b00030' }} />
-          <div className={styles.legendCell} style={{ backgroundColor: '#DA0037' }} />
+          <div className={styles.legendCell} style={{ backgroundColor: 'var(--color-bg-secondary)' }} />
+          <div className={styles.legendCell} style={{ backgroundColor: 'var(--color-accent-25)' }} />
+          <div className={styles.legendCell} style={{ backgroundColor: 'var(--color-accent-50)' }} />
+          <div className={styles.legendCell} style={{ backgroundColor: 'var(--color-accent-75)' }} />
+          <div className={styles.legendCell} style={{ backgroundColor: 'var(--color-accent)' }} />
           <span>more</span>
         </div>
       </div>

@@ -79,7 +79,7 @@ export function ContactForm() {
             </div>
 
             <div className={styles.formSection}>
-                <h3 className={styles.formTitle}>contact form</h3>
+                <h2 className={styles.formTitle}>contact form</h2>
 
                 {status === 'success' && (
                     <div className={styles.successMessage}>

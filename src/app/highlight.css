@@ -1,0 +1,80 @@
+/* Syntax Highlighting Theme - Accent color only */
+
+/* Base code styling for highlighted blocks */
+.hljs {
+  color: var(--color-text-muted);
+  background: var(--color-bg-secondary);
+}
+
+/* Comments - dimmed, not highlighted */
+.hljs-comment,
+.hljs-quote {
+  color: var(--color-text-dim);
+  font-style: italic;
+}
+
+/* All highlighted tokens use accent color */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-tag,
+.hljs-name,
+.hljs-string,
+.hljs-template-literal,
+.hljs-number,
+.hljs-literal,
+.hljs-boolean,
+.hljs-built_in,
+.hljs-function .hljs-title,
+.hljs-title.function_,
+.hljs-title.class_,
+.hljs-type,
+.hljs-class .hljs-title,
+.hljs-regexp,
+.hljs-symbol,
+.hljs-section,
+.hljs-selector-class,
+.hljs-selector-id,
+.hljs-selector-pseudo,
+.hljs-bullet,
+.hljs-link,
+.hljs-attr {
+  color: var(--color-accent);
+}
+
+/* Non-highlighted elements - subtle text colors */
+.hljs-variable,
+.hljs-attribute,
+.hljs-property {
+  color: var(--color-text);
+}
+
+.hljs-meta,
+.hljs-meta .hljs-keyword,
+.hljs-punctuation {
+  color: var(--color-text-dim);
+}
+
+.hljs-operator,
+.hljs-params {
+  color: var(--color-text-muted);
+}
+
+/* Deletion/Addition for diffs */
+.hljs-deletion {
+  color: var(--color-error);
+  background: color-mix(in srgb, var(--color-error) 15%, transparent);
+}
+
+.hljs-addition {
+  color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+}
+
+/* Emphasis and strong */
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}

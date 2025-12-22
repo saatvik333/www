@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
   // Experimental features for maximum speed
   experimental: {
     // Optimize package imports - reduce bundle size
-    optimizePackageImports: ['framer-motion', 'react-icons', 'date-fns'],
+    optimizePackageImports: ['framer-motion', 'react-icons', 'date-fns', 'embla-carousel-react', 'embla-carousel-wheel-gestures'],
   },
   
   // Image optimization
@@ -23,6 +23,17 @@ const nextConfig: NextConfig = {
   // Headers for caching and security
   async headers() {
     return [
+      // HTML pages - enable bfcache with private caching
+      {
+        source: '/:path*',
+        has: [{ type: 'header', key: 'accept', value: '(.*text/html.*)' }],
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'private, max-age=0, must-revalidate',
+          },
+        ],
+      },
       // Static asset caching
       {
         source: '/:all*(svg|jpg|png|webp|avif|woff|woff2|ico)',

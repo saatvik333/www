@@ -1,6 +1,7 @@
 import { getAllBlogs } from '@/lib/content';
+import { SITE_CONFIG } from '@/lib/config';
 
-const SITE_URL = 'https://saatvik.xyz';
+const SITE_URL = SITE_CONFIG.url;
 
 export async function GET() {
   const blogs = getAllBlogs();

@@ -5,8 +5,11 @@ import { getAllBlogs } from '@/lib/content';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
-  title: 'blog',
-  description: 'posts about various topics.',
+  title: 'Blog',
+  description: 'Thoughts, tutorials, and insights on web development, design systems, and Linux customization.',
+  alternates: {
+    canonical: '/blog',
+  },
 };
 
 function formatDate(dateString: string): string {
