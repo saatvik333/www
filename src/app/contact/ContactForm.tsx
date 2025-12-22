@@ -27,6 +27,7 @@ export function ContactForm() {
             name: formData.get('name') as string,
             email,
             message: formData.get('message') as string,
+            website: formData.get('website') as string, // Honeypot field
         };
 
         try {
@@ -109,6 +110,18 @@ export function ContactForm() {
                         />
                     </div>
 
+                    {/* Honeypot field - hidden from users, bots will fill it */}
+                    <div style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, overflow: 'hidden' }} aria-hidden="true">
+                        <label htmlFor="website">Website</label>
+                        <input
+                            type="text"
+                            id="website"
+                            name="website"
+                            tabIndex={-1}
+                            autoComplete="off"
+                        />
+                    </div>
+
                     <div className={styles.formGroup}>
                         <label htmlFor="email" className="sr-only">email (optional)</label>
                         <input
@@ -116,7 +129,7 @@ export function ContactForm() {
                             id="email"
                             name="email"
                             className={styles.input}
-                            placeholder="email (optional, if you want a reply)"
+                            placeholder="email (optional)"
                             disabled={status === 'submitting'}
                         />
                     </div>
