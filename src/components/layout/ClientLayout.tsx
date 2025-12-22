@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation';
 import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
 import { Navbar } from './Navbar';
-import { ReactNode, useMemo } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
 import styles from './ClientLayout.module.css';
 
 interface ClientLayoutProps {
@@ -14,10 +14,13 @@ export function ClientLayout({ children }: ClientLayoutProps) {
   const pathname = usePathname();
   const isHomepage = pathname === '/';
 
-  // Respect user's motion preferences
-  const prefersReducedMotion = useMemo(() => {
-    if (typeof window === 'undefined') return false;
-    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Respect user's motion preferences (client-side only to avoid hydration mismatch)
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    setPrefersReducedMotion(
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    );
   }, []);
 
   // Soft ease for gentle, buttery transitions

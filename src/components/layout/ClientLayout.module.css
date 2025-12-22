@@ -41,7 +41,6 @@
   display: grid;
   overflow-y: auto;
   overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
   /* Smooth transition when header appears/disappears */
   transition: margin-top 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
 }

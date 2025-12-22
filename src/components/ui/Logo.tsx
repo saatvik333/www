@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import styles from './Logo.module.css';
 
 interface LogoProps {
@@ -9,12 +9,22 @@ interface LogoProps {
 
 export function Logo({ className }: LogoProps) {
     const [dispersed, setDispersed] = useState(false);
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    // Cleanup timeout on unmount to prevent memory leak
+    useEffect(() => {
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+        };
+    }, []);
 
     const handleClick = () => {
         if (dispersed) return; // Prevent spam clicking
         setDispersed(true);
         // Reset after animation completes
-        setTimeout(() => setDispersed(false), 800);
+        timeoutRef.current = setTimeout(() => setDispersed(false), 800);
     };
 
     return (

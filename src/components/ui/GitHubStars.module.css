@@ -24,22 +24,3 @@
 .count {
   font-weight: 500;
 }
-
-.skeleton {
-  display: inline-block;
-  width: 2.5em;
-  height: 1.3em;
-  background: var(--color-bg-secondary);
-  border-radius: var(--border-radius);
-  animation: pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 0.4;
-  }
-  50% {
-    opacity: 0.8;
-  }
-}

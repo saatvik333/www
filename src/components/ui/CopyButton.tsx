@@ -10,21 +10,28 @@ interface CopyButtonProps {
 }
 
 // Fallback for non-secure contexts (HTTP)
+// Note: execCommand is deprecated but necessary for HTTP contexts where Clipboard API is unavailable
 function fallbackCopyToClipboard(text: string): boolean {
   const textArea = document.createElement('textarea');
   textArea.value = text;
   textArea.style.position = 'fixed';
   textArea.style.left = '-9999px';
   textArea.style.top = '-9999px';
+  textArea.setAttribute('readonly', ''); // Prevent keyboard popup on mobile
   document.body.appendChild(textArea);
   textArea.focus();
   textArea.select();
 
   try {
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     const successful = document.execCommand('copy');
     document.body.removeChild(textArea);
+    if (!successful) {
+      console.warn('Fallback clipboard copy failed');
+    }
     return successful;
-  } catch {
+  } catch (err) {
+    console.warn('Fallback clipboard copy error:', err);
     document.body.removeChild(textArea);
     return false;
   }
