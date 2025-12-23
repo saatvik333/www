@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation';
 import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
 import { Navbar } from './Navbar';
+import { MobileBottomNav } from './MobileBottomNav';
 import { ReactNode, useRef } from 'react';
 import styles from './ClientLayout.module.css';
 
@@ -18,17 +19,17 @@ export function ClientLayout({ children }: ClientLayoutProps) {
   const isHomepage = pathname === '/';
 
   return (
-    <div className={styles.layoutWrapper}>
-      <header
-        ref={headerRef}
-        className={`${styles.header} ${isHomepage ? styles.home : ''}`}
-        inert={isHomepage ? true : undefined}
-      >
-        <Navbar />
-      </header>
+    <LazyMotion features={domAnimation}>
+      <div className={styles.layoutWrapper}>
+        <header
+          ref={headerRef}
+          className={`${styles.header} ${isHomepage ? styles.home : ''}`}
+          inert={isHomepage ? true : undefined}
+        >
+          <Navbar />
+        </header>
 
-      <div className={styles.container}>
-        <LazyMotion features={domAnimation}>
+        <div className={styles.container}>
           <AnimatePresence initial={false} mode="wait">
             <m.div
               key={pathname}
@@ -37,8 +38,8 @@ export function ClientLayout({ children }: ClientLayoutProps) {
               animate={{
                 opacity: 1,
                 transition: {
-                  duration: 0.45,
-                  ease: [0.25, 0.1, 0.25, 1]
+                  duration: 0.6,
+                  ease: [0.22, 1, 0.36, 1]
                 }
               }}
               exit={{
@@ -51,8 +52,13 @@ export function ClientLayout({ children }: ClientLayoutProps) {
               {children}
             </m.div>
           </AnimatePresence>
-        </LazyMotion>
+        </div>
+
+        {/* Mobile bottom navigation - hidden on homepage */}
+        <AnimatePresence>
+          {!isHomepage && <MobileBottomNav key="mobile-nav" />}
+        </AnimatePresence>
       </div>
-    </div>
+    </LazyMotion>
   );
 }

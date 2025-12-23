@@ -1,0 +1,127 @@
+/* TUI/tmux-styled bottom navigation for mobile */
+
+.bottomNav {
+  display: none; /* Hidden on desktop */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+
+  /* tmux-style appearance */
+  background-color: var(--color-bg);
+  border-top: 1px solid var(--color-border);
+
+  /* Layout - compact padding to fit all items */
+  align-items: center;
+  justify-content: safe center;
+  padding: var(--space-xs) var(--space-sm);
+  padding-bottom: calc(var(--space-xs) + env(safe-area-inset-bottom, 0px));
+  gap: 0;
+
+  /* Typography */
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+
+  /* Scrollable on narrow devices */
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.bottomNav::-webkit-scrollbar {
+  display: none;
+}
+
+/* Show only on mobile */
+@media (max-width: 48rem) {
+  .bottomNav {
+    display: flex;
+  }
+}
+
+/* Logo section (left side, like tmux session name) */
+.logoSection {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 0 clamp(2px, 0.5vw, 6px);
+}
+
+.logo {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Box-drawing separator */
+.separator {
+  color: var(--color-text-dim);
+  padding: 0 clamp(3px, 0.75vw, 8px);
+  user-select: none;
+  flex-shrink: 0;
+}
+
+/* Navigation links container */
+.navLinks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  /* Hide scrollbar but allow scroll */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.navLinks::-webkit-scrollbar {
+  display: none;
+}
+
+.linkWrapper {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Hide the separator after the last link */
+.linkWrapper:last-child .separator {
+  display: none;
+}
+
+/* Individual nav link */
+.navLink {
+  display: block;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  padding: var(--space-xs) clamp(2px, 0.5vw, 6px);
+  white-space: nowrap;
+  transition: color var(--transition-fast);
+  outline: none;
+  border: none;
+  background: none;
+}
+
+.navLink:hover {
+  color: var(--color-text);
+}
+
+/* Reset focus to muted, only show bright on keyboard focus */
+.navLink:focus {
+  color: var(--color-text-muted);
+}
+
+.navLink:focus-visible {
+  color: var(--color-text);
+  outline: 1px solid var(--color-accent);
+  outline-offset: -1px;
+}
+
+/* Active link state */
+.navLink.active,
+.navLink.active:hover,
+.navLink.active:focus,
+.navLink.active:focus-visible {
+  color: var(--color-accent);
+}

@@ -64,9 +64,14 @@
   background-color: var(--color-bg);
 }
 
-/* Mobile: hide nav, show hamburger menu instead */
+/* Mobile: hide header entirely since bottom nav handles navigation */
 @media (max-width: 48rem) {
-  .header nav {
+  .header {
     display: none;
+  }
+
+  /* Add bottom padding for mobile bottom nav */
+  .container {
+    padding-bottom: calc(3rem + env(safe-area-inset-bottom, 0px));
   }
 }
