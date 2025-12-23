@@ -14,12 +14,13 @@ export const metadata: Metadata = {
   description: SITE_CONFIG.description,
   keywords: [
     'saatvik333',
-    'Saatvik Sharma',
-    'web developer',
-    'frontend engineer',
-    'react developer',
-    'next.js developer',
+    'software engineer',
+    'linux',
+    'full-stack developer',
     'creative developer',
+    'typescript',
+    'rust',
+    'go',
     'india',
   ],
   authors: [{ name: SITE_CONFIG.name, url: SITE_CONFIG.url }],
@@ -69,6 +70,12 @@ export const metadata: Metadata = {
       rel: 'apple-touch-icon-precomposed',
       url: '/icon-192.png',
     },
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: SITE_CONFIG.name,
+    // startUpImage: [], // valid startup images would go here if available
   },
 };
 

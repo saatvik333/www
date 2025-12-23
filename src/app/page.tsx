@@ -4,8 +4,8 @@ import { Logo } from '@/components/ui';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
-  title: 'Saatvik Sharma | Creative Developer & Designer',
-  description: 'Portfolio of Saatvik Sharma, a creative developer and designer based in India, specializing in React, Next.js, and modern web design.',
+  title: 'Saatvik Sharma | I build software',
+  description: 'Portfolio of Saatvik Sharma, a software engineer who enjoys linux and solving problems with software',
   alternates: {
     canonical: '/',
   },
