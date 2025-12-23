@@ -67,8 +67,6 @@
   font-weight: 500;
   color: var(--color-text);
   margin-bottom: var(--space-md);
-  /* Original seems to use a monospace font for title too */
-  font-family: var(--font-mono);
 }
 
 .form {
@@ -87,12 +85,10 @@
   width: 100%;
   font-family: var(--font-mono);
   font-size: var(--text-base);
-  padding: var(--space-md); /* Original has more padding */
-  background: var(
-    --color-bg-secondary
-  ); /* Original looks slightly lighter than pure black */
+  padding: var(--space-md);
+  background: var(--color-bg-secondary);
   border: 2px solid var(--color-border);
-  border-radius: 0; /* Strict TUI sharp corners */
+  border-radius: 0;
   color: var(--color-text);
   transition: border-color var(--transition-fast);
 }
@@ -100,9 +96,7 @@
 .input:focus,
 .textarea:focus {
   outline: none;
-  border-color: var(
-    --color-text-muted
-  ); /* Original seems to have subtle focus */
+  border-color: var(--color-text-muted);
 }
 
 .input::placeholder,

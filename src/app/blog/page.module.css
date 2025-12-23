@@ -34,7 +34,13 @@
 .date {
   font-size: var(--text-sm);
   color: var(--color-text-muted);
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+}
+
+.pinnedIcon {
+  color: var(--color-accent);
 }
 
 .postTitle {

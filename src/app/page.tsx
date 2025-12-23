@@ -21,7 +21,7 @@ export default function HomePage() {
             <Logo />
           </div>
           <p className={styles.greeting}>
-            hey there! i&apos;m saatvik, a developer interested in web dev, design, linux, and more.
+            hey, i&apos;m saatvik — i enjoy linux and solving problems with software.
           </p>
           <Navigation horizontal />
         </div>

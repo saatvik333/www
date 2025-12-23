@@ -54,18 +54,16 @@ export function ImageCarousel({ images, alt }: ImageCarouselProps) {
 
       {images.length > 1 && (
         <>
-          <div className={styles.navZoneLeft}>
+          <div className={styles.navZoneLeft} onClick={scrollPrev}>
             <button
-              onClick={scrollPrev}
               className={styles.arrow}
               aria-label="Previous image"
             >
               <GoArrowLeft />
             </button>
           </div>
-          <div className={styles.navZoneRight}>
+          <div className={styles.navZoneRight} onClick={scrollNext}>
             <button
-              onClick={scrollNext}
               className={styles.arrow}
               aria-label="Next image"
             >

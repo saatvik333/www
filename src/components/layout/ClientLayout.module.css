@@ -19,15 +19,14 @@
   margin: 0 auto;
   padding: 0 var(--header-padding);
   height: var(--header-height);
-  
+
   /* Smooth slide up/down animation */
   transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
-              opacity 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
-              visibility 0.4s;
+    opacity 0.4s cubic-bezier(0.25, 0.1, 0.25, 1), visibility 0.4s;
   transform: translateY(0);
   opacity: 1;
   visibility: visible;
-  
+
   flex-shrink: 0;
   position: relative;
   z-index: 100;

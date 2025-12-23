@@ -2,10 +2,11 @@ import type { Metadata } from 'next';
 import { PageLayout } from '@/components/layout';
 import { ArrowLink } from '@/components/ui';
 import { getAllBlogs } from '@/lib/content';
+import { TbPinFilled } from 'react-icons/tb';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
-  title: 'Blog',
+  title: 'Blogs',
   description: 'Thoughts, tutorials, and insights on web development, design systems, and Linux customization.',
   alternates: {
     canonical: '/blog',
@@ -26,7 +27,7 @@ export default function BlogPage() {
 
   return (
     <PageLayout
-      title={`blog[${blogPosts.length}]`}
+      title={`blogs[${blogPosts.length}]`}
       actions={<a href="/feed" className={styles.rss}>rss</a>}
     >
       <section className={styles.content}>
@@ -37,7 +38,10 @@ export default function BlogPage() {
               className={styles.postCard}
               style={{ animationDelay: `${index * 0.05}s` }}
             >
-              <span className={styles.date}>{formatDate(post.date)}</span>
+              <span className={styles.date}>
+                {post.pinned && <TbPinFilled className={styles.pinnedIcon} />}
+                {formatDate(post.date)}
+              </span>
               <ArrowLink href={`/blog/${post.slug}`}>
                 <span className={styles.postTitle}>{post.title}</span>
               </ArrowLink>
@@ -49,3 +53,4 @@ export default function BlogPage() {
     </PageLayout>
   );
 }
+

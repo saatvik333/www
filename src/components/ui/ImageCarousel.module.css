@@ -84,6 +84,7 @@
     width: 20%; /* Wider active zone */
     transform: none;
     pointer-events: auto; /* Enable hover detection on zone */
+    cursor: pointer;
   }
 
   .navZoneLeft {
@@ -105,7 +106,7 @@
     font-size: 2rem;
     opacity: 0.6; /* Visible but dimmed by default */
     background: var(--color-bg);
-    border: 1px solid var(--color-border);
+    border: 2px solid var(--color-border);
   }
 
   .navZoneLeft:hover .arrow,

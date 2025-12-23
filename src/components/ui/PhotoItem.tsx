@@ -18,6 +18,8 @@ export const PhotoItem = memo(function PhotoItem({ photo, index }: PhotoItemProp
     // Use shared observer for better performance with many photos
     const isVisible = useIntersectionObserver(ref);
 
+    const imagePath = `/pics/${photo.src}`;
+
     return (
         <div
             ref={ref}
@@ -32,18 +34,26 @@ export const PhotoItem = memo(function PhotoItem({ photo, index }: PhotoItemProp
 
             {/* Image - only render when in viewport */}
             {isVisible && (
-                <Image
-                    src={`/pics/${photo.src}`}
-                    alt={photo.alt}
-                    width={photo.width}
-                    height={photo.height}
-                    className={styles.image}
-                    onLoad={() => setIsLoaded(true)}
-                    sizes="(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, 33vw"
-                    loading="lazy"
-                    quality={75}
-                />
+                <a
+                    href={imagePath}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.imageLink}
+                    title="View full resolution"
+                >
+                    <Image
+                        src={imagePath}
+                        alt={photo.alt}
+                        width={photo.width}
+                        height={photo.height}
+                        className={styles.image}
+                        onLoad={() => setIsLoaded(true)}
+                        sizes="(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, 33vw"
+                        loading="lazy"
+                    />
+                </a>
             )}
         </div>
     );
 });
+

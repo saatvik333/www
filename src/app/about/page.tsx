@@ -4,6 +4,7 @@ import { PageLayout } from '@/components/layout';
 import { SOCIAL_LINKS } from '@/lib/config';
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
+import { LuFileText } from 'react-icons/lu';
 import styles from './page.module.css';
 
 // Dynamic import - defers loading until About page is visited
@@ -22,21 +23,23 @@ export const metadata: Metadata = {
 const links = [
   { href: SOCIAL_LINKS.github, label: 'github', icon: FaGithub },
   { href: SOCIAL_LINKS.twitter, label: 'x/twitter', icon: FaXTwitter },
-  { href: SOCIAL_LINKS.linkedin, label: 'linkedin', icon: FaLinkedin }
+  { href: SOCIAL_LINKS.linkedin, label: 'linkedin', icon: FaLinkedin },
+  { href: '/resume.pdf', label: 'résumé', icon: LuFileText },
 ];
 
-const techStack = [
-  'TypeScript', 'React', 'Next.js', 'Node.js', 'Python',
-  'Go', 'Rust', 'Linux', 'Docker', 'Git'
-];
+const skills = {
+  "languages": ['typescript', 'go', 'rust', 'c/c++', 'bash'],
+  "frameworks/db": ['node.js', 'next.js', 'ethers.js', 'redis'],
+  "tools": ['linux', 'docker', 'github actions', 'git', 'neovim'],
+};
 
 export default function AboutPage() {
   return (
     <PageLayout title="about">
       <section className={styles.content}>
         <p className={styles.bio}>
-          hey there! i&apos;m saatvik, a developer passionate about creating beautiful and functional things.
-          i love web development, design systems, linux customization, and building tools that make life easier.
+          a software engineer focused on building clean, scalable, and reliable applications.
+          i work across the stack, building thoughtful performant systems and intuitive experiences that solve real problems.
         </p>
 
         <div className={styles.section}>
@@ -62,12 +65,17 @@ export default function AboutPage() {
         </div>
 
         <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>tech</h2>
-          <div className={styles.techGrid}>
-            {techStack.map((tech) => (
-              <span key={tech} className={styles.techItem}>
-                {tech}
-              </span>
+          <h2 className={styles.sectionTitle}>skills</h2>
+          <div className={styles.skillsGrid}>
+            {Object.entries(skills).map(([category, items]) => (
+              <div key={category} className={styles.skillCategory}>
+                <span className={styles.categoryLabel}>{category}</span>
+                <div className={styles.skillItems}>
+                  {items.map((skill) => (
+                    <span key={skill} className={styles.skillItem}>{skill}</span>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -92,7 +100,7 @@ export default function AboutPage() {
             <p className={styles.colophonRow}>
               <span className={styles.colophonLabel}>stack</span>
               <span className={styles.colophonArrowSmall}>→</span>
-              <span className={styles.colophonValue}>next.js / react / vanilla css / gray-matter</span>
+              <span className={styles.colophonValue}>next.js / vanilla css / gray-matter</span>
             </p>
             <p className={styles.colophonRow}>
               <span className={styles.colophonLabel}>fonts</span>

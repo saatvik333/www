@@ -52,3 +52,12 @@
 .photoWrapper.loaded .image {
   opacity: 1;
 }
+
+/* Link wrapper */
+.imageLink {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  cursor: pointer;
+}

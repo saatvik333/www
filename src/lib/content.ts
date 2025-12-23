@@ -34,6 +34,7 @@ export interface BlogMeta {
   title: string;
   description: string;
   date: string;
+  pinned?: boolean;
 }
 
 export interface BlogPost extends BlogMeta {
@@ -165,11 +166,16 @@ export function getAllBlogs(): BlogMeta[] {
       title: data.title || slug,
       description: data.description || '',
       date: data.date || '',
+      pinned: data.pinned || false,
     } as BlogMeta;
   });
   
-  // Sort by date (newest first)
-  return blogs.sort((a, b) => (a.date > b.date ? -1 : 1));
+  // Sort: pinned first, then by date (newest first)
+  return blogs.sort((a, b) => {
+    if (a.pinned && !b.pinned) return -1;
+    if (!a.pinned && b.pinned) return 1;
+    return a.date > b.date ? -1 : 1;
+  });
 }
 
 // Get single blog with content

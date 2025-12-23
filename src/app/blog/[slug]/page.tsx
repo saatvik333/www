@@ -101,7 +101,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <article className={styles.article}>
         {/* Back link */}
         <Link href="/blog" className={styles.backLink}>
-          <GoArrowLeft className={styles.backArrow} /> blog
+          <GoArrowLeft className={styles.backArrow} /> blogs
         </Link>
 
         {/* Header */}

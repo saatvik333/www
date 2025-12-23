@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation';
 import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
 import { Navbar } from './Navbar';
-import { ReactNode, useState, useEffect, useRef } from 'react';
+import { ReactNode, useRef } from 'react';
 import styles from './ClientLayout.module.css';
 
 interface ClientLayoutProps {
