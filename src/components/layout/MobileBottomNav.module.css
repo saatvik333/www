@@ -15,8 +15,8 @@
   /* Layout - compact padding to fit all items */
   align-items: center;
   justify-content: safe center;
-  padding: var(--space-xs) var(--space-sm);
-  padding-bottom: calc(var(--space-xs) + env(safe-area-inset-bottom, 0px));
+  padding: var(--space-sm) var(--space-md);
+  padding-bottom: calc(var(--space-sm) + env(safe-area-inset-bottom, 0px));
   gap: 0;
 
   /* Typography */
