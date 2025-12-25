@@ -1,8 +1,6 @@
 import { ImageResponse } from 'next/og';
 import { SITE_CONFIG, COLORS } from '@/lib/config';
 
-export const runtime = 'edge';
-
 export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
