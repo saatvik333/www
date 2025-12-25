@@ -62,15 +62,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
   },
-  icons: {
-    icon: '/icon-192.png',
-    shortcut: '/icon-192.png',
-    apple: '/icon-192.png',
-    other: {
-      rel: 'apple-touch-icon-precomposed',
-      url: '/icon-192.png',
-    },
-  },
+
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
