@@ -38,11 +38,17 @@ export async function GET(
 
   const contentType = contentTypes[ext] || 'application/octet-stream';
 
+  // Use no-cache in development for hot-reload to work
+  const isDev = process.env.NODE_ENV === 'development';
+  const cacheControl = isDev
+    ? 'no-cache, no-store, must-revalidate'
+    : 'public, max-age=31536000, immutable';
+
   return new NextResponse(fileBuffer, {
     status: 200,
     headers: {
       'Content-Type': contentType,
-      'Cache-Control': 'public, max-age=31536000, immutable',
+      'Cache-Control': cacheControl,
     },
   });
 }

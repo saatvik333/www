@@ -59,8 +59,10 @@
   /* Layout - Fluid */
   --max-width: clamp(320px, 90vw, 680px);
   --max-width-wide: clamp(320px, 95vw, 1000px);
+  --max-width-header: clamp(320px, 98vw, 1400px);
   --header-height: clamp(3.5rem, 3rem + 2vw, 5rem);
-  --header-padding: clamp(1rem, 0.5rem + 3vw, 4rem);
+  --header-padding: clamp(1rem, 2vw, 2rem);
+
   --border-radius: 0;
 
   /* Gaps - Fluid */

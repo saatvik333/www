@@ -12,8 +12,6 @@
 
 # testing
 /coverage
-*.jpg
-*.png
 
 # next.js
 /.next/
@@ -25,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+.hidden
 
 # debug
 npm-debug.log*

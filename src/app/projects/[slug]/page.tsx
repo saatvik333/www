@@ -7,6 +7,7 @@ import { PageLayout } from '@/components/layout';
 import { ArrowLink, GitHubStars } from '@/components/ui';
 import { getProject, getProjectSlugs } from '@/lib/content';
 import styles from './page.module.css';
+import typographyStyles from '@/styles/typography.module.css';
 
 // Dynamic import for ImageCarousel - reduces initial bundle size
 const ImageCarousel = dynamic(
@@ -75,6 +76,15 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             </div>
           </div>
           <p className={styles.description}>{project.description}</p>
+
+          {/* Tech Stack */}
+          {project.stack && project.stack.length > 0 && (
+            <div className={styles.stackItems}>
+              {project.stack.map((tech) => (
+                <span key={tech} className={styles.stackItem}>{tech}</span>
+              ))}
+            </div>
+          )}
         </header>
 
         {/* Image Carousel */}
@@ -84,9 +94,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           </div>
         )}
 
+
+
         {/* Content */}
         <div
-          className={styles.content}
+          className={typographyStyles.prose}
           dangerouslySetInnerHTML={{ __html: project.content }}
         />
       </article>

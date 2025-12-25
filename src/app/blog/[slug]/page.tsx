@@ -6,6 +6,7 @@ import { PageLayout } from '@/components/layout';
 import { getBlog, getBlogSlugs } from '@/lib/content';
 import { SITE_CONFIG } from '@/lib/config';
 import styles from './page.module.css';
+import typographyStyles from '@/styles/typography.module.css';
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -93,7 +94,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   };
 
   return (
-    <PageLayout>
+    <PageLayout wide>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -111,9 +112,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <p className={styles.description}>{post.description}</p>
         </header>
 
+
+
         {/* Content */}
         <div
-          className={styles.content}
+          className={typographyStyles.prose}
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
       </article>

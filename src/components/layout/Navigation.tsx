@@ -21,7 +21,7 @@ export function Navigation({ horizontal = false }: NavigationProps) {
           <li key={link.href}>
             <Link
               href={link.href}
-              className={`${styles.navLink} ${linkStyles.navLink} ${pathname === link.href || pathname.startsWith(link.href + '/') ? `${styles.active} ${linkStyles.active}` : ''
+              className={`${styles.navLink} ${linkStyles.navLink} ${pathname === link.href || pathname.startsWith(link.href + '/') ? linkStyles.active : ''
                 }`}
             >
               <span className={linkStyles.symbolWrapper}>

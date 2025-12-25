@@ -1,4 +1,19 @@
-/* Shared nav link animation styles */
+/* Shared nav link styles */
+.navLink {
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  transition: color var(--transition-smooth);
+  position: relative;
+  text-decoration: none;
+}
+
+.navLink:hover,
+.active {
+  color: var(--color-accent);
+}
 
 /* Container for the slash/arrow transition */
 .symbolWrapper {

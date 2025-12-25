@@ -29,20 +29,5 @@
 }
 
 .navLink {
-  display: inline-flex;
-  align-items: center;
-  color: var(--color-text);
-  font-size: var(--text-lg);
   padding: var(--space-xs) 0;
-  transition: color var(--transition-smooth);
-  position: relative;
-}
-
-.navLink:hover {
-  color: var(--color-accent);
-}
-
-/* Active state */
-.active {
-  color: var(--color-accent);
 }

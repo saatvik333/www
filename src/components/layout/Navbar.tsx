@@ -24,7 +24,7 @@ export function Navbar() {
           <Link
             key={link.href}
             href={link.href}
-            className={`${styles.navLink} ${linkStyles.navLink} ${pathname === link.href || pathname.startsWith(link.href + '/') ? `${styles.active} ${linkStyles.active}` : ''
+            className={`${linkStyles.navLink} ${pathname === link.href || pathname.startsWith(link.href + '/') ? linkStyles.active : ''
               }`}
           >
             <span className={linkStyles.symbolWrapper}>

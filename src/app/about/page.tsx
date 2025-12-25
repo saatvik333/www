@@ -4,7 +4,7 @@ import { PageLayout } from '@/components/layout';
 import { SOCIAL_LINKS } from '@/lib/config';
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
-import { LuFileText } from 'react-icons/lu';
+// import { LuFileText } from 'react-icons/lu';
 import styles from './page.module.css';
 
 // Dynamic import - defers loading until About page is visited
@@ -24,7 +24,7 @@ const links = [
   { href: SOCIAL_LINKS.github, label: 'github', icon: FaGithub },
   { href: SOCIAL_LINKS.twitter, label: 'x/twitter', icon: FaXTwitter },
   { href: SOCIAL_LINKS.linkedin, label: 'linkedin', icon: FaLinkedin },
-  { href: '/resume.pdf', label: 'résumé', icon: LuFileText },
+  // { href: '/resume.pdf', label: 'résumé', icon: LuFileText },
 ];
 
 const skills = {

@@ -27,6 +27,7 @@ export default function BlogPage() {
 
   return (
     <PageLayout
+      wide
       title={`blogs[${blogPosts.length}]`}
       actions={<a href="/feed" className={styles.rss}>rss</a>}
     >

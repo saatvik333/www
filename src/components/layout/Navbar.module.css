@@ -31,26 +31,6 @@
   gap: var(--gap-nav);
 }
 
-.navLink {
-  display: inline-flex;
-  align-items: center;
-  color: var(--color-text);
-  font-family: var(--font-mono);
-  font-size: var(--text-lg);
-  transition: color 0.3s;
-  position: relative;
-}
-
-.navLink:hover {
-  color: var(--color-accent);
-}
-
-/* Active state */
-.active {
-  color: var(--color-accent);
-}
-
-/* Only hide nav on mobile - clamp() handles all other scaling */
 @media (max-width: 48rem) {
   .nav {
     display: none;

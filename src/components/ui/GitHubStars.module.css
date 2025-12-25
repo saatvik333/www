@@ -12,7 +12,6 @@
 }
 
 .stars:hover {
-  color: var(--color-accent);
   border-color: var(--color-accent);
 }
 

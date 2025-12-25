@@ -11,7 +11,7 @@ const PhotoItem = dynamic(
 
 export const metadata: Metadata = {
   title: 'Pics',
-  description: 'just some random photos.',
+  description: 'just some random photos i clicked.',
   alternates: {
     canonical: '/pics',
   },
@@ -24,7 +24,7 @@ export default function PicsPage() {
   return (
     <PageLayout title={`pics[${photos.length}]`} wide>
       <section className={styles.content}>
-        <p className={styles.description}>just some random photos.</p>
+        <p className={styles.description}>just some random photos i clicked.</p>
 
         {hasPhotos ? (
           <div className={styles.galleryWrapper}>

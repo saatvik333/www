@@ -18,6 +18,7 @@ export interface ProjectMeta {
   title: string;
   description: string;
   tags?: string[];
+  stack?: string[];
   github?: string;
   site?: string;
   thumbnail?: string;
@@ -108,6 +109,7 @@ export function getAllProjects(): ProjectMeta[] {
       title: data.title || slug,
       description: data.description || '',
       tags: data.tags || [],
+      stack: data.stack || [],
       github: data.github,
       site: data.site,
       thumbnail: getProjectThumbnail(slug),
@@ -144,6 +146,7 @@ export async function getProject(slug: string): Promise<Project | null> {
     title: data.title || slug,
     description: data.description || '',
     tags: data.tags || [],
+    stack: data.stack || [],
     github: data.github,
     site: data.site,
     thumbnail: getProjectThumbnail(slug),
