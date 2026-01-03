@@ -6,7 +6,10 @@ const SITE_URL = SITE_CONFIG.url;
 export async function GET() {
   const blogs = getAllBlogs();
 
-  const rssItems = blogs
+  // getAllBlogs already filters invalid dates, but extra safety check
+  const validBlogs = blogs.filter(blog => !isNaN(new Date(blog.date).getTime()));
+
+  const rssItems = validBlogs
     .map((blog) => {
       return `
     <item>

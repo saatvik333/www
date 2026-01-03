@@ -14,7 +14,6 @@
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.23.26",
     "gray-matter": "^4.0.3",
-    "image-size": "^2.0.2",
     "next": "16.0.10",
     "next-pwa": "^5.6.0",
     "nodemailer": "^7.0.11",

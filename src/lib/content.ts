@@ -173,11 +173,17 @@ export function getAllBlogs(): BlogMeta[] {
     } as BlogMeta;
   });
   
+  // Filter out posts with missing or invalid dates
+  const validBlogs = blogs.filter((blog) => {
+    const date = new Date(blog.date);
+    return !isNaN(date.getTime()) && blog.date !== '';
+  });
+
   // Sort: pinned first, then by date (newest first)
-  return blogs.sort((a, b) => {
+  return validBlogs.sort((a, b) => {
     if (a.pinned && !b.pinned) return -1;
     if (!a.pinned && b.pinned) return 1;
-    return a.date > b.date ? -1 : 1;
+    return new Date(b.date).getTime() - new Date(a.date).getTime();
   });
 }
 
