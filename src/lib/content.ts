@@ -36,6 +36,7 @@ export interface BlogMeta {
   description: string;
   date: string;
   pinned?: boolean;
+  readingTime: string;
 }
 
 export interface BlogPost extends BlogMeta {
@@ -155,6 +156,13 @@ export async function getProject(slug: string): Promise<Project | null> {
   };
 }
 
+function getReadingTime(content: string): string {
+  const wordsPerMinute = 200;
+  const words = content.trim().split(/\s+/).length;
+  const minutes = Math.ceil(words / wordsPerMinute);
+  return `${minutes} min read`;
+}
+
 // Get all blogs metadata (for listing page)
 export function getAllBlogs(): BlogMeta[] {
   const slugs = getBlogSlugs();
@@ -162,7 +170,7 @@ export function getAllBlogs(): BlogMeta[] {
   const blogs = slugs.map((slug) => {
     const filePath = path.join(blogsDirectory, `${slug}.md`);
     const fileContents = fs.readFileSync(filePath, 'utf8');
-    const { data } = matter(fileContents);
+    const { data, content } = matter(fileContents);
     
     return {
       slug,
@@ -170,6 +178,7 @@ export function getAllBlogs(): BlogMeta[] {
       description: data.description || '',
       date: data.date || '',
       pinned: data.pinned || false,
+      readingTime: getReadingTime(content),
     } as BlogMeta;
   });
   
@@ -214,5 +223,6 @@ export async function getBlog(slug: string): Promise<BlogPost | null> {
     description: data.description || '',
     date: data.date || '',
     content: contentHtml,
+    readingTime: getReadingTime(content),
   };
 }

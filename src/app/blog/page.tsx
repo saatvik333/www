@@ -39,10 +39,14 @@ export default function BlogPage() {
               className={styles.postCard}
               style={{ animationDelay: `${index * 0.05}s` }}
             >
-              <span className={styles.date}>
-                {post.pinned && <TbPinFilled className={styles.pinnedIcon} />}
-                {formatDate(post.date)}
-              </span>
+              <div className={styles.meta}>
+                <span className={styles.date}>
+                  {post.pinned && <TbPinFilled className={styles.pinnedIcon} />}
+                  {formatDate(post.date)}
+                </span>
+                <span className={styles.separator}>·</span>
+                <span className={styles.readingTime}>{post.readingTime}</span>
+              </div>
               <ArrowLink href={`/blog/${post.slug}`}>
                 <span className={styles.postTitle}>{post.title}</span>
               </ArrowLink>
