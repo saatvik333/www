@@ -3,6 +3,7 @@ title: "wayland-bongocat"
 description: "a lightweight wayland overlay that displays an animated bongo cat reacting to real-time keyboard input."
 date: "2025-8-12"
 github: "https://github.com/saatvik333/wayland-bongocat"
+site: "https://aur.archlinux.org/packages/bongocat"
 tags: ["wayland", "c", "linux", "overlay"]
 stack: ["c/c++", "wayland", "cairo", "layer-shell", "inotify", "make"]
 ---

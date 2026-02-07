@@ -3,6 +3,7 @@ title: "tabula"
 description: "a minimalist and productive new-tab browser extension with widgets and customizable visuals."
 date: "2025-10-12"
 github: "https://github.com/saatvik333/tabula"
+site: "https://addons.mozilla.org/en-US/firefox/addon/saatvik333-tabula/"
 tags: ["browser extension", "typescript", "productivity", "web"]
 stack: ["typescript", "vite", "github actions", "css", "bun"]
 ---

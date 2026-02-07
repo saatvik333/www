@@ -3,6 +3,7 @@ title: "vscode-wallust-theme"
 description: "a wallust powered color theme extension for Code OSS based editors that adapts dynamically to your wallpaper palette."
 date: "2025-12-24"
 github: "https://github.com/saatvik333/vscode-wallust-theme"
+site: "https://marketplace.visualstudio.com/items?itemName=saatvik333.wallust-theme"
 tags: ["vscode", "typescript", "chokidar", "theme", "wallust", "customization"]
 stack: ["typescript", "nodejs", "chokidar", "code-oss", "wallust"]
 ---
