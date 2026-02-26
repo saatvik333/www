@@ -82,7 +82,7 @@ function getProjectImages(slug: string): string[] {
 function getProjectThumbnail(slug: string): string | undefined {
   const projectDir = path.join(projectsDirectory, slug);
   const possibleExtensions = ['png', 'jpg', 'jpeg', 'webp', 'gif'];
-  
+
   for (const ext of possibleExtensions) {
     const thumbnailPath = path.join(projectDir, `thumbnail.${ext}`);
     if (fs.existsSync(thumbnailPath)) {
@@ -95,16 +95,16 @@ function getProjectThumbnail(slug: string): string | undefined {
 // Get all projects metadata (for listing page)
 export function getAllProjects(): ProjectMeta[] {
   const slugs = getProjectSlugs();
-  
+
   const projects = slugs.map((slug) => {
     const indexPath = path.join(projectsDirectory, slug, 'index.md');
     if (!fs.existsSync(indexPath)) {
       return null;
     }
-    
+
     const fileContents = fs.readFileSync(indexPath, 'utf8');
     const { data } = matter(fileContents);
-    
+
     return {
       slug,
       title: data.title || slug,
@@ -117,21 +117,26 @@ export function getAllProjects(): ProjectMeta[] {
       images: getProjectImages(slug),
     } as ProjectMeta;
   });
-  
+
   return projects.filter((p): p is ProjectMeta => p !== null);
 }
 
 // Get single project with content
 export async function getProject(slug: string): Promise<Project | null> {
+  // Defense in depth parameter validation
+  if (!slug || slug.includes('..') || slug.includes('/') || slug.includes('\\')) {
+    return null;
+  }
+
   const indexPath = path.join(projectsDirectory, slug, 'index.md');
-  
+
   if (!fs.existsSync(indexPath)) {
     return null;
   }
-  
+
   const fileContents = fs.readFileSync(indexPath, 'utf8');
   const { data, content } = matter(fileContents);
-  
+
   // Convert markdown to HTML with syntax highlighting
   const processedContent = await unified()
     .use(remarkParse)
@@ -141,7 +146,7 @@ export async function getProject(slug: string): Promise<Project | null> {
     .use(rehypeStringify)
     .process(content);
   const contentHtml = processedContent.toString();
-  
+
   return {
     slug,
     title: data.title || slug,
@@ -166,12 +171,12 @@ function getReadingTime(content: string): string {
 // Get all blogs metadata (for listing page)
 export function getAllBlogs(): BlogMeta[] {
   const slugs = getBlogSlugs();
-  
+
   const blogs = slugs.map((slug) => {
     const filePath = path.join(blogsDirectory, `${slug}.md`);
     const fileContents = fs.readFileSync(filePath, 'utf8');
     const { data, content } = matter(fileContents);
-    
+
     return {
       slug,
       title: data.title || slug,
@@ -181,7 +186,7 @@ export function getAllBlogs(): BlogMeta[] {
       readingTime: getReadingTime(content),
     } as BlogMeta;
   });
-  
+
   // Filter out posts with missing or invalid dates
   const validBlogs = blogs.filter((blog) => {
     const date = new Date(blog.date);
@@ -198,15 +203,20 @@ export function getAllBlogs(): BlogMeta[] {
 
 // Get single blog with content
 export async function getBlog(slug: string): Promise<BlogPost | null> {
+  // Defense in depth parameter validation
+  if (!slug || slug.includes('..') || slug.includes('/') || slug.includes('\\')) {
+    return null;
+  }
+
   const filePath = path.join(blogsDirectory, `${slug}.md`);
-  
+
   if (!fs.existsSync(filePath)) {
     return null;
   }
-  
+
   const fileContents = fs.readFileSync(filePath, 'utf8');
   const { data, content } = matter(fileContents);
-  
+
   // Convert markdown to HTML with syntax highlighting
   const processedContent = await unified()
     .use(remarkParse)
@@ -216,7 +226,7 @@ export async function getBlog(slug: string): Promise<BlogPost | null> {
     .use(rehypeStringify)
     .process(content);
   const contentHtml = processedContent.toString();
-  
+
   return {
     slug,
     title: data.title || slug,

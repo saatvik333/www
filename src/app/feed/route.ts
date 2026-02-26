@@ -11,12 +11,15 @@ export async function GET() {
 
   const rssItems = validBlogs
     .map((blog) => {
+      const safeTitle = blog.title.replace(/]]>/g, ']]]]><![CDATA[>');
+      const safeDescription = (blog.description || '').replace(/]]>/g, ']]]]><![CDATA[>');
+
       return `
     <item>
-      <title><![CDATA[${blog.title}]]></title>
+      <title><![CDATA[${safeTitle}]]></title>
       <link>${SITE_URL}/blog/${blog.slug}</link>
       <guid isPermaLink="true">${SITE_URL}/blog/${blog.slug}</guid>
-      <description><![CDATA[${blog.description}]]></description>
+      <description><![CDATA[${safeDescription}]]></description>
       <pubDate>${new Date(blog.date).toUTCString()}</pubDate>
     </item>`;
     })
@@ -27,7 +30,7 @@ export async function GET() {
   <channel>
     <title>saatvik333 blog</title>
     <link>${SITE_URL}</link>
-    <description>blog posts from saatvik.xyz</description>
+    <description>blog posts from saatvik.me</description>
     <language>en-us</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <atom:link href="${SITE_URL}/feed" rel="self" type="application/rss+xml" />

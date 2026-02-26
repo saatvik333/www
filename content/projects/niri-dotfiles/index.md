@@ -7,47 +7,41 @@ tags: ["niri", "dotfiles", "linux", "wayland", "shell"]
 stack: ["niri", "bash", "waybar", "fish", "rust", "alacritty", "wayland", "gtk", "neovim", "rofi", "mako", "wallust"]
 ---
 
-a comprehensive, modular configuration setup for the niri wayland window manager, designed to deliver a clean, dynamic, and highly personalized desktop environment with automated theming and productivity-oriented tooling.
+A fully featured, highly modular, and aesthetically tuned configuration repository for Niri, the scrollable tiling Wayland window manager.
 
-## ideation
+## The Paradigm Shift
 
-after switching from hyprland to **niri**, a scrolling tiling wayland compositor written in rust, this project was created to provide a full featured, ready-to-use desktop environment with minimal manual setup. niri’s distinctive infinite horizontal workspace model reimagines tiling workflows, and **niri-dotfiles** centralizes essential components — from system utilities to visual theming, keybindings, and application configurations — into a coherent, reproducible configuration.
+After extensively daily-driving Hyprland, I migrated my primary workspace to **Niri**. Written in Rust, Niri introduces a uniquely compelling infinite horizontal workspace model that fundamentally reimagines traditional tiling window management workflows.
 
-the goal was to reduce repetitive setup across machines, unify appearance and behavior system-wide, and leverage automation for dynamic theme adaptation and workflow enhancements.
+However, moving to a new compositor meant rebuilding my environment from scratch. **niri-dotfiles** was engineered to solve this. I centralized all the essential components—ranging from core system utilities to visual theming, customized keybindings, and application-specific configurations—into a single, reproducible architecture. 
 
-## implementation
+The core engineering objective was clear: drastically reduce the repetitive friction of setting up fresh machines, unify the appearance and behavior across the entire system, and leverage heavy automation to support dynamic theme adaptation and power-user workflow enhancements.
 
-this repository organizes configuration files and automation scripts for niri and associated tools. installation is automated via a script that bootstraps an arch-based system with required packages and dotfiles. core aspects include:
+## Implementation Details
 
-- **modular scripting and automation** for theme orchestration, media controls, system utilities, and workflow helpers  
-- **dynamic system-wide theming** using wallust to extract palette colors from wallpapers and apply them across gtk, status bar, terminals, and applications  
-- preconfigured components including shell (fish), status bar (waybar), terminals (alacritty/kitty), notification daemon (mako), and launcher (rofi)  
-- keybind sets optimized for niri window and workspace management  
-- reusable directory structure enabling easy version control and portability  
+This repository is more than just a collection of config files; it's a bootstrapped environment. Installation is driven by a custom shell script that immediately provisions an Arch-based system with the mandatory packages and deploys the dotfiles gracefully.
 
-the install script validates system compatibility, configures a rust toolchain, installs packages (including niri, waybar, and utilities), and deploys the dotfiles to the user environment.
+Key architectural pillars of the setup include:
 
-## key features
+- **Theme Orchestration:** Automated scripts handle dynamic system-side theming using `wallust` to extract color palettes directly from wallpapers, instantly pushing those color schemes down to GTK, the Waybar status bar, Alacritty/Kitty terminals, and rofi launchers.
+- **Preconfigured Environment:** Out-of-the-box integrations for the `fish` shell, `mako` notification daemon, and an entirely customized Neovim setup.
+- **Workflow Automation:** Modular shell scripting manages media controls, system utilities, and daily workflow helpers without bloated dependencies.
+- **Niri-Optimized Binds:** A meticulous set of keyboard-centric keybinds specifically designed to exploit Niri's horizontal scrolling mechanics alongside system and media management.
 
-- clean, gapless minimal aesthetic  
-- dynamic theme switching and palette extraction  
-- full configuration for common desktop components  
-- utility scripts for workflow automation  
-- keyboard-centric keybinds for system, media, and window management  
-- easily deployable via automated installer  
+The installation script itself is built with failure resilience in mind. It validates system compatibility, configures the necessary Rust toolchains, installs Niri and its dependencies, and safely symlinks the configuration directory structure.
 
-## requirements
+## Setup Requirements
 
-- niri wayland compositor (rust-based, scrollable tiling wm)  
-- arch linux or arch-based distribution (recommended for installer)  
-- wallust for dynamic theme palette generation  
+- Niri Wayland compositor
+- Arch Linux or an Arch-based distribution (highly recommended for the automated installer)
+- `wallust` (for dynamic procedural theme generation)
 
-## installation
+## Deployment
 
-to bootstrap a fresh setup on arch linux or an arch-based distro:
+To bootstrap a fresh setup on an Arch Linux installation, simply execute the remote install script:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/saatvik333/niri-dotfiles/main/install.sh | sh
 ```
 
-the installer handles package installation, configuration deployment, and environment setup.
+The installer will autonomously manage package resolution, configuration deployment, and environment sanitization.

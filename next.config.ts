@@ -4,22 +4,22 @@ import withPWA from "next-pwa";
 const nextConfig: NextConfig = {
   // React Compiler for automatic memoization
   reactCompiler: true,
-  
+
   // Turbopack configuration (faster than webpack)
   turbopack: {},
-  
+
   // Experimental features for maximum speed
   experimental: {
     // Optimize package imports - reduce bundle size
     optimizePackageImports: ['framer-motion', 'react-icons', 'date-fns', 'embla-carousel-react', 'embla-carousel-wheel-gestures'],
   },
-  
+
   // Image optimization
   images: {
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 31536000, // 1 year cache
   },
-  
+
   // Headers for caching and security
   async headers() {
     return [
@@ -91,7 +91,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  
+
   // Rewrites to serve content directory images
   async rewrites() {
     return [
@@ -101,13 +101,13 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  
+
   // Compress responses
   compress: true,
-  
+
   // Power by header off for slightly smaller responses
   poweredByHeader: false,
-  
+
   // Source maps disabled in production (reduces build size, hides source code)
   productionBrowserSourceMaps: false,
 };

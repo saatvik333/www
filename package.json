@@ -12,12 +12,12 @@
   },
   "dependencies": {
     "embla-carousel-react": "^8.6.0",
-    "framer-motion": "^12.23.26",
+    "framer-motion": "^12.34.3",
     "gray-matter": "^4.0.3",
     "image-size": "^2.0.2",
     "next": "16.0.10",
     "next-pwa": "^5.6.0",
-    "nodemailer": "^7.0.11",
+    "nodemailer": "^8.0.1",
     "react": "19.2.1",
     "react-dom": "19.2.1",
     "react-icons": "^5.5.0",
@@ -31,15 +31,15 @@
     "unified": "^11.0.5"
   },
   "devDependencies": {
-    "@types/minimatch": "^6.0.0",
-    "@types/node": "^20",
-    "@types/nodemailer": "^7.0.4",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/minimatch": "^5.1.2",
+    "@types/node": "^20.19.34",
+    "@types/nodemailer": "^7.0.11",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "babel-plugin-react-compiler": "1.0.0",
-    "baseline-browser-mapping": "^2.9.19",
-    "eslint": "^9",
+    "baseline-browser-mapping": "^2.10.0",
+    "eslint": "^10.0.2",
     "eslint-config-next": "16.0.10",
-    "typescript": "^5"
+    "typescript": "^5.9.3"
   }
 }

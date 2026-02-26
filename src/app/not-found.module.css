@@ -30,7 +30,7 @@
   font-family: var(--font-mono);
   font-size: var(--text-base);
   color: var(--color-text);
-  transition: color 0.2s;
+  transition: color var(--transition-fast);
 }
 
 .homeLink:hover {
@@ -44,7 +44,7 @@
   margin-right: 0.3em;
   font-size: 1.1em;
   line-height: 1;
-  transition: transform 0.2s;
+  transition: transform var(--transition-fast);
 }
 
 .homeLink:hover .arrow {

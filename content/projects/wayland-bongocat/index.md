@@ -8,51 +8,51 @@ tags: ["wayland", "c", "linux", "overlay"]
 stack: ["c/c++", "wayland", "cairo", "layer-shell", "inotify", "make"]
 ---
 
-a cute comapanion for your desktop (^.^) i.e minimal yet customizable, native wayland overlay written in c that renders an animated bongo cat responding to real-time keyboard input. built to be compositor-agnostic, unobtrusive, and extremely lightweight.
+A highly optimized, compositor-agnostic Wayland overlay written entirely in C. It renders an animated, customizable "Bongo Cat" companion that reacts synchronously to real-time keyboard input.
 
-## ideation
+## The Engineering Challenge
 
-linux desktops offer deep customization, but most desktop overlays and pets rely on heavy frameworks or operate outside the wayland ecosystem. the goal of this project was to build a purely aesthetic companion that integrates cleanly with modern wayland compositors, remains invisible to focus management, and introduces no meaningful performance overhead.
+While Linux desktops boast incredible customization depth, most "desktop pet" or overlay applications rely heavily on bloated frameworks (like Electron) or legacy X11 APIs that simply do not operate correctly within the modern Wayland ecosystem.
 
-the emphasis was on simplicity, correctness, and native protocols rather than feature bloat.
+The core engineering objective of this project was to construct a purely aesthetic companion that interacts natively with modern Wayland compositors, remains entirely invisible to window focus management, and introduces effectively zero performance overhead to the host system. The emphasis was strictly maintained on architectural simplicity, memory safety, and native protocols over feature bloat.
 
-## implementation
+## Implementation Details
 
-the application is written entirely in **c** to keep the binary small and resource usage predictable. it creates a non-interactive overlay using the **wayland layer-shell protocol** and **wayland top-level management protocol**, allowing it to stay above normal windows without stealing focus.
+The application is written strictly in **C** to guarantee a microscopic binary footprint and highly predictable resource utilization. It establishes a completely non-interactive overlay leveraging both the **Wayland Layer-Shell** protocol and the **Wayland Top-Level Management** protocol. This specific combination guarantees the overlay floats persistently above standard windows without ever stealing input focus or aggressively trapping the mouse.
 
-keyboard activity is captured by reading events directly from `/dev/input`, enabling low-latency animation triggers without relying on compositor-specific apis. rendering is handled with **cairo**, providing clean, scalable 2d output.
+To achieve imperceptible latency, keyboard activity is intercepted by reading raw input events directly from `/dev/input`, completely bypassing compositor-specific APIs. The visual rendering pipeline utilizes **Cairo**, providing crisp, scalable 2D outputs that redraw only precisely when an input event alters the animation state.
 
-runtime configuration is hot-reloaded using `inotify`, allowing live adjustments to size, position, and behavior without restarting the process.
+Furthermore, runtime configuration is hot-reloadable. The daemon utilizes `inotify` to monitor its config files, allowing users to make live, zero-downtime adjustments to the overlay's size, screen position, and behavioral parameters without ever restarting the host process.
 
-## key features
+## Capabilities
 
-- native wayland **layer-shell** overlay (no xwayland or electron)
-- real-time animation driven by actual keyboard input
-- hot-reloadable configuration
-- automatic hiding during fullscreen applications
-- multi-monitor and per-output support
-- very low resource usage **(~8 mb typical)**
+- **Native Integration:** Pure Wayland **Layer-Shell** overlay (strictly no XWayland or heavy web-view dependencies).
+- **Synchronous Input:** Real-time animation logic driven by low-level kernel input events.
+- **Dynamic Configuration:** Non-blocking `inotify` hooks for hot-reloading visual configurations.
+- **Context Aware:** Automatic visibility toggling when fullscreen applications are detected.
+- **Scalable Architecture:** Built-in multi-monitor routing and per-output coordinate support.
+- **Micro-Footprint:** Extremely frugal resource allocation (typically idling at **~8 MB** RAM).
 
-## installation
+## Installation
 
 ```bash
-# using aur
+# Arch Linux (Via AUR Helper)
 yay -S bongocat
 
-# from source
+# Compilation from Source
 git clone https://github.com/saatvik333/wayland-bongocat.git
 cd wayland-bongocat
 make
 ```
 
-## helper tool
+## System Utilities
 
-includes a helper tool (`bongocat-find-devices`) to locate the correct keyboard input device.
+The repository ships with an integrated CLI helper tool (`bongocat-find-devices`) engineered to automatically locate and bind the correct kernel keyboard input device descriptor.
 
 ```bash
-# automated finding
+# Automated heuristic device binding
 bongocat-find-devices
 
-# interactive mode
+# Manual interactive selection mode
 bongocat-find-devices -i
 ```

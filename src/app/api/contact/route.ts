@@ -75,19 +75,19 @@ function checkRateLimit(ip: string): { allowed: boolean; retryAfter?: number } {
 function validateOrigin(request: NextRequest): boolean {
   const referer = request.headers.get('referer');
   const origin = request.headers.get('origin');
-  
+
   const allowedDomains = [
-    'saatvik.xyz',
-    'www.saatvik.xyz',
+    'saatvik.me',
+    'www.saatvik.me',
     'localhost',
     '127.0.0.1',
   ];
-  
+
   const checkDomain = (url: string | null): boolean => {
     if (!url) return false;
     try {
       const parsedUrl = new URL(url);
-      return allowedDomains.some(domain => 
+      return allowedDomains.some(domain =>
         parsedUrl.hostname === domain || parsedUrl.hostname.endsWith(`.${domain}`)
       );
     } catch {
@@ -101,7 +101,7 @@ function validateOrigin(request: NextRequest): boolean {
 // Generate clean HTML email matching site's markdown aesthetic
 function generateEmailHTML(name: string, email: string, message: string, timestamp: string, ip: string): string {
   const messageLines = message.replace(/\n/g, '<br>');
-  
+
   return `
 <!DOCTYPE html>
 <html>
@@ -128,7 +128,7 @@ function generateEmailHTML(name: string, email: string, message: string, timesta
     <div style="padding-top: 16px; border-top: 1px solid ${COLORS.border}; font-size: 12px; color: ${COLORS.textDim};">
       <span>${timestamp}</span>
       <span style="margin: 0 8px;">·</span>
-      <span>saatvik.xyz/contact</span>
+      <span>saatvik.me/contact</span>
       <span style="margin: 0 8px;">·</span>
       <span style="opacity: 0.6;">${ip}</span>
     </div>
@@ -163,7 +163,7 @@ export async function POST(request: NextRequest) {
     // Validate SMTP credentials before proceeding
     const smtpEmail = process.env.SMTP_EMAIL;
     const smtpPassword = process.env.SMTP_PASSWORD;
-    
+
     if (!smtpEmail || !smtpPassword) {
       console.error('SMTP_EMAIL or SMTP_PASSWORD environment variables are not set');
       return NextResponse.json(
@@ -181,10 +181,34 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const body: ContactFormData = await request.json();
+    const body: any = await request.json();
+
+    // Validate body structure and field types at runtime
+    if (!body || typeof body !== 'object') {
+      return NextResponse.json(
+        { error: 'Invalid request format' },
+        { status: 400 }
+      );
+    }
+
+    if (body.name !== undefined && typeof body.name !== 'string') {
+      return NextResponse.json({ error: 'Invalid name format' }, { status: 400 });
+    }
+    if (body.email !== undefined && typeof body.email !== 'string') {
+      return NextResponse.json({ error: 'Invalid email format' }, { status: 400 });
+    }
+    if (body.message !== undefined && typeof body.message !== 'string') {
+      return NextResponse.json({ error: 'Invalid message format' }, { status: 400 });
+    }
+    if (body.website !== undefined && typeof body.website !== 'string') {
+      return NextResponse.json({ error: 'Invalid website format' }, { status: 400 });
+    }
+
+    // Cast the safely checked body back into the interface
+    const safeBody = body as ContactFormData;
 
     // Honeypot check - if website field is filled, it's likely a bot
-    if (body.website) {
+    if (safeBody.website) {
       // Silently reject but return success to not reveal honeypot
       return NextResponse.json(
         { success: true, message: 'Message sent successfully!' },
@@ -193,7 +217,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate required fields
-    if (!body.name || !body.message) {
+    if (!safeBody.name || !safeBody.message) {
       return NextResponse.json(
         { error: 'Name and message are required' },
         { status: 400 }
@@ -201,19 +225,19 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate input lengths
-    if (body.name.length > MAX_NAME_LENGTH) {
+    if (safeBody.name.length > MAX_NAME_LENGTH) {
       return NextResponse.json(
         { error: `Name must be ${MAX_NAME_LENGTH} characters or less` },
         { status: 400 }
       );
     }
-    if (body.email && body.email.length > MAX_EMAIL_LENGTH) {
+    if (safeBody.email && safeBody.email.length > MAX_EMAIL_LENGTH) {
       return NextResponse.json(
         { error: `Email must be ${MAX_EMAIL_LENGTH} characters or less` },
         { status: 400 }
       );
     }
-    if (body.message.length > MAX_MESSAGE_LENGTH) {
+    if (safeBody.message.length > MAX_MESSAGE_LENGTH) {
       return NextResponse.json(
         { error: `Message must be ${MAX_MESSAGE_LENGTH} characters or less` },
         { status: 400 }
@@ -221,9 +245,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate email format if provided
-    if (body.email) {
+    if (safeBody.email) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(body.email)) {
+      if (!emailRegex.test(safeBody.email)) {
         return NextResponse.json(
           { error: 'Invalid email format' },
           { status: 400 }
@@ -232,11 +256,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Prepare email content (sanitize for HTML to prevent XSS)
-    const safeName = escapeHtml(body.name.trim());
-    const safeEmail = body.email ? escapeHtml(body.email.trim()) : 'Not provided';
-    const safeMessage = escapeHtml(body.message.trim());
-    const replyInfo = body.email ? `\n\nReply to: ${body.email}` : '\n\n(No email provided)';
-    
+    const safeName = escapeHtml(safeBody.name.trim());
+    const safeEmail = safeBody.email ? escapeHtml(safeBody.email.trim()) : 'Not provided';
+    const safeMessage = escapeHtml(safeBody.message.trim());
+    const replyInfo = safeBody.email ? `\n\nReply to: ${safeBody.email}` : '\n\n(No email provided)';
+
     // Generate timestamp
     const timestamp = new Date().toLocaleString('en-US', {
       timeZone: 'Asia/Kolkata',
@@ -247,9 +271,9 @@ export async function POST(request: NextRequest) {
     const mailOptions = {
       from: smtpEmail,
       to: SITE_CONFIG.email,
-      replyTo: body.email || undefined,
-      subject: `💬 ${body.name.trim()}`,
-      text: `Name: ${body.name}${replyInfo}\n\nMessage:\n${body.message}\n\n---\nSent: ${timestamp}\nIP: ${clientIP}`,
+      replyTo: safeBody.email || undefined,
+      subject: `💬 ${safeBody.name.trim()}`,
+      text: `Name: ${safeBody.name}${replyInfo}\n\nMessage:\n${safeBody.message}\n\n---\nSent: ${timestamp}\nIP: ${clientIP}`,
       html: generateEmailHTML(safeName, safeEmail, safeMessage, timestamp, clientIP),
     };
 

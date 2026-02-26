@@ -7,47 +7,48 @@ tags: ["sddm", "qml", "qt6", "linux", "theme"]
 stack: ["sddm", "qml", "qtquick", "qt6"]
 ---
 
-a minimal yet highly customizable sddm login theme that uses randomized ipa (international phonetic alphabet) characters for password masking, resulting in an intentionally obscure and distinctive login experience. the theme emphasizes clean visuals, subtle animation, and fine-grained control over appearance and behavior.
+A highly customizable, deliberately minimal login theme for the SDDM greeter. Its signature feature utilizes randomized International Phonetic Alphabet (IPA) characters for password masking, creating a distinctive and intentionally obscure login sequence. 
 
-## ideation
+## The Approach
 
-the default linux login experience is often treated as an afterthought, prioritizing function over polish. many existing sddm themes either rely on heavy visuals or expose limited customization. this project explores a more deliberate approach: a restrained, modern greeter that feels cohesive, configurable, and visually intentional.
+The default Linux display manager login experience is too often treated as an afterthought—a screen you rush past, where function completely overrules polish. Conversely, many community SDDM themes swing too far in the other direction, relying on heavy, unoptimized visuals while exposing very little configuration to the end user.
 
-the idea of ipa-based password masking was introduced to make password entry visually interesting while remaining purely cosmetic and non-intrusive. the goal was not novelty alone, but a theme that balances clarity, personality, and control.
+This project explores a much more deliberate middle ground: a restrained, highly modern greeter that feels cohesive, configurable, and visually intentional.
 
-## implementation
+The concept of IPA-based password masking was introduced specifically to make the mundane act of password entry visually engaging, all while remaining purely cosmetic and completely secure. The core objective was not merely novelty, but rather engineering a theme that perfectly balances clarity with deep personalization capability.
 
-the theme is implemented using **qml** on top of **qtquick**, targeting **sddm** (login greeter). it follows the standard sddm theme structure and relies entirely on declarative ui components for layout, animation, and interaction.
+## Technical Architecture
 
-all customization is centralized in `theme.conf`, with settings grouped by palette, background, typography, and behavior. the visual system is driven by a single accent color, optional glass blur layers, and configurable opacity and animation timings.
+The visual framework is built entirely using **QML** running aggressively optimized **QtQuick** views, explicitly targeting the SDDM login greeter. It rigidly adheres to standard SDDM theme packaging structures and relies strictly on declarative UI components to manage layout state, subtle animations, and user interaction.
 
-password masking is handled at the ui layer, allowing ipa-based glyphs or a simple fallback mask, with optional per-keystroke randomization. animated error feedback and a password visibility toggle integrate seamlessly with the same configuration controls.
+Configuration logic is completely decoupled from the view code. All customizations are centrally managed within `theme.conf`. Settings are cleanly grouped logically by color palettes, background definitions, typography rules, and runtime behavior. The entire visual aesthetic maps dynamically to a single user-defined accent color, supporting optional glass-morphism blur layers and exacting control over UI opacity and CSS timing functions.
 
-## key features
+The password masking engine operates entirely at the UI layer. This permits the rendering of IPA-based glyphs (or a more traditional fallback mask if requested) with optional, cryptographically light per-keystroke randomization logic. Smoothly animated error feedback loops and a password visibility toggle are integrated seamlessly, hooked directly into the shared configuration context.
 
-- clean, modern greeter with accent-driven design
-- ipa character-based password masking with optional randomization
-- animated password visibility toggle and error feedback
-- customizable background image with blur, tint, and opacity controls
-- glass-style ui elements with configurable blur and radius
-- keyboard-driven user and session selectors
-- extensive configuration via a single `theme.conf` file
+## Core Capabilities
 
-## requirements
+- A clean, modern greeter architecture driven procedurally by an accent design system.
+- Unique IPA character-based password masking with deterministic or randomized character mappings.
+- Fully animated state transitions for password visibility toggling and authentication failure feedback.
+- Configurable background rendering pipeline supporting multi-layered blur, tint drops, and precise opacity control.
+- Glassmorphism application on UI elements featuring variable blur intensity and border radius clamping.
+- Comprehensive configuration accessible directly via a standard key-value `theme.conf` file.
 
-- sddm ≥ 0.19.0
-- qt ≥ 6.0.0
-- a font with ipa character support (default: inter)
+## Dependencies
 
-## installation
+- SDDM ≥ 0.19.0
+- Qt Framework ≥ 6.0.0
+- A system font supporting IPA Unicode blocks (the `Inter` typeface is recommended and used as the default fallback).
+
+## Installation
 
 ```bash
-# using aur
+# Arch Linux (Using an AUR helper)
 yay -S sddm-theme-obscure-git
 
-# manual installation
+# Manual Deployment
 git clone https://github.com/saatvik333/obscure-sddm-theme.git
 sudo cp -r obscure-sddm-theme /usr/share/sddm/themes/obscure
 ```
 
-set the theme as active in your sddm configuration.
+Once installed, simply update your `/etc/sddm.conf` to declare `obscure` as your active Current theme.

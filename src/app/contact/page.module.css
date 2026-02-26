@@ -122,7 +122,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-sm);
+  gap: var(--space-xs); /* Tighter gap for arrow visual balance */
   transition: all var(--transition-fast);
   margin-top: var(--space-sm);
 }
@@ -133,7 +133,7 @@
 }
 
 .buttonArrow {
-  font-size: 1.1em; /* Requested 1.1em size */
+  font-size: 1.1em;
   transition: transform var(--transition-fast);
 }
 

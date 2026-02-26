@@ -55,6 +55,7 @@
   align-items: center;
   justify-content: center;
   pointer-events: none; /* Allow clicks through on mobile */
+  user-select: none;
 }
 
 .navZoneLeft {
@@ -78,6 +79,7 @@
   font-size: clamp(1.1rem, 1vw + 0.8rem, 1.5rem);
   transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   pointer-events: auto; /* Re-enable pointer events for the button */
+  user-select: none;
 }
 
 /* Desktop Hover Interaction */

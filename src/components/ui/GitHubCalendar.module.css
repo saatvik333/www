@@ -39,12 +39,12 @@
 }
 
 .graphContainer::-webkit-scrollbar-thumb {
-  background: var(--color-text-muted);
+  background: var(--color-bg-tertiary); /* Visible by default like Firefox */
   border-radius: 0; /* Boxy */
 }
 
 .graphContainer::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text);
+  background: var(--color-text-muted); /* Brightens on hover */
 }
 
 /* Mobile: Allow scrolling, Right-to-Left direction forces scroll to start at end */

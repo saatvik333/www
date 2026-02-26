@@ -12,12 +12,22 @@ export async function GET(
   // Security: prevent directory traversal
   const contentDir = path.join(process.cwd(), 'content');
   const resolvedPath = path.resolve(filePath);
-  if (!resolvedPath.startsWith(contentDir)) {
+
+  // Explicitly require it to be inside the content directory by appending the path separator
+  // This prevents bypasses like requesting `/content-secrets/file.png` which would otherwise
+  // satisfy `.startsWith('/content')`
+  if (!resolvedPath.startsWith(contentDir + path.sep) && resolvedPath !== contentDir) {
     return new NextResponse('Forbidden', { status: 403 });
   }
 
-  // Check if file exists
-  if (!fs.existsSync(resolvedPath)) {
+  // Check if file exists and is actually a file, not a directory
+  try {
+    const stats = fs.statSync(resolvedPath);
+    if (!stats.isFile()) {
+      return new NextResponse('Forbidden (Is a Directory)', { status: 403 });
+    }
+  } catch (error) {
+    // fs.statSync throws if the file does not exist
     return new NextResponse('Not Found', { status: 404 });
   }
 
