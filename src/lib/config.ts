@@ -20,6 +20,7 @@ export const SOCIAL_LINKS = {
 export const SOCIAL_PROFILES = [
   SOCIAL_LINKS.github,
   SOCIAL_LINKS.twitter,
+  SOCIAL_LINKS.linkedin,
 ] as const;
 
 // Centralized colors - sync these with globals.css :root variables

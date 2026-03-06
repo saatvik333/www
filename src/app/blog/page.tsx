@@ -41,10 +41,10 @@ export default function BlogPage() {
             >
               <div className={styles.postContent}>
                 <div className={styles.meta}>
-                  <span className={styles.date}>
+                  <time dateTime={post.date} className={styles.date}>
                     {post.pinned && <TbPinFilled className={styles.pinnedIcon} />}
                     {formatDate(post.date)}
-                  </span>
+                  </time>
                   <span className={styles.separator}>·</span>
                   <span className={styles.readingTime}>{post.readingTime}</span>
                 </div>

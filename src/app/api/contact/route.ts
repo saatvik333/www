@@ -204,8 +204,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid website format' }, { status: 400 });
     }
 
-    // Cast the safely checked body back into the interface
-    const safeBody = body as ContactFormData;
+    const safeBody: ContactFormData = {
+      name: body.name as string,
+      message: body.message as string,
+      ...(body.email !== undefined && { email: body.email as string }),
+      ...(body.website !== undefined && { website: body.website as string }),
+    };
 
     // Honeypot check - if website field is filled, it's likely a bot
     if (safeBody.website) {

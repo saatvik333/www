@@ -7,6 +7,7 @@ import { PageLayout } from '@/components/layout';
 import { ArrowLink, GitHubStars } from '@/components/ui';
 import { cache } from 'react';
 import { getProject, getProjectSlugs } from '@/lib/content';
+import { SITE_CONFIG } from '@/lib/config';
 
 const getCachedProject = cache(getProject);
 import styles from './page.module.css';
@@ -34,9 +35,34 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
     return { title: 'Project Not Found' };
   }
 
+  const ogImage = `/api/og?title=${encodeURIComponent(project.title)}`;
+
   return {
     title: project.title,
     description: project.description,
+    openGraph: {
+      title: project.title,
+      description: project.description,
+      type: 'article',
+      url: `${SITE_CONFIG.url}/projects/${slug}`,
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: project.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: project.title,
+      description: project.description,
+      images: [ogImage],
+    },
+    alternates: {
+      canonical: `/projects/${slug}`,
+    },
   };
 }
 
@@ -48,8 +74,27 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     notFound();
   }
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareSourceCode',
+    name: project.title,
+    description: project.description,
+    author: {
+      '@type': 'Person',
+      name: SITE_CONFIG.name,
+      url: SITE_CONFIG.url,
+    },
+    ...(project.github && { codeRepository: project.github }),
+    ...(project.site && { url: project.site }),
+    ...(project.stack && project.stack.length > 0 && { programmingLanguage: project.stack }),
+  };
+
   return (
     <PageLayout wide>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <article className={styles.article}>
         {/* Back link */}
         <Link href="/projects" className={styles.backLink}>

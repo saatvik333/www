@@ -111,7 +111,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         {/* Header */}
         <header className={styles.header}>
           <div className={styles.meta}>
-            <time className={styles.date}>{formatDate(post.date)}</time>
+            <time dateTime={post.date} className={styles.date}>{formatDate(post.date)}</time>
             <span className={styles.separator}>·</span>
             <span className={styles.readingTime}>{post.readingTime}</span>
           </div>
