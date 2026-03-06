@@ -2,13 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { m } from 'framer-motion';
+import { m, useReducedMotion } from 'framer-motion';
 import { Logo } from '@/components/ui';
 import { navLinks } from '@/lib/navLinks';
 import styles from './MobileBottomNav.module.css';
 
 export function MobileBottomNav() {
     const pathname = usePathname();
+    const prefersReduced = useReducedMotion();
 
     return (
         <m.nav
@@ -17,7 +18,7 @@ export function MobileBottomNav() {
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: prefersReduced ? 0 : 0.7, ease: [0.22, 1, 0.36, 1] }}
         >
             {/* Left section: Logo */}
             <Link href="/" className={styles.logoSection} aria-label="saatvik333 - Go to homepage">

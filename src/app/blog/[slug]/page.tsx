@@ -3,7 +3,10 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { GoArrowLeft } from 'react-icons/go';
 import { PageLayout } from '@/components/layout';
+import { cache } from 'react';
 import { getBlog, getBlogSlugs } from '@/lib/content';
+
+const getCachedBlog = cache(getBlog);
 import { SITE_CONFIG } from '@/lib/config';
 import styles from './page.module.css';
 import typographyStyles from '@/styles/typography.module.css';
@@ -19,7 +22,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getBlog(slug);
+  const post = await getCachedBlog(slug);
 
   if (!post) {
     return { title: 'Post Not Found' };
@@ -69,7 +72,7 @@ function formatDate(dateString: string): string {
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
-  const post = await getBlog(slug);
+  const post = await getCachedBlog(slug);
 
   if (!post) {
     notFound();

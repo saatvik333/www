@@ -1,10 +1,10 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
+import { LazyMotion, domAnimation, m, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Navbar } from './Navbar';
 import { MobileBottomNav } from './MobileBottomNav';
-import { ReactNode, useRef } from 'react';
+import { ReactNode } from 'react';
 import styles from './ClientLayout.module.css';
 
 interface ClientLayoutProps {
@@ -13,7 +13,7 @@ interface ClientLayoutProps {
 
 export function ClientLayout({ children }: ClientLayoutProps) {
   const pathname = usePathname();
-  const headerRef = useRef<HTMLElement>(null);
+  const prefersReduced = useReducedMotion();
 
   // Simple pathname check is sufficient now that layout structure is fixed
   const isHomepage = pathname === '/';
@@ -22,7 +22,6 @@ export function ClientLayout({ children }: ClientLayoutProps) {
     <LazyMotion features={domAnimation}>
       <div className={styles.layoutWrapper}>
         <header
-          ref={headerRef}
           className={`${styles.header} ${isHomepage ? styles.home : ''}`}
           inert={isHomepage ? true : undefined}
         >
@@ -38,7 +37,7 @@ export function ClientLayout({ children }: ClientLayoutProps) {
               animate={{
                 opacity: 1,
                 transition: {
-                  duration: 0.6,
+                  duration: prefersReduced ? 0 : 0.6,
                   ease: [0.22, 1, 0.36, 1]
                 }
               }}

@@ -5,7 +5,10 @@ import { notFound } from 'next/navigation';
 import { GoArrowLeft } from 'react-icons/go';
 import { PageLayout } from '@/components/layout';
 import { ArrowLink, GitHubStars } from '@/components/ui';
+import { cache } from 'react';
 import { getProject, getProjectSlugs } from '@/lib/content';
+
+const getCachedProject = cache(getProject);
 import styles from './page.module.css';
 import typographyStyles from '@/styles/typography.module.css';
 
@@ -25,7 +28,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const project = await getProject(slug);
+  const project = await getCachedProject(slug);
 
   if (!project) {
     return { title: 'Project Not Found' };
@@ -39,7 +42,7 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { slug } = await params;
-  const project = await getProject(slug);
+  const project = await getCachedProject(slug);
 
   if (!project) {
     notFound();

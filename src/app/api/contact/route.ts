@@ -181,7 +181,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const body: any = await request.json();
+    const body: Record<string, unknown> = await request.json();
 
     // Validate body structure and field types at runtime
     if (!body || typeof body !== 'object') {

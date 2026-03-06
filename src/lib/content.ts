@@ -12,6 +12,13 @@ const contentDirectory = path.join(process.cwd(), 'content');
 const projectsDirectory = path.join(contentDirectory, 'projects');
 const blogsDirectory = path.join(contentDirectory, 'blogs');
 
+const markdownProcessor = unified()
+  .use(remarkParse)
+  .use(remarkGfm)
+  .use(remarkRehype)
+  .use(rehypeHighlight)
+  .use(rehypeStringify);
+
 // Project types
 export interface ProjectMeta {
   slug: string;
@@ -138,14 +145,7 @@ export async function getProject(slug: string): Promise<Project | null> {
   const { data, content } = matter(fileContents);
 
   // Convert markdown to HTML with syntax highlighting
-  const processedContent = await unified()
-    .use(remarkParse)
-    .use(remarkGfm)
-    .use(remarkRehype)
-    .use(rehypeHighlight)
-    .use(rehypeStringify)
-    .process(content);
-  const contentHtml = processedContent.toString();
+  const contentHtml = (await markdownProcessor.process(content)).toString();
 
   return {
     slug,
@@ -218,14 +218,7 @@ export async function getBlog(slug: string): Promise<BlogPost | null> {
   const { data, content } = matter(fileContents);
 
   // Convert markdown to HTML with syntax highlighting
-  const processedContent = await unified()
-    .use(remarkParse)
-    .use(remarkGfm)
-    .use(remarkRehype)
-    .use(rehypeHighlight)
-    .use(rehypeStringify)
-    .process(content);
-  const contentHtml = processedContent.toString();
+  const contentHtml = (await markdownProcessor.process(content)).toString();
 
   return {
     slug,

@@ -26,7 +26,7 @@ export async function GET(
     if (!stats.isFile()) {
       return new NextResponse('Forbidden (Is a Directory)', { status: 403 });
     }
-  } catch (error) {
+  } catch {
     // fs.statSync throws if the file does not exist
     return new NextResponse('Not Found', { status: 404 });
   }

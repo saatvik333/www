@@ -50,7 +50,7 @@ export function ImageCarousel({ images, alt }: ImageCarouselProps) {
                 width={1200}
                 height={700}
                 className={`${styles.image} ${loadedImages.has(index) ? styles.imageLoaded : ''}`}
-                loading="eager"
+                loading={index === 0 ? "eager" : "lazy"}
                 onLoad={() => handleImageLoad(index)}
               />
             </div>

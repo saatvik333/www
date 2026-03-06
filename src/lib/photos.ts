@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { imageSize } from 'image-size';
+import { imageSizeFromFile } from 'image-size/fromFile';
 
 export interface Photo {
   id: string;
@@ -16,7 +16,7 @@ const SUPPORTED_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.avif']
  * Auto-discovers images from /public/pics/ directory
  * Just drop images in that folder and they'll appear in the gallery
  */
-export function getPhotos(): Photo[] {
+export async function getPhotos(): Promise<Photo[]> {
   const picsDir = path.join(process.cwd(), 'public', 'pics');
 
   // Return empty array if directory doesn't exist
@@ -26,19 +26,19 @@ export function getPhotos(): Photo[] {
 
   const files = fs.readdirSync(picsDir);
 
-  const photos: Photo[] = files
-    .filter((file) => {
-      const ext = path.extname(file).toLowerCase();
-      return SUPPORTED_EXTENSIONS.includes(ext);
-    })
-    .map((file, index) => {
+  const filteredFiles = files.filter((file) => {
+    const ext = path.extname(file).toLowerCase();
+    return SUPPORTED_EXTENSIONS.includes(ext);
+  });
+
+  const photos = await Promise.all(
+    filteredFiles.map(async (file, index) => {
       const filePath = path.join(picsDir, file);
       let width = 800;
       let height = 600;
 
       try {
-        const buffer = fs.readFileSync(filePath);
-        const dimensions = imageSize(buffer);
+        const dimensions = await imageSizeFromFile(filePath);
         if (dimensions.width && dimensions.height) {
           width = dimensions.width;
           height = dimensions.height;
@@ -60,8 +60,8 @@ export function getPhotos(): Photo[] {
         height,
       };
     })
-    // Sort by filename for consistent ordering
-    .sort((a, b) => a.src.localeCompare(b.src));
+  );
 
-  return photos;
+  // Sort by filename for consistent ordering
+  return photos.sort((a, b) => a.src.localeCompare(b.src));
 }

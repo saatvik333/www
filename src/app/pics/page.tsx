@@ -17,8 +17,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function PicsPage() {
-  const photos = getPhotos();
+export default async function PicsPage() {
+  const photos = await getPhotos();
   const hasPhotos = photos.length > 0;
 
   return (
