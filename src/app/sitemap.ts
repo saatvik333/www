@@ -60,7 +60,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // Project pages
   const projectPages: MetadataRoute.Sitemap = projects.map((project) => ({
     url: `${SITE_URL}/projects/${project.slug}`,
-    lastModified: new Date(),
+    lastModified: project.date ? new Date(project.date) : new Date('2025-01-01'),
     changeFrequency: 'monthly' as const,
     priority: 0.7,
   }));

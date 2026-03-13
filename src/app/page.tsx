@@ -17,7 +17,7 @@ export default function HomePage() {
       <div className={styles.container}>
         <div className={styles.hero}>
           <div className={styles.headerWrapper}>
-            <h1 className={styles.title} style={{ marginBottom: 0 }}>saatvik333</h1>
+            <h1 className={styles.title} style={{ marginBottom: 0 }}>Saatvik Sharma</h1>
             <Logo />
           </div>
           <p className={styles.greeting}>
