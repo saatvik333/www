@@ -8,13 +8,14 @@ import { FaXTwitter } from 'react-icons/fa6';
 import styles from './page.module.css';
 
 // Dynamic import - defers loading until About page is visited
-const GitHubCalendar = dynamic(
-  () => import('@/components/ui/GitHubCalendar').then(mod => mod.GitHubCalendar)
+const GitHubCalendar = dynamic(() =>
+  import('@/components/ui/GitHubCalendar').then((mod) => mod.GitHubCalendar)
 );
 
 export const metadata: Metadata = {
   title: 'About',
-  description: 'Learn more about Saatvik Sharma, a full-stack developer passionate about open source, design mechanics, and high-performance web apps.',
+  description:
+    'Learn more about Saatvik Sharma, a full-stack developer passionate about open source, design mechanics, and high-performance web apps.',
   openGraph: {
     type: 'profile',
     firstName: 'Saatvik',
@@ -22,7 +23,8 @@ export const metadata: Metadata = {
     username: 'saatvik333',
     url: `${SITE_CONFIG.url}/about`,
     title: 'About Saatvik Sharma',
-    description: 'Learn more about Saatvik Sharma, a full-stack developer passionate about open source, design mechanics, and high-performance web apps.',
+    description:
+      'Learn more about Saatvik Sharma, a full-stack developer passionate about open source, design mechanics, and high-performance web apps.',
     images: [
       {
         url: `/api/og?title=${encodeURIComponent('Saatvik Sharma')}`,
@@ -45,9 +47,9 @@ const links = [
 ];
 
 const skills = {
-  "languages": ['typescript', 'go', 'rust', 'c/c++', 'bash'],
-  "frameworks/db": ['node.js', 'next.js', 'ethers.js', 'redis'],
-  "tools": ['linux', 'docker', 'github actions', 'git', 'neovim'],
+  languages: ['typescript', 'go', 'rust', 'c/c++', 'bash'],
+  'frameworks/db': ['node.js', 'next.js', 'ethers.js', 'redis'],
+  tools: ['linux', 'docker', 'github actions', 'git', 'neovim'],
 };
 
 const profilePageJsonLd = {
@@ -76,8 +78,9 @@ export default function AboutPage() {
       <PageLayout title="about">
         <section className={styles.content}>
           <p className={styles.bio}>
-            Saatvik Sharma is a software engineer focused on building clean, scalable, and reliable applications.
-            Works across the full stack — building thoughtful, performant systems and intuitive experiences that solve real problems.
+            a software engineer focused on building clean, scalable, and reliable applications.
+            Works across the full stack — building thoughtful, performant systems and intuitive
+            experiences that solve real problems.
           </p>
 
           <div className={styles.section}>
@@ -110,7 +113,9 @@ export default function AboutPage() {
                   <span className={styles.categoryLabel}>{category}</span>
                   <div className={styles.skillItems}>
                     {items.map((skill) => (
-                      <span key={skill} className={styles.skillItem}>{skill}</span>
+                      <span key={skill} className={styles.skillItem}>
+                        {skill}
+                      </span>
                     ))}
                   </div>
                 </div>
@@ -146,13 +151,41 @@ export default function AboutPage() {
                 <span className={styles.colophonValue}>ibm plex mono / sf mono</span>
               </p>
               <div className={styles.colorPalette}>
-                <span className={styles.colorSwatch} style={{ backgroundColor: 'var(--color-bg)' }} title="bg" />
-                <span className={styles.colorSwatch} style={{ backgroundColor: 'var(--color-bg-secondary)' }} title="bg-2" />
-                <span className={styles.colorSwatch} style={{ backgroundColor: 'var(--color-bg-tertiary)' }} title="bg-3" />
-                <span className={styles.colorSwatch} style={{ backgroundColor: 'var(--color-text-dim)' }} title="txt-dim" />
-                <span className={styles.colorSwatch} style={{ backgroundColor: 'var(--color-text-muted)' }} title="txt-muted" />
-                <span className={styles.colorSwatch} style={{ backgroundColor: 'var(--color-text)' }} title="txt" />
-                <span className={styles.colorSwatch} style={{ backgroundColor: 'var(--color-accent)' }} title="accent" />
+                <span
+                  className={styles.colorSwatch}
+                  style={{ backgroundColor: 'var(--color-bg)' }}
+                  title="bg"
+                />
+                <span
+                  className={styles.colorSwatch}
+                  style={{ backgroundColor: 'var(--color-bg-secondary)' }}
+                  title="bg-2"
+                />
+                <span
+                  className={styles.colorSwatch}
+                  style={{ backgroundColor: 'var(--color-bg-tertiary)' }}
+                  title="bg-3"
+                />
+                <span
+                  className={styles.colorSwatch}
+                  style={{ backgroundColor: 'var(--color-text-dim)' }}
+                  title="txt-dim"
+                />
+                <span
+                  className={styles.colorSwatch}
+                  style={{ backgroundColor: 'var(--color-text-muted)' }}
+                  title="txt-muted"
+                />
+                <span
+                  className={styles.colorSwatch}
+                  style={{ backgroundColor: 'var(--color-text)' }}
+                  title="txt"
+                />
+                <span
+                  className={styles.colorSwatch}
+                  style={{ backgroundColor: 'var(--color-accent)' }}
+                  title="accent"
+                />
               </div>
             </div>
           </div>
