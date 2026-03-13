@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
     return { title: 'Project Not Found' };
   }
 
-  const ogImage = `/api/og?title=${encodeURIComponent(project.title)}`;
+  const ogImage = `/api/og?title=${encodeURIComponent(project.title)}&description=${encodeURIComponent(project.description)}`;
 
   return {
     title: project.title,
@@ -76,17 +76,30 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'SoftwareSourceCode',
-    name: project.title,
-    description: project.description,
-    author: {
-      '@type': 'Person',
-      name: SITE_CONFIG.name,
-      url: SITE_CONFIG.url,
-    },
-    ...(project.github && { codeRepository: project.github }),
-    ...(project.site && { url: project.site }),
-    ...(project.stack && project.stack.length > 0 && { programmingLanguage: project.stack }),
+    '@graph': [
+      {
+        '@type': 'SoftwareSourceCode',
+        name: project.title,
+        description: project.description,
+        author: {
+          '@type': 'Person',
+          '@id': `${SITE_CONFIG.url}/#person`,
+          name: 'Saatvik Sharma',
+          url: SITE_CONFIG.url,
+        },
+        ...(project.github && { codeRepository: project.github }),
+        ...(project.site && { url: project.site }),
+        ...(project.stack && project.stack.length > 0 && { programmingLanguage: project.stack }),
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_CONFIG.url },
+          { '@type': 'ListItem', position: 2, name: 'Projects', item: `${SITE_CONFIG.url}/projects` },
+          { '@type': 'ListItem', position: 3, name: project.title, item: `${SITE_CONFIG.url}/projects/${project.slug}` },
+        ],
+      },
+    ],
   };
 
   return (

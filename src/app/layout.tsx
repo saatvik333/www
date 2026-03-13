@@ -13,6 +13,7 @@ export const metadata: Metadata = {
   },
   description: SITE_CONFIG.description,
   keywords: [
+    'Saatvik Sharma',
     'saatvik333',
     'software engineer',
     'linux',
@@ -99,11 +100,16 @@ export default function RootLayout({
                 {
                   '@type': 'Person',
                   '@id': `${SITE_CONFIG.url}/#person`,
-                  name: SITE_CONFIG.name,
+                  name: 'Saatvik Sharma',
+                  givenName: 'Saatvik',
+                  familyName: 'Sharma',
+                  alternateName: 'saatvik333',
                   url: SITE_CONFIG.url,
+                  email: SITE_CONFIG.email,
+                  image: `${SITE_CONFIG.url}/og.png`,
                   sameAs: SOCIAL_PROFILES,
-                  jobTitle: 'Developer',
-                  description: 'A developer interested in web dev, design, linux, and more.',
+                  jobTitle: 'Software Engineer',
+                  description: 'Saatvik Sharma is a software engineer focused on building clean, scalable, and reliable applications. Works across the full stack with TypeScript, Go, and Rust.',
                 },
               ],
             }),
@@ -117,7 +123,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://api.github.com" crossOrigin="anonymous" />
 
         {/* RSS Feed */}
-        <link rel="alternate" type="application/rss+xml" title="saatvik333 blog" href="/feed" />
+        <link rel="alternate" type="application/rss+xml" title="Saatvik Sharma's Blog" href="/feed" />
 
         {/* PWA Manifest */}
         <link rel="manifest" href="/manifest.json" />

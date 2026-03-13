@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     return { title: 'Post Not Found' };
   }
 
-  const ogImage = `/api/og?title=${encodeURIComponent(post.title)}`;
+  const ogImage = `/api/og?title=${encodeURIComponent(post.title)}&description=${encodeURIComponent(post.description)}`;
 
   return {
     title: post.title,
@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
       description: post.description,
       type: 'article',
       publishedTime: post.date,
-      authors: [SITE_CONFIG.name],
+      authors: ['Saatvik Sharma'],
       url: `${SITE_CONFIG.url}/blog/${post.slug}`,
       images: [
         {
@@ -80,20 +80,33 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    headline: post.title,
-    description: post.description,
-    author: {
-      '@type': 'Person',
-      name: SITE_CONFIG.name,
-      url: SITE_CONFIG.url,
-    },
-    datePublished: post.date,
-    dateModified: post.date,
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${SITE_CONFIG.url}/blog/${post.slug}`,
-    },
+    '@graph': [
+      {
+        '@type': 'BlogPosting',
+        headline: post.title,
+        description: post.description,
+        author: {
+          '@type': 'Person',
+          '@id': `${SITE_CONFIG.url}/#person`,
+          name: 'Saatvik Sharma',
+          url: SITE_CONFIG.url,
+        },
+        datePublished: post.date,
+        dateModified: post.date,
+        mainEntityOfPage: {
+          '@type': 'WebPage',
+          '@id': `${SITE_CONFIG.url}/blog/${post.slug}`,
+        },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_CONFIG.url },
+          { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_CONFIG.url}/blog` },
+          { '@type': 'ListItem', position: 3, name: post.title, item: `${SITE_CONFIG.url}/blog/${post.slug}` },
+        ],
+      },
+    ],
   };
 
   return (

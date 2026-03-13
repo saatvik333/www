@@ -48,9 +48,9 @@ export default function BlogPage() {
                   <span className={styles.separator}>·</span>
                   <span className={styles.readingTime}>{post.readingTime}</span>
                 </div>
-                <ArrowLink href={`/blog/${post.slug}`} className={styles.stretchedLink}>
-                  <span className={styles.postTitle}>{post.title}</span>
-                </ArrowLink>
+                <h2 className={styles.postTitle}>
+                  <ArrowLink href={`/blog/${post.slug}`} className={styles.stretchedLink}>{post.title}</ArrowLink>
+                </h2>
                 <p className={styles.postDescription}>{post.description}</p>
               </div>
             </article>
