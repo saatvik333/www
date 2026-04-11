@@ -13,6 +13,19 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  const GITHUB_NAME_RE = /^[a-zA-Z0-9._-]+$/;
+  if (
+    !GITHUB_NAME_RE.test(owner) ||
+    owner.length > 39 ||
+    !GITHUB_NAME_RE.test(repo) ||
+    repo.length > 100
+  ) {
+    return NextResponse.json(
+      { error: 'Invalid owner or repo parameter' },
+      { status: 400 }
+    );
+  }
+
   const stars = await getRepoStars(owner, repo);
 
   return NextResponse.json(
