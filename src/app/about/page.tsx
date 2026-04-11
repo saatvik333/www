@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import dynamic from 'next/dynamic';
 import { PageLayout } from '@/components/layout';
 import { SITE_CONFIG, SOCIAL_LINKS, SOCIAL_PROFILES } from '@/lib/config';
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
@@ -7,10 +6,7 @@ import { FaXTwitter } from 'react-icons/fa6';
 // import { LuFileText } from 'react-icons/lu';
 import styles from './page.module.css';
 
-// Dynamic import - defers loading until About page is visited
-const GitHubCalendar = dynamic(() =>
-  import('@/components/ui/GitHubCalendar').then((mod) => mod.GitHubCalendar)
-);
+import { GitHubCalendar } from '@/components/ui/GitHubCalendar';
 
 export const metadata: Metadata = {
   title: 'About',
