@@ -112,7 +112,7 @@ function validateOrigin(request: NextRequest): boolean {
   }
 
   const checkDomain = (url: string | null): boolean => {
-    if (!url) return true; // Allow if no referer/origin (e.g., direct API call)
+    if (!url) return false; // Reject if header is missing
     try {
       const parsedUrl = new URL(url);
       return allowedDomains.some(domain =>
@@ -123,7 +123,10 @@ function validateOrigin(request: NextRequest): boolean {
     }
   };
 
-  // Allow if either referer or origin is valid (or both are missing)
+  // Require at least one of origin/referer to be present and valid
+  if (!referer && !origin) return false;
+
+  // Allow if either referer or origin is from an allowed domain
   return checkDomain(referer) || checkDomain(origin);
 }
 
