@@ -2,6 +2,20 @@ import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { SITE_CONFIG, COLORS } from '@/lib/config';
 
+let _transporter: nodemailer.Transporter | null = null;
+
+function getTransporter(): nodemailer.Transporter | null {
+  if (_transporter) return _transporter;
+  const smtpEmail = process.env.SMTP_EMAIL;
+  const smtpPassword = process.env.SMTP_PASSWORD;
+  if (!smtpEmail || !smtpPassword) return null;
+  _transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: { user: smtpEmail, pass: smtpPassword },
+  });
+  return _transporter;
+}
+
 interface ContactFormData {
   name: string;
   email?: string;
@@ -196,26 +210,14 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Validate SMTP credentials before proceeding
-  const smtpEmail = process.env.SMTP_EMAIL;
-  const smtpPassword = process.env.SMTP_PASSWORD;
-
-  if (!smtpEmail || !smtpPassword) {
+  const transporter = getTransporter();
+  if (!transporter) {
     console.error('SMTP_EMAIL or SMTP_PASSWORD environment variables are not set');
     return NextResponse.json(
       { error: 'Email service is not configured' },
       { status: 500 }
     );
   }
-
-  // Create transporter for sending emails
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: smtpEmail,
-      pass: smtpPassword,
-    },
-  });
 
   // Parse JSON body separately from SMTP operations
   // This ensures malformed JSON returns 400, not 500
@@ -322,7 +324,7 @@ export async function POST(request: NextRequest) {
   const safeIP = escapeHtml(clientIP);
 
   const mailOptions = {
-    from: smtpEmail,
+    from: process.env.SMTP_EMAIL,
     to: SITE_CONFIG.email,
     replyTo: safeBody.email || undefined,
     subject: `💬 ${safeBody.name.trim()}`,
