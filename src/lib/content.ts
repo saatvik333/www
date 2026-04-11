@@ -43,6 +43,7 @@ export interface BlogMeta {
   title: string;
   description: string;
   date: string;
+  updatedAt?: string;
   pinned?: boolean;
   readingTime: string;
 }
@@ -185,6 +186,7 @@ export function getAllBlogs(): BlogMeta[] {
       title: data.title || slug,
       description: data.description || '',
       date: data.date || '',
+      updatedAt: data.updatedAt,
       pinned: data.pinned || false,
       readingTime: getReadingTime(content),
     } as BlogMeta;
@@ -228,6 +230,7 @@ export async function getBlog(slug: string): Promise<BlogPost | null> {
     title: data.title || slug,
     description: data.description || '',
     date: data.date || '',
+    updatedAt: data.updatedAt,
     content: contentHtml,
     readingTime: getReadingTime(content),
   };

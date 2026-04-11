@@ -5,9 +5,10 @@ import styles from './Logo.module.css';
 
 interface LogoProps {
     className?: string;
+    simple?: boolean;
 }
 
-export function Logo({ className }: LogoProps) {
+export function Logo({ className, simple }: LogoProps) {
     const [dispersed, setDispersed] = useState(false);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -21,18 +22,17 @@ export function Logo({ className }: LogoProps) {
     }, []);
 
     const handleClick = () => {
-        if (dispersed) return; // Prevent spam clicking
+        if (simple || dispersed) return;
         setDispersed(true);
-        // Reset after animation completes
         timeoutRef.current = setTimeout(() => setDispersed(false), 800);
     };
 
     return (
         <div
-            className={`${styles.container} ${className || ''} ${dispersed ? styles.dispersed : ''}`}
+            className={`${styles.container} ${className || ''} ${simple ? styles.simple : ''} ${dispersed ? styles.dispersed : ''}`}
             aria-hidden="true"
-            onClick={handleClick}
-            style={{ cursor: 'pointer' }}
+            onClick={simple ? undefined : handleClick}
+            style={simple ? undefined : { cursor: 'pointer' }}
         >
             <svg className={styles.three} viewBox="0 0 100 200" shapeRendering="geometricPrecision" focusable="false">
                 <path d="M 35 40 A 35 35 0 1 1 55 100 A 35 35 0 1 1 35 160" />

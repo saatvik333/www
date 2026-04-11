@@ -27,7 +27,7 @@ export const metadata: Metadata = {
       'Learn more about Saatvik Sharma, a full-stack developer passionate about open source, design mechanics, and high-performance web apps.',
     images: [
       {
-        url: `/api/og?title=${encodeURIComponent('Saatvik Sharma')}`,
+        url: `/api/og?title=${encodeURIComponent('Saatvik Sharma')}&description=${encodeURIComponent('Software Engineer')}`,
         width: 1200,
         height: 630,
         alt: 'Saatvik Sharma',
@@ -48,8 +48,8 @@ const links = [
 
 const skills = {
   languages: ['typescript', 'go', 'rust', 'c/c++', 'bash'],
-  'frameworks/db': ['node.js', 'next.js', 'ethers.js', 'redis'],
-  tools: ['linux', 'docker', 'github actions', 'git', 'neovim'],
+  'frameworks/db': ['node.js', 'next.js', 'ethers.js', 'redis', 'postgresql'],
+  tools: ['linux', 'docker', 'n8n', 'clauden', 'github actions', 'git', 'neovim'],
 };
 
 const profilePageJsonLd = {

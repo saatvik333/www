@@ -92,7 +92,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           url: SITE_CONFIG.url,
         },
         datePublished: post.date,
-        dateModified: post.date,
+        dateModified: post.updatedAt ?? post.date,
         mainEntityOfPage: {
           '@type': 'WebPage',
           '@id': `${SITE_CONFIG.url}/blog/${post.slug}`,

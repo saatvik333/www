@@ -10,8 +10,8 @@ const PhotoItem = dynamic(
 );
 
 export const metadata: Metadata = {
-  title: 'Pics',
-  description: 'just some random photos i clicked.',
+  title: 'Photography',
+  description: 'A personal photo gallery by Saatvik Sharma — candid moments, places, and everyday scenes captured on camera.',
   alternates: {
     canonical: '/pics',
   },

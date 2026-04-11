@@ -22,7 +22,7 @@ export function MobileBottomNav() {
         >
             {/* Left section: Logo */}
             <Link href="/" className={styles.logoSection} aria-label="saatvik333 - Go to homepage">
-                <Logo className={styles.logo} />
+                <Logo className={styles.logo} simple />
             </Link>
 
             <span className={styles.separator} aria-hidden="true">│</span>
