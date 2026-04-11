@@ -48,6 +48,22 @@ const nextConfig: NextConfig = {
       {
         source: '/:path*',
         headers: [
+          // Content Security Policy - primary XSS defense
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline'",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: blob:",
+              "connect-src 'self' https://api.github.com",
+              "font-src 'self'",
+              "frame-ancestors 'self'",
+              "base-uri 'self'",
+              "form-action 'self'",
+              "object-src 'none'",
+            ].join('; '),
+          },
           // Prevent clickjacking
           {
             key: 'X-Frame-Options',
