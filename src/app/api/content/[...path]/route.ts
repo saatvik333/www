@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
+import { stat, readFile } from 'fs/promises';
 import path from 'path';
 
 // Allowed asset extensions - explicitly deny markdown and config files
@@ -41,12 +41,12 @@ export async function GET(
 
   // Check if file exists and is actually a file, not a directory
   try {
-    const stats = fs.statSync(resolvedPath);
+    const stats = await stat(resolvedPath);
     if (!stats.isFile()) {
       return new NextResponse('Forbidden (Is a Directory)', { status: 403 });
     }
   } catch {
-    // fs.statSync throws if the file does not exist
+    // stat() throws if the file does not exist
     return new NextResponse('Not Found', { status: 404 });
   }
 
@@ -57,7 +57,7 @@ export async function GET(
   }
 
   // Read file
-  const fileBuffer = fs.readFileSync(resolvedPath);
+  const fileBuffer = await readFile(resolvedPath);
 
   // Determine content type
   const contentTypes: Record<string, string> = {
@@ -78,11 +78,15 @@ export async function GET(
     ? 'no-cache, no-store, must-revalidate'
     : 'public, max-age=31536000, immutable';
 
-  return new NextResponse(fileBuffer, {
-    status: 200,
-    headers: {
-      'Content-Type': contentType,
-      'Cache-Control': cacheControl,
-    },
-  });
+  const headers: Record<string, string> = {
+    'Content-Type': contentType,
+    'Cache-Control': cacheControl,
+  };
+
+  // SVGs can contain executable scripts -- serve with restrictive CSP
+  if (ext === '.svg') {
+    headers['Content-Security-Policy'] = "default-src 'none'; style-src 'unsafe-inline'";
+  }
+
+  return new NextResponse(fileBuffer, { status: 200, headers });
 }
