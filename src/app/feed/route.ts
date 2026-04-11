@@ -3,11 +3,26 @@ import { SITE_CONFIG } from '@/lib/config';
 
 const SITE_URL = SITE_CONFIG.url;
 
+/**
+ * Get the most recent blog date for feed lastBuildDate
+ * This prevents feed timestamp churn when content hasn't changed
+ */
+function getFeedLastBuildDate(): Date {
+  const blogs = getAllBlogs();
+  if (blogs.length === 0) {
+    return new Date('2025-01-01');
+  }
+  // Blogs are already sorted by date (newest first)
+  return new Date(blogs[0].date);
+}
+
 export async function GET() {
   const blogs = getAllBlogs();
 
   // getAllBlogs already filters invalid dates, but extra safety check
   const validBlogs = blogs.filter(blog => !isNaN(new Date(blog.date).getTime()));
+
+  const lastBuildDate = getFeedLastBuildDate();
 
   const rssItems = validBlogs
     .map((blog) => {
@@ -32,7 +47,7 @@ export async function GET() {
     <link>${SITE_URL}</link>
     <description>blog posts from saatvik.me</description>
     <language>en-us</language>
-    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+    <lastBuildDate>${lastBuildDate.toUTCString()}</lastBuildDate>
     <atom:link href="${SITE_URL}/feed" rel="self" type="application/rss+xml" />
     ${rssItems}
   </channel>

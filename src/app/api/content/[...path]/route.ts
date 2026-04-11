@@ -2,11 +2,30 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
+// Allowed asset extensions - explicitly deny markdown and config files
+const ALLOWED_EXTENSIONS = new Set([
+  '.png',
+  '.jpg',
+  '.jpeg',
+  '.webp',
+  '.gif',
+  '.svg',
+  '.avif',
+]);
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ path: string[] }> }
 ) {
   const { path: pathSegments } = await params;
+
+  // Security: block any path containing hidden segments
+  for (const segment of pathSegments) {
+    if (segment.startsWith('.') || segment.includes('/.')) {
+      return new NextResponse('Forbidden', { status: 403 });
+    }
+  }
+
   const filePath = path.join(process.cwd(), 'content', ...pathSegments);
 
   // Security: prevent directory traversal
@@ -31,11 +50,16 @@ export async function GET(
     return new NextResponse('Not Found', { status: 404 });
   }
 
+  // Security: only allow explicit asset extensions
+  const ext = path.extname(resolvedPath).toLowerCase();
+  if (!ALLOWED_EXTENSIONS.has(ext)) {
+    return new NextResponse('Forbidden', { status: 403 });
+  }
+
   // Read file
   const fileBuffer = fs.readFileSync(resolvedPath);
 
   // Determine content type
-  const ext = path.extname(resolvedPath).toLowerCase();
   const contentTypes: Record<string, string> = {
     '.png': 'image/png',
     '.jpg': 'image/jpeg',

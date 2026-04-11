@@ -5,45 +5,63 @@ import { SITE_CONFIG } from '@/lib/config';
 
 const SITE_URL = SITE_CONFIG.url;
 
-export default function sitemap(): MetadataRoute.Sitemap {
+/**
+ * Get the most recent date from all content for cache-busting
+ * This prevents sitemap timestamp churn when content hasn't changed
+ */
+function getContentLastModified(): Date {
   const blogs = getAllBlogs();
   const projects = getAllProjects();
 
-  // Static pages
+  const dates = [
+    ...blogs.map(b => new Date(b.date).getTime()),
+    ...projects.map(p => p.date ? new Date(p.date).getTime() : 0),
+  ];
+
+  const maxDate = Math.max(...dates, 0);
+  return maxDate > 0 ? new Date(maxDate) : new Date('2025-01-01');
+}
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const blogs = getAllBlogs();
+  const projects = getAllProjects();
+  const lastModified = getContentLastModified();
+
+  // Static pages - use content-derived timestamp
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: SITE_URL,
-      lastModified: new Date(),
+      lastModified,
       changeFrequency: 'monthly',
       priority: 1,
     },
     {
       url: `${SITE_URL}/about`,
-      lastModified: new Date(),
+      lastModified,
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${SITE_URL}/projects`,
-      lastModified: new Date(),
+      lastModified,
       changeFrequency: 'weekly',
       priority: 0.8,
     },
     {
       url: `${SITE_URL}/blog`,
-      lastModified: new Date(),
+      lastModified,
       changeFrequency: 'weekly',
       priority: 0.8,
     },
     {
       url: `${SITE_URL}/pics`,
-      lastModified: new Date(),
+      lastModified,
       changeFrequency: 'weekly',
       priority: 0.6,
     },
     {
       url: `${SITE_URL}/contact`,
-      lastModified: new Date(),
+      lastModified,
       changeFrequency: 'monthly',
       priority: 0.5,
     },

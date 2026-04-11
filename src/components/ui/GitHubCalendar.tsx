@@ -9,13 +9,9 @@ export async function GitHubCalendar({ username }: GitHubCalendarProps) {
   const data = await getContributions(username);
 
   if (!data) {
-    return (
-      <div className={styles.calendarWrapper}>
-        <div className={styles.error}>
-          failed to load contributions. check token?
-        </div>
-      </div>
-    );
+    // Graceful fallback - hide the section entirely or show minimal placeholder
+    // Don't expose config state or error messages to users
+    return null;
   }
 
   const { weeks, totalContributions } = data;

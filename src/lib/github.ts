@@ -2,6 +2,30 @@
  * GitHub API utilities for fetching repository data
  */
 
+// Timeout for GitHub API requests (5 seconds)
+const GITHUB_TIMEOUT_MS = 5000;
+
+/**
+ * Create a fetch request with timeout
+ */
+async function fetchWithTimeout(
+  url: string,
+  options: RequestInit,
+  timeoutMs: number
+): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    clearTimeout(timeoutId);
+    return response;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    throw error;
+  }
+}
+
 /**
  * Parse a GitHub URL and extract owner and repo name
  * Handles various URL formats:
@@ -28,10 +52,11 @@ export function parseGitHubUrl(url: string): { owner: string; repo: string } | n
 /**
  * Fetch star count for a GitHub repository
  * Uses the public GitHub API (no auth required for public repos)
+ * Returns null on timeout, error, or rate limit
  */
 export async function getRepoStars(owner: string, repo: string): Promise<number | null> {
   try {
-    const response = await fetch(
+    const response = await fetchWithTimeout(
       `https://api.github.com/repos/${owner}/${repo}`,
       {
         headers: {
@@ -39,18 +64,22 @@ export async function getRepoStars(owner: string, repo: string): Promise<number 
           'User-Agent': 'portfolio-website',
         },
         next: { revalidate: 3600 }, // Cache for 1 hour
-      }
+      },
+      GITHUB_TIMEOUT_MS
     );
 
     if (!response.ok) {
-      console.error(`GitHub API error: ${response.status}`);
+      // Silently fail on rate limit or errors - stars are non-essential
+      if (response.status === 403 || response.status === 429) {
+        return null; // Rate limited
+      }
       return null;
     }
 
     const data = await response.json();
     return data.stargazers_count ?? null;
-  } catch (error) {
-    console.error('Failed to fetch GitHub stars:', error);
+  } catch {
+    // Timeout or network error - return null silently
     return null;
   }
 }
@@ -71,10 +100,9 @@ export interface ContributionCalendar {
 }
 
 export async function getContributions(username: string): Promise<ContributionCalendar | null> {
-  // Validate token before making request
+  // Skip if no token - return null silently for graceful degradation
   const token = process.env.GITHUB_TOKEN;
   if (!token) {
-    console.error('GITHUB_TOKEN environment variable is not set');
     return null;
   }
 
@@ -98,28 +126,31 @@ export async function getContributions(username: string): Promise<ContributionCa
   `;
 
   try {
-    const response = await fetch('https://api.github.com/graphql', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+    const response = await fetchWithTimeout(
+      'https://api.github.com/graphql',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          query,
+          variables: { username },
+        }),
+        next: { revalidate: 3600 * 6 }, // Cache for 6 hours
       },
-      body: JSON.stringify({
-        query,
-        variables: { username },
-      }),
-      next: { revalidate: 3600 * 6 }, // Cache for 6 hours
-    });
+      GITHUB_TIMEOUT_MS
+    );
 
     if (!response.ok) {
-      console.error(`GitHub GraphQL API error: ${response.status}`);
       return null;
     }
 
     const data = await response.json();
     return data.data?.user?.contributionsCollection?.contributionCalendar ?? null;
-  } catch (error) {
-    console.error('Failed to fetch GitHub contributions:', error);
+  } catch {
+    // Timeout or network error - return null silently
     return null;
   }
 }

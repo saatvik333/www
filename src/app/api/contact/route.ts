@@ -32,15 +32,30 @@ function escapeHtml(text: string): string {
 }
 
 // Get client IP from request
+// Uses trusted platform headers only when behind a known proxy
 function getClientIP(request: NextRequest): string {
-  const forwarded = request.headers.get('x-forwarded-for');
-  if (forwarded) {
-    return forwarded.split(',')[0].trim();
+  // Only trust CF-Connecting-IP when behind Cloudflare (check for CF-specific headers)
+  const cfConnectingIP = request.headers.get('cf-connecting-ip');
+  if (cfConnectingIP && request.headers.get('cf-ray')) {
+    return cfConnectingIP;
   }
-  const realIP = request.headers.get('x-real-ip');
-  if (realIP) {
-    return realIP;
+
+  // Only trust x-forwarded-for/x-real-ip when behind a trusted proxy
+  // Check for x-vercel-id header to verify we're on Vercel
+  const vercelId = request.headers.get('x-vercel-id');
+  if (vercelId) {
+    const forwarded = request.headers.get('x-forwarded-for');
+    if (forwarded) {
+      return forwarded.split(',')[0].trim();
+    }
+    const realIP = request.headers.get('x-real-ip');
+    if (realIP) {
+      return realIP;
+    }
   }
+
+  // Fall back to unknown when no trusted proxy is detected
+  // This prevents IP spoofing in development or untrusted environments
   return 'unknown';
 }
 
@@ -76,6 +91,7 @@ function validateOrigin(request: NextRequest): boolean {
   const referer = request.headers.get('referer');
   const origin = request.headers.get('origin');
 
+  // Base allowed domains from config
   const allowedDomains = [
     'saatvik.me',
     'www.saatvik.me',
@@ -83,8 +99,20 @@ function validateOrigin(request: NextRequest): boolean {
     '127.0.0.1',
   ];
 
+  // Add custom allowed domains from environment variable (comma-separated)
+  const customDomains = process.env.ALLOWED_CONTACT_ORIGINS;
+  if (customDomains) {
+    allowedDomains.push(...customDomains.split(',').map(d => d.trim()));
+  }
+
+  // Support Vercel preview deployments (*.vercel.app)
+  const vercelId = request.headers.get('x-vercel-id');
+  if (vercelId) {
+    allowedDomains.push('vercel.app');
+  }
+
   const checkDomain = (url: string | null): boolean => {
-    if (!url) return false;
+    if (!url) return true; // Allow if no referer/origin (e.g., direct API call)
     try {
       const parsedUrl = new URL(url);
       return allowedDomains.some(domain =>
@@ -95,6 +123,7 @@ function validateOrigin(request: NextRequest): boolean {
     }
   };
 
+  // Allow if either referer or origin is valid (or both are missing)
   return checkDomain(referer) || checkDomain(origin);
 }
 
@@ -139,160 +168,178 @@ function generateEmailHTML(name: string, email: string, message: string, timesta
 }
 
 export async function POST(request: NextRequest) {
+  // Get client IP for rate limiting
+  let clientIP: string;
   try {
-    // Get client IP for rate limiting
-    const clientIP = getClientIP(request);
+    clientIP = getClientIP(request);
+  } catch {
+    clientIP = 'unknown';
+  }
 
-    // Check rate limit
-    const rateLimit = checkRateLimit(clientIP);
-    if (!rateLimit.allowed) {
-      return NextResponse.json(
-        { error: `Too many requests. Please try again in ${rateLimit.retryAfter} seconds.` },
-        { status: 429 }
-      );
-    }
+  // Check rate limit
+  const rateLimit = checkRateLimit(clientIP);
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { error: `Too many requests. Please try again in ${rateLimit.retryAfter} seconds.` },
+      { status: 429 }
+    );
+  }
 
-    // Validate origin
-    if (!validateOrigin(request)) {
-      return NextResponse.json(
-        { error: 'Invalid request origin' },
-        { status: 403 }
-      );
-    }
+  // Validate origin
+  if (!validateOrigin(request)) {
+    return NextResponse.json(
+      { error: 'Invalid request origin' },
+      { status: 403 }
+    );
+  }
 
-    // Validate SMTP credentials before proceeding
-    const smtpEmail = process.env.SMTP_EMAIL;
-    const smtpPassword = process.env.SMTP_PASSWORD;
+  // Validate SMTP credentials before proceeding
+  const smtpEmail = process.env.SMTP_EMAIL;
+  const smtpPassword = process.env.SMTP_PASSWORD;
 
-    if (!smtpEmail || !smtpPassword) {
-      console.error('SMTP_EMAIL or SMTP_PASSWORD environment variables are not set');
-      return NextResponse.json(
-        { error: 'Email service is not configured' },
-        { status: 500 }
-      );
-    }
+  if (!smtpEmail || !smtpPassword) {
+    console.error('SMTP_EMAIL or SMTP_PASSWORD environment variables are not set');
+    return NextResponse.json(
+      { error: 'Email service is not configured' },
+      { status: 500 }
+    );
+  }
 
-    // Create transporter for sending emails
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: smtpEmail,
-        pass: smtpPassword,
-      },
-    });
+  // Create transporter for sending emails
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: smtpEmail,
+      pass: smtpPassword,
+    },
+  });
 
-    const body: Record<string, unknown> = await request.json();
+  // Parse JSON body separately from SMTP operations
+  // This ensures malformed JSON returns 400, not 500
+  let body: Record<string, unknown>;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json(
+      { error: 'Invalid JSON in request body' },
+      { status: 400 }
+    );
+  }
 
-    // Validate body structure and field types at runtime
-    if (!body || typeof body !== 'object') {
-      return NextResponse.json(
-        { error: 'Invalid request format' },
-        { status: 400 }
-      );
-    }
+  // Validate body structure and field types at runtime
+  if (!body || typeof body !== 'object') {
+    return NextResponse.json(
+      { error: 'Invalid request format' },
+      { status: 400 }
+    );
+  }
 
-    if (body.name !== undefined && typeof body.name !== 'string') {
-      return NextResponse.json({ error: 'Invalid name format' }, { status: 400 });
-    }
-    if (body.email !== undefined && typeof body.email !== 'string') {
-      return NextResponse.json({ error: 'Invalid email format' }, { status: 400 });
-    }
-    if (body.message !== undefined && typeof body.message !== 'string') {
-      return NextResponse.json({ error: 'Invalid message format' }, { status: 400 });
-    }
-    if (body.website !== undefined && typeof body.website !== 'string') {
-      return NextResponse.json({ error: 'Invalid website format' }, { status: 400 });
-    }
+  if (body.name !== undefined && typeof body.name !== 'string') {
+    return NextResponse.json({ error: 'Invalid name format' }, { status: 400 });
+  }
+  if (body.email !== undefined && typeof body.email !== 'string') {
+    return NextResponse.json({ error: 'Invalid email format' }, { status: 400 });
+  }
+  if (body.message !== undefined && typeof body.message !== 'string') {
+    return NextResponse.json({ error: 'Invalid message format' }, { status: 400 });
+  }
+  if (body.website !== undefined && typeof body.website !== 'string') {
+    return NextResponse.json({ error: 'Invalid website format' }, { status: 400 });
+  }
 
-    const safeBody: ContactFormData = {
-      name: body.name as string,
-      message: body.message as string,
-      ...(body.email !== undefined && { email: body.email as string }),
-      ...(body.website !== undefined && { website: body.website as string }),
-    };
+  const safeBody: ContactFormData = {
+    name: body.name as string,
+    message: body.message as string,
+    ...(body.email !== undefined && { email: body.email as string }),
+    ...(body.website !== undefined && { website: body.website as string }),
+  };
 
-    // Honeypot check - if website field is filled, it's likely a bot
-    if (safeBody.website) {
-      // Silently reject but return success to not reveal honeypot
-      return NextResponse.json(
-        { success: true, message: 'Message sent successfully!' },
-        { status: 200 }
-      );
-    }
-
-    // Validate required fields
-    if (!safeBody.name || !safeBody.message) {
-      return NextResponse.json(
-        { error: 'Name and message are required' },
-        { status: 400 }
-      );
-    }
-
-    // Validate input lengths
-    if (safeBody.name.length > MAX_NAME_LENGTH) {
-      return NextResponse.json(
-        { error: `Name must be ${MAX_NAME_LENGTH} characters or less` },
-        { status: 400 }
-      );
-    }
-    if (safeBody.email && safeBody.email.length > MAX_EMAIL_LENGTH) {
-      return NextResponse.json(
-        { error: `Email must be ${MAX_EMAIL_LENGTH} characters or less` },
-        { status: 400 }
-      );
-    }
-    if (safeBody.message.length > MAX_MESSAGE_LENGTH) {
-      return NextResponse.json(
-        { error: `Message must be ${MAX_MESSAGE_LENGTH} characters or less` },
-        { status: 400 }
-      );
-    }
-
-    // Validate email format if provided
-    if (safeBody.email) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(safeBody.email)) {
-        return NextResponse.json(
-          { error: 'Invalid email format' },
-          { status: 400 }
-        );
-      }
-    }
-
-    // Prepare email content (sanitize for HTML to prevent XSS)
-    const safeName = escapeHtml(safeBody.name.trim());
-    const safeEmail = safeBody.email ? escapeHtml(safeBody.email.trim()) : 'Not provided';
-    const safeMessage = escapeHtml(safeBody.message.trim());
-    const replyInfo = safeBody.email ? `\n\nReply to: ${safeBody.email}` : '\n\n(No email provided)';
-
-    // Generate timestamp
-    const timestamp = new Date().toLocaleString('en-US', {
-      timeZone: 'Asia/Kolkata',
-      dateStyle: 'medium',
-      timeStyle: 'short',
-    }) + ' IST';
-
-    const mailOptions = {
-      from: smtpEmail,
-      to: SITE_CONFIG.email,
-      replyTo: safeBody.email || undefined,
-      subject: `💬 ${safeBody.name.trim()}`,
-      text: `Name: ${safeBody.name}${replyInfo}\n\nMessage:\n${safeBody.message}\n\n---\nSent: ${timestamp}\nIP: ${clientIP}`,
-      html: generateEmailHTML(safeName, safeEmail, safeMessage, timestamp, clientIP),
-    };
-
-    // Send email
-    await transporter.sendMail(mailOptions);
-
+  // Honeypot check - if website field is filled, it's likely a bot
+  if (safeBody.website) {
+    // Silently reject but return success to not reveal honeypot
     return NextResponse.json(
       { success: true, message: 'Message sent successfully!' },
       { status: 200 }
     );
+  }
+
+  // Validate required fields
+  if (!safeBody.name || !safeBody.message) {
+    return NextResponse.json(
+      { error: 'Name and message are required' },
+      { status: 400 }
+    );
+  }
+
+  // Validate input lengths
+  if (safeBody.name.length > MAX_NAME_LENGTH) {
+    return NextResponse.json(
+      { error: `Name must be ${MAX_NAME_LENGTH} characters or less` },
+      { status: 400 }
+    );
+  }
+  if (safeBody.email && safeBody.email.length > MAX_EMAIL_LENGTH) {
+    return NextResponse.json(
+      { error: `Email must be ${MAX_EMAIL_LENGTH} characters or less` },
+      { status: 400 }
+    );
+  }
+  if (safeBody.message.length > MAX_MESSAGE_LENGTH) {
+    return NextResponse.json(
+      { error: `Message must be ${MAX_MESSAGE_LENGTH} characters or less` },
+      { status: 400 }
+    );
+  }
+
+  // Validate email format if provided
+  if (safeBody.email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(safeBody.email)) {
+      return NextResponse.json(
+        { error: 'Invalid email format' },
+        { status: 400 }
+      );
+    }
+  }
+
+  // Prepare email content (sanitize for HTML to prevent XSS)
+  const safeName = escapeHtml(safeBody.name.trim());
+  const safeEmail = safeBody.email ? escapeHtml(safeBody.email.trim()) : 'Not provided';
+  const safeMessage = escapeHtml(safeBody.message.trim());
+  const replyInfo = safeBody.email ? `\n\nReply to: ${safeBody.email}` : '\n\n(No email provided)';
+
+  // Generate timestamp
+  const timestamp = new Date().toLocaleString('en-US', {
+    timeZone: 'Asia/Kolkata',
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }) + ' IST';
+
+  // Escape IP for HTML output (prevent header injection attacks)
+  const safeIP = escapeHtml(clientIP);
+
+  const mailOptions = {
+    from: smtpEmail,
+    to: SITE_CONFIG.email,
+    replyTo: safeBody.email || undefined,
+    subject: `💬 ${safeBody.name.trim()}`,
+    text: `Name: ${safeBody.name}${replyInfo}\n\nMessage:\n${safeBody.message}\n\n---\nSent: ${timestamp}\nIP: ${clientIP}`,
+    html: generateEmailHTML(safeName, safeEmail, safeMessage, timestamp, safeIP),
+  };
+
+  // Send email - wrap in try-catch to distinguish SMTP errors from other failures
+  try {
+    await transporter.sendMail(mailOptions);
   } catch (error) {
-    console.error('Contact form error:', error);
+    console.error('SMTP error:', error);
     return NextResponse.json(
       { error: 'Failed to send message. Please try again later.' },
       { status: 500 }
     );
   }
+
+  return NextResponse.json(
+    { success: true, message: 'Message sent successfully!' },
+    { status: 200 }
+  );
 }
