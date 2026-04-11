@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useRef, useState, memo } from 'react';
+import { useRef, useState } from 'react';
 import { useIntersectionObserver } from '@/lib/useIntersectionObserver';
 import styles from './PhotoItem.module.css';
 import type { Photo } from '@/lib/photos';
@@ -11,7 +11,7 @@ interface PhotoItemProps {
     index: number;
 }
 
-export const PhotoItem = memo(function PhotoItem({ photo, index }: PhotoItemProps) {
+export function PhotoItem({ photo, index }: PhotoItemProps) {
     const [isLoaded, setIsLoaded] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
 
@@ -55,5 +55,5 @@ export const PhotoItem = memo(function PhotoItem({ photo, index }: PhotoItemProp
             )}
         </div>
     );
-});
+}
 

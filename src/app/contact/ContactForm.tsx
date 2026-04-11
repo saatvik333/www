@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState } from 'react';
 import { FaDiscord } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
 import { GoArrowRight } from 'react-icons/go';
@@ -15,7 +15,7 @@ export function ContactForm() {
     const [errorMessage, setErrorMessage] = useState('');
     const [emailProvided, setEmailProvided] = useState(false);
 
-    async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    async function handleSubmit(e: React.BaseSyntheticEvent) {
         e.preventDefault();
         const form = e.currentTarget;
         setStatus('submitting');
@@ -85,7 +85,7 @@ export function ContactForm() {
                 {status === 'success' && (
                     <div className={styles.successMessage}>
                         {emailProvided
-                            ? "message sent successfully! i'll get back to you soon."
+                            ? "message received! i'll get back to you soon."
                             : "message sent successfully!"}
                     </div>
                 )}
