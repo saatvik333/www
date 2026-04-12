@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { PageLayout } from '@/components/layout';
 import { ArrowLink } from '@/components/ui';
 import { getAllBlogs } from '@/lib/content';
+import { formatDateShort } from '@/lib/dates';
 import { TbPinFilled } from 'react-icons/tb';
 import styles from './page.module.css';
 
@@ -12,15 +13,6 @@ export const metadata: Metadata = {
     canonical: '/blog',
   },
 };
-
-function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    month: '2-digit',
-    day: '2-digit',
-    year: 'numeric',
-  });
-}
 
 export default function BlogPage() {
   const blogPosts = getAllBlogs();
@@ -43,7 +35,7 @@ export default function BlogPage() {
                 <div className={styles.meta}>
                   <time dateTime={post.date} className={styles.date}>
                     {post.pinned && <TbPinFilled className={styles.pinnedIcon} />}
-                    {formatDate(post.date)}
+                    {formatDateShort(post.date)}
                   </time>
                   <span className={styles.separator}>·</span>
                   <span className={styles.readingTime}>{post.readingTime}</span>

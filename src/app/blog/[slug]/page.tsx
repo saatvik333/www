@@ -5,6 +5,7 @@ import { GoArrowLeft } from 'react-icons/go';
 import { PageLayout } from '@/components/layout';
 import { cache } from 'react';
 import { getBlog, getBlogSlugs } from '@/lib/content';
+import { formatDateLong } from '@/lib/dates';
 
 const getCachedBlog = cache(getBlog);
 import { SITE_CONFIG } from '@/lib/config';
@@ -61,15 +62,6 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   };
 }
 
-function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  });
-}
-
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
   const post = await getCachedBlog(slug);
@@ -124,7 +116,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         {/* Header */}
         <header className={styles.header}>
           <div className={styles.meta}>
-            <time dateTime={post.date} className={styles.date}>{formatDate(post.date)}</time>
+            <time dateTime={post.date} className={styles.date}>{formatDateLong(post.date)}</time>
             <span className={styles.separator}>·</span>
             <span className={styles.readingTime}>{post.readingTime}</span>
           </div>
