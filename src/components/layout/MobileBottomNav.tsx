@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { m, useReducedMotion } from 'framer-motion';
 import { Logo } from '@/components/ui';
-import { navLinks } from '@/lib/navLinks';
+import { isLinkActive, navLinks } from '@/lib/navLinks';
 import styles from './MobileBottomNav.module.css';
 
 export function MobileBottomNav() {
@@ -30,7 +30,7 @@ export function MobileBottomNav() {
             {/* Navigation links */}
             <ul className={styles.navLinks}>
                 {navLinks.map((link) => {
-                    const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
+                    const isActive = isLinkActive(pathname, link.href);
                     return (
                         <li key={link.href} className={styles.linkWrapper}>
                             <Link

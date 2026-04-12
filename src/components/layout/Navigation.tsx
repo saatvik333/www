@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { GoArrowRight } from 'react-icons/go';
-import { navLinks } from '@/lib/navLinks';
+import { isLinkActive, navLinks } from '@/lib/navLinks';
 import styles from './Navigation.module.css';
 import linkStyles from './NavLink.module.css';
 
@@ -21,7 +21,7 @@ export function Navigation({ horizontal = false }: NavigationProps) {
           <li key={link.href}>
             <Link
               href={link.href}
-              className={`${styles.navLink} ${linkStyles.navLink} ${pathname === link.href || pathname.startsWith(link.href + '/') ? linkStyles.active : ''
+              className={`${styles.navLink} ${linkStyles.navLink} ${isLinkActive(pathname, link.href) ? linkStyles.active : ''
                 }`}
             >
               <span className={linkStyles.symbolWrapper}>

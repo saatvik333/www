@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { GoArrowRight } from 'react-icons/go';
 import { Logo } from '@/components/ui';
-import { navLinks } from '@/lib/navLinks';
+import { isLinkActive, navLinks } from '@/lib/navLinks';
 import styles from './Navbar.module.css';
 import linkStyles from './NavLink.module.css';
 
@@ -24,7 +24,7 @@ export function Navbar() {
           <Link
             key={link.href}
             href={link.href}
-            className={`${linkStyles.navLink} ${pathname === link.href || pathname.startsWith(link.href + '/') ? linkStyles.active : ''
+            className={`${linkStyles.navLink} ${isLinkActive(pathname, link.href) ? linkStyles.active : ''
               }`}
           >
             <span className={linkStyles.symbolWrapper}>

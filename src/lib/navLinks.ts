@@ -10,3 +10,7 @@ export const navLinks: NavLinkItem[] = [
   { href: '/pics', label: 'pics' },
   { href: '/contact', label: 'contact' },
 ];
+
+export function isLinkActive(pathname: string, href: string): boolean {
+  return pathname === href || pathname.startsWith(href + '/');
+}
