@@ -155,3 +155,12 @@
     transform: translate(-50%, -50%) rotate(-90deg) translateX(160%);
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .container,
+  .three:nth-child(1),
+  .three:nth-child(2),
+  .three:nth-child(3) {
+    animation: none;
+  }
+}
