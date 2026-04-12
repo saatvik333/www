@@ -1,16 +1,8 @@
 import { getAllBlogs } from '@/lib/content';
 import { SITE_CONFIG } from '@/lib/config';
+import { escapeXml } from '@/lib/xml-utils';
 
 const SITE_URL = SITE_CONFIG.url;
-
-function escapeXml(str: string): string {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;');
-}
 
 export async function GET() {
   const blogs = getAllBlogs();
