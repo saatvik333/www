@@ -15,19 +15,19 @@ export function ContactForm() {
     const [errorMessage, setErrorMessage] = useState('');
     const [emailProvided, setEmailProvided] = useState(false);
 
-    async function handleSubmit(e: React.BaseSyntheticEvent) {
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         const form = e.currentTarget;
         setStatus('submitting');
         setErrorMessage('');
 
         const formData = new FormData(form);
-        const email = formData.get('email') as string;
+        const email = formData.get('email')?.toString() ?? '';
         const data = {
-            name: formData.get('name') as string,
+            name: formData.get('name')?.toString() ?? '',
             email,
-            message: formData.get('message') as string,
-            website: formData.get('website') as string, // Honeypot field
+            message: formData.get('message')?.toString() ?? '',
+            website: formData.get('website')?.toString() ?? '', // Honeypot field
         };
 
         try {
