@@ -22,6 +22,13 @@ const nextConfig: NextConfig = {
 
   // Headers for caching and security
   async headers() {
+    const isDev = process.env.NODE_ENV === 'development';
+    // React dev mode needs 'unsafe-eval' for HMR, fast refresh, and callstack reconstruction.
+    // In production, it is omitted for stronger XSS defense.
+    const scriptSrc = isDev
+      ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
+      : "script-src 'self' 'unsafe-inline'";
+
     return [
       // HTML pages - enable bfcache with private caching
       {
@@ -53,10 +60,13 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline'",
+              scriptSrc,
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob:",
-              "connect-src 'self' https://api.github.com",
+              // connect-src needs ws: in dev for HMR websocket
+              isDev
+                ? "connect-src 'self' ws: wss: https://api.github.com"
+                : "connect-src 'self' https://api.github.com",
               "font-src 'self'",
               "frame-ancestors 'self'",
               "base-uri 'self'",
