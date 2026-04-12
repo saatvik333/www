@@ -6,16 +6,27 @@ import remarkParse from 'remark-parse';
 import remarkGfm from 'remark-gfm';
 import remarkRehype from 'remark-rehype';
 import rehypeHighlight from 'rehype-highlight';
+import rehypeSanitize, { defaultSchema, type Options } from 'rehype-sanitize';
 import rehypeStringify from 'rehype-stringify';
 
 const contentDirectory = path.join(process.cwd(), 'content');
 const projectsDirectory = path.join(contentDirectory, 'projects');
 const blogsDirectory = path.join(contentDirectory, 'blogs');
 
+const sanitizeSchema: Options = {
+  ...defaultSchema,
+  attributes: {
+    ...defaultSchema.attributes,
+    span: [...(defaultSchema.attributes?.span || []), ['className']],
+    code: [...(defaultSchema.attributes?.code || []), ['className']],
+  },
+};
+
 const markdownProcessor = unified()
   .use(remarkParse)
   .use(remarkGfm)
   .use(remarkRehype)
+  .use(rehypeSanitize, sanitizeSchema)
   .use(rehypeHighlight)
   .use(rehypeStringify);
 
