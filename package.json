@@ -11,7 +11,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "clean": "rm -rf .next node_modules tsconfig.tsbuildinfo"
+    "clean": "rm -rf .next node_modules tsconfig.tsbuildinfo",
+    "prepare": "husky"
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",
@@ -45,7 +46,12 @@
     "eslint": "^9.39.3",
     "eslint-config-next": "^16.2.3",
     "happy-dom": "^20.8.9",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
     "typescript": "^5.9.3",
     "vitest": "^4.1.4"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": ["eslint --fix"]
   }
 }
