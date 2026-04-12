@@ -78,8 +78,10 @@ export async function getRepoStars(owner: string, repo: string): Promise<number 
 
     const data = await response.json();
     return data.stargazers_count ?? null;
-  } catch {
-    // Timeout or network error - return null silently
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('GitHub API error:', error);
+    }
     return null;
   }
 }
@@ -149,8 +151,10 @@ export async function getContributions(username: string): Promise<ContributionCa
 
     const data = await response.json();
     return data.data?.user?.contributionsCollection?.contributionCalendar ?? null;
-  } catch {
-    // Timeout or network error - return null silently
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('GitHub API error:', error);
+    }
     return null;
   }
 }

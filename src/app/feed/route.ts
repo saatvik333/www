@@ -3,6 +3,15 @@ import { SITE_CONFIG } from '@/lib/config';
 
 const SITE_URL = SITE_CONFIG.url;
 
+function escapeXml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
 export async function GET() {
   const blogs = getAllBlogs();
 
@@ -23,8 +32,8 @@ export async function GET() {
       return `
     <item>
       <title><![CDATA[${safeTitle}]]></title>
-      <link>${SITE_URL}/blog/${blog.slug}</link>
-      <guid isPermaLink="true">${SITE_URL}/blog/${blog.slug}</guid>
+      <link>${SITE_URL}/blog/${escapeXml(blog.slug)}</link>
+      <guid isPermaLink="true">${SITE_URL}/blog/${escapeXml(blog.slug)}</guid>
       <description><![CDATA[${safeDescription}]]></description>
       <pubDate>${new Date(blog.date).toUTCString()}</pubDate>
     </item>`;
