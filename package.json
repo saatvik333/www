@@ -8,6 +8,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "clean": "rm -rf .next node_modules tsconfig.tsbuildinfo"
   },
   "dependencies": {
@@ -31,13 +34,18 @@
     "unified": "^11.0.5"
   },
   "devDependencies": {
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/react": "^16.3.2",
     "@types/node": "^20.19.35",
     "@types/nodemailer": "^7.0.11",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9.39.3",
     "eslint-config-next": "^16.2.3",
-    "typescript": "^5.9.3"
+    "happy-dom": "^20.8.9",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.4"
   }
 }
