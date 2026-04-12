@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [main]
 
+# Opt all JS-based actions into Node 24 (Node 20 deprecated, removed Sept 16 2026).
+# Allows us to keep using actions/checkout@v4, actions/cache@v4, etc. without forced upgrades.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   lint:
     name: Lint

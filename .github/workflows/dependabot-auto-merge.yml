@@ -8,6 +8,10 @@ permissions:
   contents: write
   pull-requests: write
 
+# Opt JS-based actions into Node 24 (Node 20 deprecated, removed Sept 16 2026).
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   auto-merge:
     name: Auto-merge safe Dependabot updates
