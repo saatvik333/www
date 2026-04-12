@@ -28,8 +28,21 @@ export async function GET(request: NextRequest) {
 
   const stars = await getRepoStars(owner, repo);
 
+  // On transient API errors (stars === null), use a short cache so we don't
+  // pin a stale "0 stars" response for the full hour that healthy responses get.
+  if (stars === null) {
+    return NextResponse.json(
+      { stars: 0 },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        },
+      }
+    );
+  }
+
   return NextResponse.json(
-    { stars: stars ?? 0 },
+    { stars },
     {
       headers: {
         'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',

@@ -9,6 +9,8 @@ interface ArrowLinkProps {
   external?: boolean;
 }
 
+// External links use a text ">" character to signal "leaving the site";
+// internal links use the arrow icon for visual consistency with navigation.
 export function ArrowLink({ href, children, className = '', external = false }: ArrowLinkProps) {
   if (external) {
     return (
