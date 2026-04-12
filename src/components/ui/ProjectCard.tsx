@@ -14,6 +14,9 @@ interface ProjectCardProps {
 export function ProjectCard({ slug, title, description, thumbnail, index = 0 }: ProjectCardProps) {
   // Prioritize first 2 images for faster LCP
   const isPriority = index < 2;
+  // Animated images (GIFs) cannot be optimized by next/image; mark as unoptimized
+  // to preserve animation and avoid Next.js warnings.
+  const isAnimated = thumbnail?.toLowerCase().endsWith('.gif') ?? false;
 
   return (
     <Link
@@ -30,6 +33,7 @@ export function ProjectCard({ slug, title, description, thumbnail, index = 0 }: 
             className={styles.image}
             sizes="(max-width: 640px) 100vw, (max-width: 900px) 50vw, 33vw"
             priority={isPriority}
+            unoptimized={isAnimated}
           />
         ) : (
           <div className={styles.placeholder}>
