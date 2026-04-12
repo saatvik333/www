@@ -1,12 +1,7 @@
 import type { Metadata } from 'next';
-import dynamic from 'next/dynamic';
 import { PageLayout } from '@/components/layout';
 import { SITE_CONFIG } from '@/lib/config';
-
-// Dynamic import - defers loading until Contact page is visited
-const ContactForm = dynamic(
-  () => import('./ContactForm').then(mod => mod.ContactForm)
-);
+import { ContactForm } from './ContactForm';
 
 export const metadata: Metadata = {
   title: 'Contact',
