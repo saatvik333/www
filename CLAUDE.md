@@ -10,7 +10,7 @@ Personal portfolio website for saatvik333 (saatvik.me). Built with **Next.js 16*
 
 **ALWAYS use `bun`, never use `npm`.**
 
-- `bun run dev` - Start dev server (Turbopack, binds to 0.0.0.0)
+- `bun run dev` - Start dev server (Turbopack)
 - `bun run build` - Production build (does NOT run linting)
 - `bun run start` - Start production server
 - `bun run lint` - ESLint via CLI directly (not `next lint`, which was removed in Next.js 16)
@@ -23,10 +23,11 @@ No test framework is configured.
 - `GITHUB_TOKEN` - GitHub personal access token (read-only) for the contributions calendar GraphQL API (`/about` page)
 - `SMTP_EMAIL` - Gmail address used as the nodemailer sender for the contact form
 - `SMTP_PASSWORD` - Gmail app password for the above account
+- `ALLOWED_CONTACT_ORIGINS` - Additional allowed domains for contact form origin validation (comma-separated, optional)
 
 ## Key Conventions (Next.js 16 / React 19)
 
-- **Server Components by default.** Only add `'use client'` when the component needs browser APIs, hooks, or event handlers. Currently client components: `ClientLayout`, `MobileBottomNav`, `ContactForm`, `ImageCarousel`, `GitHubCalendar`, `GitHubStars`, `CopyButton`, `PhotoItem`.
+- **Server Components by default.** Only add `'use client'` when the component needs browser APIs, hooks, or event handlers. Currently client components: `ClientLayout`, `Navbar`, `Navigation`, `MobileBottomNav`, `ContactForm`, `ImageCarousel`, `Logo`, `CopyButton`, `PhotoItem`.
 - **Async params.** Dynamic route params are `Promise<{ slug: string }>` — always `await params` before use. See `src/app/blog/[slug]/page.tsx` for the pattern.
 - **`generateStaticParams` + `generateMetadata`** for static generation and per-page SEO on dynamic routes.
 - **React Compiler enabled** (`reactCompiler: true` in `next.config.ts`) — do NOT manually add `useMemo`/`useCallback`/`React.memo`; the compiler handles memoization automatically.
@@ -41,7 +42,7 @@ No test framework is configured.
 
 **Content system:** Markdown files in `content/` read at build time by `src/lib/content.ts` using gray-matter (frontmatter) and unified/remark/rehype (rendering with syntax highlighting via rehype-highlight). Two content types:
 
-- **Blogs:** `content/blogs/{slug}.md` — frontmatter: title, description, date, pinned. Hidden drafts in `content/blogs/.hidden/`.
+- **Blogs:** `content/blogs/{slug}.md` — frontmatter: title, description, date, pinned, updatedAt (optional). Hidden drafts in `content/blogs/.hidden/`.
 - **Projects:** `content/projects/{slug}/index.md` with optional `thumbnail.{ext}` and `images/` directory. Images served via `/api/content/[...path]` route with a rewrite from `/content/:path*`.
 
 **Key files:**
@@ -69,4 +70,4 @@ No test framework is configured.
 
 **Path alias:** `@/*` maps to `./src/*`.
 
-**TypeScript:** Strict mode, ES2022 target, bundler module resolution. Props use `Readonly<{}>` wrapper. Path alias configured in `tsconfig.json`.
+**TypeScript:** Strict mode, ES2022 target, bundler module resolution. Path alias configured in `tsconfig.json`.

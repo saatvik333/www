@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
   // Experimental features for maximum speed
   experimental: {
     // Optimize package imports - reduce bundle size
-    optimizePackageImports: ['framer-motion', 'react-icons', 'date-fns', 'embla-carousel-react', 'embla-carousel-wheel-gestures'],
+    optimizePackageImports: ['framer-motion', 'react-icons', 'embla-carousel-react'],
   },
 
   // Image optimization
