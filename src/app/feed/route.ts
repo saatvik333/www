@@ -3,26 +3,17 @@ import { SITE_CONFIG } from '@/lib/config';
 
 const SITE_URL = SITE_CONFIG.url;
 
-/**
- * Get the most recent blog date for feed lastBuildDate
- * This prevents feed timestamp churn when content hasn't changed
- */
-function getFeedLastBuildDate(): Date {
-  const blogs = getAllBlogs();
-  if (blogs.length === 0) {
-    return new Date('2025-01-01');
-  }
-  // Blogs are already sorted by date (newest first)
-  return new Date(blogs[0].date);
-}
-
 export async function GET() {
   const blogs = getAllBlogs();
 
   // getAllBlogs already filters invalid dates, but extra safety check
   const validBlogs = blogs.filter(blog => !isNaN(new Date(blog.date).getTime()));
 
-  const lastBuildDate = getFeedLastBuildDate();
+  // Blogs are already sorted by date (newest first). Use the most recent
+  // blog date as the feed lastBuildDate to prevent timestamp churn when
+  // content hasn't changed.
+  const lastBuildDate =
+    validBlogs.length > 0 ? new Date(validBlogs[0].date) : new Date('2025-01-01');
 
   const rssItems = validBlogs
     .map((blog) => {

@@ -5,27 +5,18 @@ import { SITE_CONFIG } from '@/lib/config';
 
 const SITE_URL = SITE_CONFIG.url;
 
-/**
- * Get the most recent date from all content for cache-busting
- * This prevents sitemap timestamp churn when content hasn't changed
- */
-function getContentLastModified(): Date {
-  const blogs = getAllBlogs();
-  const projects = getAllProjects();
-
-  const dates = [
-    ...blogs.map(b => new Date(b.date).getTime()),
-    ...projects.map(p => p.date ? new Date(p.date).getTime() : 0),
-  ];
-
-  const maxDate = Math.max(...dates, 0);
-  return maxDate > 0 ? new Date(maxDate) : new Date('2025-01-01');
-}
-
 export default function sitemap(): MetadataRoute.Sitemap {
   const blogs = getAllBlogs();
   const projects = getAllProjects();
-  const lastModified = getContentLastModified();
+
+  // Derive the most recent content date for cache-busting static pages.
+  // This prevents sitemap timestamp churn when content hasn't changed.
+  const dates = [
+    ...blogs.map(b => new Date(b.date).getTime()),
+    ...projects.map(p => (p.date ? new Date(p.date).getTime() : 0)),
+  ];
+  const maxDate = Math.max(...dates, 0);
+  const lastModified = maxDate > 0 ? new Date(maxDate) : new Date('2025-01-01');
 
   // Static pages - use content-derived timestamp
   const staticPages: MetadataRoute.Sitemap = [
