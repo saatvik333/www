@@ -92,16 +92,7 @@ const nextConfig: NextConfig = {
           // HSTS - enforce HTTPS
           {
             key: 'Strict-Transport-Security',
-            value: 'max-age=31536000; includeSubDomains',
-          },
-          // Cross-Origin policies
-          {
-            key: 'Cross-Origin-Opener-Policy',
-            value: 'same-origin',
-          },
-          {
-            key: 'Cross-Origin-Embedder-Policy',
-            value: 'credentialless',
+            value: 'max-age=63072000; includeSubDomains; preload',
           },
         ],
       },
