@@ -16,11 +16,12 @@ jobs:
       - name: Install dependencies
         env:
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          IS_PR: ${{ github.event_name == 'pull_request' }}
         run: |
-          if [ "$PR_AUTHOR" = "dependabot[bot]" ]; then
-            bun install
-          else
+          if [ "$IS_PR" = "true" ] && [ "$PR_AUTHOR" != "dependabot[bot]" ]; then
             bun install --frozen-lockfile
+          else
+            bun install
           fi
       - run: bun run lint
 
@@ -33,11 +34,12 @@ jobs:
       - name: Install dependencies
         env:
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          IS_PR: ${{ github.event_name == 'pull_request' }}
         run: |
-          if [ "$PR_AUTHOR" = "dependabot[bot]" ]; then
-            bun install
-          else
+          if [ "$IS_PR" = "true" ] && [ "$PR_AUTHOR" != "dependabot[bot]" ]; then
             bun install --frozen-lockfile
+          else
+            bun install
           fi
       - run: bunx tsc --noEmit
 
@@ -50,11 +52,12 @@ jobs:
       - name: Install dependencies
         env:
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          IS_PR: ${{ github.event_name == 'pull_request' }}
         run: |
-          if [ "$PR_AUTHOR" = "dependabot[bot]" ]; then
-            bun install
-          else
+          if [ "$IS_PR" = "true" ] && [ "$PR_AUTHOR" != "dependabot[bot]" ]; then
             bun install --frozen-lockfile
+          else
+            bun install
           fi
       - run: bun run test
 
@@ -68,11 +71,12 @@ jobs:
       - name: Install dependencies
         env:
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          IS_PR: ${{ github.event_name == 'pull_request' }}
         run: |
-          if [ "$PR_AUTHOR" = "dependabot[bot]" ]; then
-            bun install
-          else
+          if [ "$IS_PR" = "true" ] && [ "$PR_AUTHOR" != "dependabot[bot]" ]; then
             bun install --frozen-lockfile
+          else
+            bun install
           fi
       - run: bun run build
         env:
