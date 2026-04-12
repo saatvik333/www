@@ -129,9 +129,9 @@ export function getAllProjects(): ProjectMeta[] {
       slug,
       title: data.title || slug,
       description: data.description || '',
-      date: data.date,
-      tags: data.tags || [],
-      stack: data.stack || [],
+      date: data.date ? String(data.date) : undefined,
+      tags: Array.isArray(data.tags) ? data.tags : [],
+      stack: Array.isArray(data.stack) ? data.stack : [],
       github: data.github,
       site: data.site,
       thumbnail: getProjectThumbnail(slug),
@@ -165,9 +165,9 @@ export async function getProject(slug: string): Promise<Project | null> {
     slug,
     title: data.title || slug,
     description: data.description || '',
-    date: data.date,
-    tags: data.tags || [],
-    stack: data.stack || [],
+    date: data.date ? String(data.date) : undefined,
+    tags: Array.isArray(data.tags) ? data.tags : [],
+    stack: Array.isArray(data.stack) ? data.stack : [],
     github: data.github,
     site: data.site,
     thumbnail: getProjectThumbnail(slug),
@@ -187,24 +187,30 @@ function getReadingTime(content: string): string {
 export function getAllBlogs(): BlogMeta[] {
   const slugs = getBlogSlugs();
 
-  const blogs = slugs.map((slug) => {
-    const filePath = path.join(blogsDirectory, `${slug}.md`);
-    const fileContents = fs.readFileSync(filePath, 'utf8');
-    const { data, content } = matter(fileContents);
+  const blogs = slugs.map((slug): BlogMeta | null => {
+    try {
+      const filePath = path.join(blogsDirectory, `${slug}.md`);
+      const fileContents = fs.readFileSync(filePath, 'utf8');
+      const { data, content } = matter(fileContents);
 
-    return {
-      slug,
-      title: data.title || slug,
-      description: data.description || '',
-      date: data.date || '',
-      updatedAt: data.updatedAt,
-      pinned: data.pinned || false,
-      readingTime: getReadingTime(content),
-    } as BlogMeta;
+      return {
+        slug,
+        title: data.title || slug,
+        description: data.description || '',
+        date: data.date ? String(data.date) : '',
+        updatedAt: data.updatedAt ? String(data.updatedAt) : undefined,
+        pinned: data.pinned || false,
+        readingTime: getReadingTime(content),
+      } as BlogMeta;
+    } catch (error) {
+      console.warn(`Failed to read blog "${slug}":`, error);
+      return null;
+    }
   });
 
-  // Filter out posts with missing or invalid dates
-  const validBlogs = blogs.filter((blog) => {
+  // Filter out posts with missing or invalid dates or failed reads
+  const validBlogs = blogs.filter((blog): blog is BlogMeta => {
+    if (blog === null) return false;
     const date = new Date(blog.date);
     return !isNaN(date.getTime()) && blog.date !== '';
   });
