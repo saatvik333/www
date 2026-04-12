@@ -13,6 +13,21 @@ import {
   MAX_MESSAGE_LENGTH,
 } from '@/lib/contact-utils';
 
+/**
+ * Contact form handler with multi-layer anti-abuse:
+ *
+ * 1. Strict Content-Type check (rejects non-JSON)
+ * 2. Rate limiting (3 requests per 5 minutes per IP)
+ *    Note: in-memory store is best-effort -- resets on serverless cold start
+ * 3. Origin validation (requires Origin or Referer from allowed domains)
+ * 4. Honeypot field (silently rejects bot submissions)
+ * 5. Runtime input validation with length caps and type checks
+ * 6. HTML escaping for email output
+ *
+ * Nodemailer transport is lazily initialized at module scope to reuse
+ * connection pools across requests.
+ */
+
 let _transporter: nodemailer.Transporter | null = null;
 
 function getTransporter(): nodemailer.Transporter | null {

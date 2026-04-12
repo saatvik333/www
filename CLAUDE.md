@@ -43,7 +43,30 @@ No test framework is configured.
 **Content system:** Markdown files in `content/` read at build time by `src/lib/content.ts` using gray-matter (frontmatter) and unified/remark/rehype (rendering with syntax highlighting via rehype-highlight). Two content types:
 
 - **Blogs:** `content/blogs/{slug}.md` — frontmatter: title, description, date, pinned, updatedAt (optional). Hidden drafts in `content/blogs/.hidden/`.
-- **Projects:** `content/projects/{slug}/index.md` with optional `thumbnail.{ext}` and `images/` directory. Images served via `/api/content/[...path]` route with a rewrite from `/content/:path*`.
+- **Projects:** `content/projects/{slug}/index.md` with optional `thumbnail.{ext}` and `images/` directory. Images served via `/api/content/[...path]` route with a rewrite from `/content/:path*`. Frontmatter fields:
+  - `title` (required) -- falls back to slug if missing
+  - `description` (required)
+  - `date` (optional)
+  - `tags: string[]` (optional)
+  - `stack: string[]` (optional)
+  - `github` (optional) -- GitHub repo URL
+  - `site` (optional) -- live site URL
+  - Thumbnail: `thumbnail.{png|jpg|jpeg|webp|gif}` in project root
+  - Images: placed in `images/` subdirectory, **sorted alphabetically by filename** to control carousel order
+
+### Photo gallery (/pics)
+
+- Drop images into `public/pics/`
+- Supported formats: jpg, jpeg, png, webp, gif, avif
+- Alt text is auto-generated from filenames (dashes/underscores become spaces)
+- Gallery order is **alphabetical by filename**
+- Pre-optimize images before adding -- Next.js Image component serves optimized versions, but source size impacts deploys
+
+### Security design decisions
+
+- **Content API defense-in-depth** (`src/app/api/content/[...path]/route.ts`): Three layers prevent filesystem exposure -- (1) hidden segment blocking (rejects paths starting with `.`), (2) resolved path boundary check (uses `path.sep` to prevent `/content-secrets` bypasses), (3) extension allowlist (only image formats served).
+- **Contact API rate limiter** (`src/app/api/contact/route.ts`): Uses an in-memory `Map` which resets on serverless cold starts. This is **best-effort** spam mitigation, not security -- for real abuse prevention, use Vercel KV or Upstash Redis.
+- **Null origin handling**: Contact API requires at least one of `Origin` or `Referer` to be present. Requests with neither are rejected. This blocks direct API access from curl/bots.
 
 **Key files:**
 

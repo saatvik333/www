@@ -9,6 +9,24 @@ import rehypeHighlight from 'rehype-highlight';
 import rehypeSanitize, { defaultSchema, type Options } from 'rehype-sanitize';
 import rehypeStringify from 'rehype-stringify';
 
+/**
+ * Content system for blogs and projects.
+ *
+ * Reads markdown files from `content/blogs/` and `content/projects/` at build
+ * time using gray-matter (frontmatter) and unified/remark/rehype (HTML rendering
+ * with syntax highlighting via rehype-highlight).
+ *
+ * Security:
+ * - Markdown HTML is sanitized via rehype-sanitize (preserves highlight classes)
+ * - Slugs are validated against `..`, `/`, and `\` to prevent path traversal
+ * - Hidden drafts live in `content/blogs/.hidden/` -- they're excluded because
+ *   `getBlogSlugs()` only reads top-level `.md` files
+ *
+ * Performance:
+ * - Uses synchronous `fs` methods (acceptable for build-time SSG)
+ * - Reading time assumes 200 WPM
+ */
+
 const contentDirectory = path.join(process.cwd(), 'content');
 const projectsDirectory = path.join(contentDirectory, 'projects');
 const blogsDirectory = path.join(contentDirectory, 'blogs');

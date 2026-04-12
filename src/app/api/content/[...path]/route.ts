@@ -2,6 +2,19 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stat, readFile } from 'fs/promises';
 import path from 'path';
 
+/**
+ * Content file serving API with defense-in-depth against path traversal.
+ *
+ * Three layers of protection:
+ * 1. Hidden segment blocking: rejects any path containing segments starting with `.`
+ * 2. Resolved path boundary check: uses `path.resolve()` + prefix check with
+ *    `path.sep` to prevent `/content-secrets/file.png` bypassing `/content`
+ * 3. Extension allowlist: only whitelisted image formats are served
+ *
+ * SVGs are served with a restrictive per-response CSP (`default-src 'none'`) to
+ * mitigate embedded script execution in case a malicious SVG is ever added.
+ */
+
 // Allowed asset extensions - explicitly deny markdown and config files
 const ALLOWED_EXTENSIONS = new Set([
   '.png',
