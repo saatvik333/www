@@ -72,14 +72,27 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  pointer-events: auto; /* Re-enable pointer events for the button */
+  user-select: none;
+}
+
+.arrowIcon {
+  width: clamp(2.25rem, 3vw + 1.5rem, 3rem);
+  height: clamp(2.25rem, 3vw + 1.5rem, 3rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: var(--color-bg);
   border: 2px solid var(--color-border);
   color: var(--color-text);
-  cursor: pointer;
   font-size: clamp(1.1rem, 1vw + 0.8rem, 1.5rem);
   transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-  pointer-events: auto; /* Re-enable pointer events for the button */
-  user-select: none;
 }
 
 /* Desktop Hover Interaction */
@@ -92,23 +105,39 @@
     width: 20%; /* Wider active zone */
     transform: none;
     pointer-events: auto; /* Enable hover detection on zone */
-    cursor: pointer;
   }
 
   .navZoneLeft {
     left: 0;
     justify-content: flex-start;
-    padding-left: var(--space-xl); /* More padding */
   }
 
   .navZoneRight {
     right: 0;
     justify-content: flex-end;
+  }
+
+  /* Button fills the full nav zone so the whole area is clickable
+     and keyboard-accessible via the native <button>. */
+  .arrow {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .navZoneLeft .arrow {
+    justify-content: flex-start;
+    padding-left: var(--space-xl); /* More padding */
+  }
+
+  .navZoneRight .arrow {
+    justify-content: flex-end;
     padding-right: var(--space-xl); /* More padding */
   }
 
   /* Specific overriding styles for Desktop */
-  .arrow {
+  .arrowIcon {
     width: 4rem;
     height: 4rem;
     font-size: 2rem;
@@ -117,15 +146,15 @@
     border: 2px solid var(--color-border);
   }
 
-  .navZoneLeft:hover .arrow,
-  .navZoneRight:hover .arrow {
+  .arrow:hover .arrowIcon,
+  .arrow:focus-visible .arrowIcon {
     opacity: 1;
     border-color: var(--color-accent);
     color: var(--color-accent);
     background: var(--color-bg);
   }
 
-  .arrow:active {
+  .arrow:active .arrowIcon {
     /* No scale transform */
     background: var(--color-bg-secondary);
   }
@@ -133,7 +162,7 @@
 
 /* Fallback for Mobile / No-Hover */
 @media (hover: none) {
-  .arrow:active {
+  .arrow:active .arrowIcon {
     opacity: 0.8;
   }
 }
