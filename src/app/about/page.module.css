@@ -67,7 +67,7 @@
 
 .skillCategory {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   gap: var(--space-lg);
 }
 
@@ -76,6 +76,7 @@
   color: var(--color-text-dim);
   min-width: 5.5rem;
   flex-shrink: 0;
+  padding-top: 0.2rem; /* optical alignment with tag text */
 }
 
 .skillItems {

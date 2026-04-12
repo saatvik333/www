@@ -44,8 +44,8 @@ const links = [
 
 const skills = {
   languages: ['typescript', 'go', 'rust', 'c/c++', 'bash'],
-  'frameworks/db': ['node.js', 'next.js', 'ethers.js', 'redis', 'postgresql'],
-  tools: ['linux', 'docker', 'n8n', 'clauden', 'github actions', 'git', 'neovim'],
+  'frameworks/db': ['node.js', 'next.js', 'ethers.js', 'redis', 'sql'],
+  tools: ['linux', 'docker', 'n8n', 'claude', 'github actions', 'git', 'neovim'],
 };
 
 const profilePageJsonLd = {
@@ -74,8 +74,8 @@ export default function AboutPage() {
       <PageLayout title="about">
         <section className={styles.content}>
           <p className={styles.bio}>
-            a software engineer focused on building clean, scalable, and reliable applications.
-            Works across the full stack — building thoughtful, performant systems and intuitive
+            an ai-forward software engineer focused on building clean, scalable, and reliable
+            applications. works across the full stack, building performant systems and intuitive
             experiences that solve real problems.
           </p>
 
