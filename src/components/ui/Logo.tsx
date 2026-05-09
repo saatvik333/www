@@ -23,8 +23,15 @@ export function Logo({ className, simple }: LogoProps) {
 
     const handleClick = () => {
         if (simple || dispersed) return;
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+        }
         setDispersed(true);
-        timeoutRef.current = setTimeout(() => setDispersed(false), 800);
+        timeoutRef.current = setTimeout(() => {
+            timeoutRef.current = null;
+            setDispersed(false);
+        }, 800);
     };
 
     return (
