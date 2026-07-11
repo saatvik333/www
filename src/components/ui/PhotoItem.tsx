@@ -8,10 +8,9 @@ import type { Photo } from '@/lib/photos';
 
 interface PhotoItemProps {
     photo: Photo;
-    index: number;
 }
 
-export function PhotoItem({ photo, index }: PhotoItemProps) {
+export function PhotoItem({ photo }: PhotoItemProps) {
     const [isLoaded, setIsLoaded] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
 
@@ -24,10 +23,7 @@ export function PhotoItem({ photo, index }: PhotoItemProps) {
         <div
             ref={ref}
             className={`${styles.photoWrapper} ${isVisible ? styles.visible : ''} ${isLoaded ? styles.loaded : ''}`}
-            style={{
-                animationDelay: `${index * 0.03}s`,
-                aspectRatio: `${photo.width} / ${photo.height}`,
-            }}
+            style={{ aspectRatio: `${photo.width} / ${photo.height}` }}
         >
             {/* Placeholder */}
             <div className={styles.placeholder} />

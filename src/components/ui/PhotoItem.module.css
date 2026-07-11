@@ -19,6 +19,13 @@
   transform: none;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .photoWrapper {
+    transform: none;
+    transition: opacity 0.4s ease-out;
+  }
+}
+
 /* Placeholder - always present, fades out when image loads */
 .placeholder {
   position: absolute;

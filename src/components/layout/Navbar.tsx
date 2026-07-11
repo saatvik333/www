@@ -20,12 +20,14 @@ export function Navbar() {
         </Link>
       </div>
       <nav className={styles.nav} aria-label="Main navigation">
-        {navLinks.map((link) => (
+        {navLinks.map((link) => {
+          const isActive = isLinkActive(pathname, link.href);
+          return (
           <Link
             key={link.href}
             href={link.href}
-            className={`${linkStyles.navLink} ${isLinkActive(pathname, link.href) ? linkStyles.active : ''
-              }`}
+            className={`${linkStyles.navLink} ${isActive ? linkStyles.active : ''}`}
+            aria-current={isActive ? 'page' : undefined}
           >
             <span className={linkStyles.symbolWrapper}>
               <span className={linkStyles.slash}>/</span>
@@ -35,7 +37,8 @@ export function Navbar() {
             </span>
             {link.label}
           </Link>
-        ))}
+          );
+        })}
       </nav>
     </>
   );

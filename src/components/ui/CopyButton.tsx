@@ -33,6 +33,7 @@ export function CopyButton({ text, label }: CopyButtonProps) {
       ) : (
         <MdContentCopy className={styles.copyIcon} />
       )}
+      <span className="sr-only" role="status">{copied ? 'copied' : ''}</span>
     </button>
   );
 }

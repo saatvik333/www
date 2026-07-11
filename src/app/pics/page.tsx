@@ -29,8 +29,8 @@ export default async function PicsPage() {
         {hasPhotos ? (
           <div className={styles.galleryWrapper}>
             <div className={styles.gallery}>
-              {photos.map((photo, index) => (
-                <PhotoItem key={photo.id} photo={photo} index={index} />
+              {photos.map((photo) => (
+                <PhotoItem key={photo.id} photo={photo} />
               ))}
             </div>
           </div>

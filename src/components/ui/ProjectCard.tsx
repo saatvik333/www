@@ -19,11 +19,7 @@ export function ProjectCard({ slug, title, description, thumbnail, index = 0 }: 
   const isAnimated = thumbnail?.toLowerCase().endsWith('.gif') ?? false;
 
   return (
-    <Link
-      href={`/projects/${slug}`}
-      className={styles.card}
-      style={{ animationDelay: `${index * 0.05}s` }}
-    >
+    <Link href={`/projects/${slug}`} className={styles.card}>
       <div className={styles.imageWrapper}>
         {thumbnail ? (
           <Image

@@ -83,7 +83,7 @@ export function ContactForm() {
                 <h2 className={styles.formTitle}>contact form</h2>
 
                 {status === 'success' && (
-                    <div className={styles.successMessage}>
+                    <div className={styles.successMessage} role="status">
                         {emailProvided
                             ? "message received! i'll get back to you soon."
                             : "message sent successfully!"}
@@ -91,7 +91,7 @@ export function ContactForm() {
                 )}
 
                 {status === 'error' && (
-                    <div className={styles.errorMessage}>
+                    <div className={styles.errorMessage} role="alert">
                         {errorMessage}
                     </div>
                 )}
