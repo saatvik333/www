@@ -2,10 +2,10 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { GoArrowRight } from 'react-icons/go';
 import { isLinkActive, navLinks } from '@/lib/navLinks';
 import styles from './Navigation.module.css';
 import linkStyles from './NavLink.module.css';
+import { NavSymbol } from './NavSymbol';
 
 interface NavigationProps {
   horizontal?: boolean;
@@ -24,12 +24,7 @@ export function Navigation({ horizontal = false }: NavigationProps) {
               className={`${styles.navLink} ${linkStyles.navLink} ${isLinkActive(pathname, link.href) ? linkStyles.active : ''
                 }`}
             >
-              <span className={linkStyles.symbolWrapper}>
-                <span className={linkStyles.slash}>/</span>
-                <span className={linkStyles.arrow}>
-                  <GoArrowRight />
-                </span>
-              </span>
+              <NavSymbol />
               {link.label}
             </Link>
           </li>

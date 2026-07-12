@@ -15,7 +15,7 @@
   color: var(--color-accent);
 }
 
-/* Container for the slash/arrow transition */
+/* Container for the slash/arrow morph */
 .symbolWrapper {
   position: relative;
   display: inline-flex;
@@ -26,50 +26,55 @@
   margin-right: -0.1em;
 }
 
-/* Slash - visible by default */
-.slash {
-  color: inherit;
-  position: absolute;
-  transition: transform 0.5s cubic-bezier(0.2, 0, 0, 1), opacity 0.2s ease;
-  font-size: 1.1em;
-  transform-origin: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.symbol {
+  display: block;
+  width: 1.2em;
+  height: 1.2em;
+  overflow: visible;
 }
 
-/* Arrow - hidden by default */
-.arrow {
-  color: var(--color-accent);
-  position: absolute;
+.symbol path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Idle: the shaft rotated up is the "/" glyph */
+.glyph {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  transform: rotate(-67deg);
+  transition: transform 0.5s cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Arrow head collapsed into the shaft tip (20,12) until hover */
+.head {
+  transform-box: view-box;
+  transform-origin: 83.333% 50%;
+  transform: scale(0);
   opacity: 0;
-  transition: transform 0.5s cubic-bezier(0.2, 0, 0, 1), opacity 0.2s ease;
-  font-size: 1.1em;
-  transform-origin: center;
-  transform: rotate(-45deg) translateY(0) translateX(0);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  transition:
+    transform 0.5s cubic-bezier(0.2, 0, 0, 1),
+    opacity 0.3s ease;
 }
 
-/* On hover: slash rotates out, arrow rotates in */
-.navLink:hover .slash {
-  transform: rotate(45deg) scale(0.8);
-  opacity: 0;
+/* On hover/active: shaft levels out into the arrow, head grows from the tip */
+.navLink:hover .glyph,
+.active .glyph {
+  transform: rotate(0deg);
 }
 
-.navLink:hover .arrow {
-  transform: rotate(0deg) translateY(0) translateX(0);
+.navLink:hover .head,
+.active .head {
+  transform: scale(1);
   opacity: 1;
 }
 
-/* Active state */
-.active .slash {
-  transform: rotate(45deg) scale(0.8);
-  opacity: 0;
-}
-
-.active .arrow {
-  transform: rotate(0deg) translateY(0px);
-  opacity: 1;
+@media (prefers-reduced-motion: reduce) {
+  .glyph,
+  .head {
+    transition: none;
+  }
 }

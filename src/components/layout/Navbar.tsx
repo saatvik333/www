@@ -2,11 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { GoArrowRight } from 'react-icons/go';
 import { Logo } from '@/components/ui';
 import { isLinkActive, navLinks } from '@/lib/navLinks';
 import styles from './Navbar.module.css';
 import linkStyles from './NavLink.module.css';
+import { NavSymbol } from './NavSymbol';
 
 export function Navbar() {
   const pathname = usePathname();
@@ -29,12 +29,7 @@ export function Navbar() {
             className={`${linkStyles.navLink} ${isActive ? linkStyles.active : ''}`}
             aria-current={isActive ? 'page' : undefined}
           >
-            <span className={linkStyles.symbolWrapper}>
-              <span className={linkStyles.slash}>/</span>
-              <span className={linkStyles.arrow}>
-                <GoArrowRight />
-              </span>
-            </span>
+            <NavSymbol />
             {link.label}
           </Link>
           );

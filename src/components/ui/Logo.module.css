@@ -12,6 +12,24 @@
   --logo-offset: 5.4%;
 }
 
+/* Disperse animates the wrapper so it composes with the idle animation on
+   the inner svg — no snap when a click lands mid-cycle. */
+.arm {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.arm:nth-child(1) {
+  z-index: 1;
+}
+.arm:nth-child(2) {
+  z-index: 2;
+}
+.arm:nth-child(3) {
+  z-index: 3;
+}
+
 .three {
   position: absolute;
   top: 50%;
@@ -25,34 +43,21 @@
 
 .three path {
   fill: none;
+  stroke: var(--color-accent);
   stroke-width: 16;
   stroke-linecap: butt;
   stroke-linejoin: bevel;
 }
 
-/* Colors */
-.three:nth-child(1) path {
-  stroke: var(--color-accent);
-}
-.three:nth-child(2) path {
-  stroke: var(--color-accent);
-}
-.three:nth-child(3) path {
-  stroke: var(--color-accent);
-}
-
 /* Animations */
-.three:nth-child(1) {
+.arm:nth-child(1) .three {
   animation: rotate1 6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
-  z-index: 1;
 }
-.three:nth-child(2) {
+.arm:nth-child(2) .three {
   animation: rotate2 6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
-  z-index: 2;
 }
-.three:nth-child(3) {
+.arm:nth-child(3) .three {
   animation: rotate3 6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
-  z-index: 3;
 }
 
 @keyframes rotate1 {
@@ -100,67 +105,87 @@
 }
 
 /* Simple mode: static trefoil, no split animation */
-.simple .three:nth-child(1) {
+.simple .arm:nth-child(1) .three {
   animation: none;
   transform: translate(-50%, -50%) rotate(0deg) translateX(var(--logo-offset));
 }
-.simple .three:nth-child(2) {
+.simple .arm:nth-child(2) .three {
   animation: none;
   transform: translate(-50%, -50%) rotate(120deg) translateX(var(--logo-offset));
 }
-.simple .three:nth-child(3) {
+.simple .arm:nth-child(3) .three {
   animation: none;
   transform: translate(-50%, -50%) rotate(-120deg) translateX(var(--logo-offset));
 }
 
 /* Easter egg disperse animation */
-.dispersed .three:nth-child(1) {
-  animation: disperse1 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+.dispersed .arm:nth-child(1) {
+  animation: disperse1 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-.dispersed .three:nth-child(2) {
-  animation: disperse2 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+.dispersed .arm:nth-child(2) {
+  animation: disperse2 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-.dispersed .three:nth-child(3) {
-  animation: disperse3 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+.dispersed .arm:nth-child(3) {
+  animation: disperse3 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
 @keyframes disperse1 {
   0%,
   100% {
-    transform: translate(-50%, -50%) rotate(0deg) translateX(0);
+    transform: rotate(0deg) translateX(0);
   }
   50% {
-    transform: translate(-50%, -50%) rotate(30deg) translateX(160%);
+    transform: rotate(30deg) translateX(160%);
   }
 }
 
 @keyframes disperse2 {
   0%,
   100% {
-    transform: translate(-50%, -50%) rotate(0deg) translateX(0);
+    transform: rotate(0deg) translateX(0);
   }
   50% {
-    transform: translate(-50%, -50%) rotate(150deg) translateX(160%);
+    transform: rotate(150deg) translateX(160%);
   }
 }
 
 @keyframes disperse3 {
   0%,
   100% {
-    transform: translate(-50%, -50%) rotate(0deg) translateX(0);
+    transform: rotate(0deg) translateX(0);
   }
   50% {
-    transform: translate(-50%, -50%) rotate(-90deg) translateX(160%);
+    transform: rotate(-90deg) translateX(160%);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .container,
-  .three:nth-child(1),
-  .three:nth-child(2),
-  .three:nth-child(3) {
+  .container {
+    animation: none;
+  }
+
+  /* Static trefoil; the centering transform must be restated here because it
+     otherwise only exists inside the disabled keyframes. */
+  .arm:nth-child(1) .three {
+    animation: none;
+    transform: translate(-50%, -50%) rotate(0deg) translateX(var(--logo-offset));
+  }
+  .arm:nth-child(2) .three {
+    animation: none;
+    transform: translate(-50%, -50%) rotate(120deg)
+      translateX(var(--logo-offset));
+  }
+  .arm:nth-child(3) .three {
+    animation: none;
+    transform: translate(-50%, -50%) rotate(-120deg)
+      translateX(var(--logo-offset));
+  }
+
+  .dispersed .arm:nth-child(1),
+  .dispersed .arm:nth-child(2),
+  .dispersed .arm:nth-child(3) {
     animation: none;
   }
 }
