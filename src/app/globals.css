@@ -21,21 +21,23 @@
   --color-success: #22c55e; /* colors.success */
   --color-focus: #8e8e8e; /* colors.focus */
 
-  /* Accent color shades - auto-derived from base accent using color-mix() */
+  /* Accent shades for quartile scales (contribution calendar). A quiet but
+     readable ramp over surfaceRaised: roughly #213e5f / #295798 / #3071bb
+     before the full accent */
   --color-accent-25: color-mix(
-    in oklch,
-    var(--color-accent) 25%,
-    var(--color-bg)
+    in srgb,
+    var(--color-accent) 35%,
+    var(--color-bg-secondary)
   );
   --color-accent-50: color-mix(
-    in oklch,
-    var(--color-accent) 50%,
-    var(--color-bg)
+    in srgb,
+    var(--color-accent) 60%,
+    var(--color-bg-secondary)
   );
   --color-accent-75: color-mix(
-    in oklch,
-    var(--color-accent) 75%,
-    var(--color-bg)
+    in srgb,
+    var(--color-accent) 80%,
+    var(--color-bg-secondary)
   );
 
   /* Typography */
