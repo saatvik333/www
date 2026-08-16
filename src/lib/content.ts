@@ -81,25 +81,28 @@ export interface BlogPost extends BlogMeta {
   content: string;
 }
 
-// Get all project slugs (folder names)
+// Get all project slugs (folder names); hidden/dot directories are excluded
+// so drafts or junk dirs (.git, node_modules) never become public pages
 export function getProjectSlugs(): string[] {
   if (!fs.existsSync(projectsDirectory)) {
     return [];
   }
   return fs.readdirSync(projectsDirectory).filter((name) => {
+    if (name.startsWith('.')) return false;
     const fullPath = path.join(projectsDirectory, name);
     return fs.statSync(fullPath).isDirectory();
   });
 }
 
-// Get all blog slugs (file names without .md)
+// Get all blog slugs (file names without .md); statSync guards against a
+// directory named like "foo.md" making readFileSync throw EISDIR
 export function getBlogSlugs(): string[] {
   if (!fs.existsSync(blogsDirectory)) {
     return [];
   }
   return fs
     .readdirSync(blogsDirectory)
-    .filter((name) => name.endsWith('.md'))
+    .filter((name) => name.endsWith('.md') && fs.statSync(path.join(blogsDirectory, name)).isFile())
     .map((name) => name.replace(/\.md$/, ''));
 }
 
@@ -113,7 +116,9 @@ function getProjectImages(slug: string): string[] {
   return files
     .filter((file) => /\.(png|jpg|jpeg|webp|gif)$/i.test(file))
     .sort()
-    .map((file) => `/api/content/projects/${slug}/images/${file}`);
+    // /content/ rewrite instead of /api/content/ — robots.ts disallows /api/,
+    // which would hide these images from crawlers that fetch metadata images
+    .map((file) => `/content/projects/${slug}/images/${file}`);
 }
 
 // Check if project has a thumbnail (from content/projects/[slug]/)
@@ -124,7 +129,8 @@ function getProjectThumbnail(slug: string): string | undefined {
   for (const ext of possibleExtensions) {
     const thumbnailPath = path.join(projectDir, `thumbnail.${ext}`);
     if (fs.existsSync(thumbnailPath)) {
-      return `/api/content/projects/${slug}/thumbnail.${ext}`;
+      // Crawlable /content/ rewrite (see getProjectImages)
+      return `/content/projects/${slug}/thumbnail.${ext}`;
     }
   }
   return undefined;

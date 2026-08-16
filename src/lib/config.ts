@@ -23,14 +23,18 @@ export const SOCIAL_PROFILES = [
   SOCIAL_LINKS.linkedin,
 ] as const;
 
-// Centralized colors - sync these with globals.css :root variables
+// Centralized colors - keep in sync with globals.css :root variables.
+// Source of truth is the BBlack design system (~/.bblack/colors.json).
 export const COLORS = {
-  bg: '#171717',
-  bgSecondary: '#333333',
-  text: '#ededed',
-  textMuted: '#c4c4c4',
-  textDim: '#a0a0a0',
+  bg: '#000000', // canvas
+  bgSecondary: '#171717', // surfaceRaised
+  bgTertiary: '#1f1f1f', // surfacePressed
+  text: '#f7f7f8',
+  textMuted: '#c7c7c7',
+  textDim: '#8e8e8e', // textSubtle
   textBright: '#ffffff',
-  border: '#333333',
-  accent: '#ef4444',
+  border: '#2f2f2f',
+  accent: '#3584e4',
+  error: '#ef4444', // danger
+  success: '#22c55e',
 } as const;

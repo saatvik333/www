@@ -1,6 +1,6 @@
-import { IBM_Plex_Mono } from 'next/font/google';
+import { JetBrains_Mono } from 'next/font/google';
 
-export const ibmPlexMono = IBM_Plex_Mono({
+export const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   display: 'optional',
   variable: '--font-mono',

@@ -38,6 +38,8 @@ export async function GitHubCalendar({ username }: GitHubCalendarProps) {
                   className={styles.cell}
                   style={{ backgroundColor: getThemeColor(day.contributionLevel) }}
                   title={`${day.contributionCount} on ${day.date}`}
+                  role="img"
+                  aria-label={`${day.contributionCount} contributions on ${day.date}`}
                 />
               ))}
             </div>

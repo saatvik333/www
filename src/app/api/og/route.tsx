@@ -4,8 +4,10 @@ import { SITE_CONFIG, COLORS } from '@/lib/config';
 export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
-        const title = searchParams.get('title') || SITE_CONFIG.name;
-        const description = searchParams.get('description') || SITE_CONFIG.description;
+        // Cap inputs: unbounded strings are slow to render in satori and get
+        // edge-cached per unique URL (cache-flooding vector)
+        const title = (searchParams.get('title') || SITE_CONFIG.name).slice(0, 200);
+        const description = (searchParams.get('description') || SITE_CONFIG.description).slice(0, 200);
 
         return new ImageResponse(
             (
@@ -68,21 +70,21 @@ export async function GET(request: Request) {
                             >
                                 <path
                                     d="M12 2L2 7L12 12L22 7L12 2Z"
-                                    stroke="white"
+                                    stroke={COLORS.textBright}
                                     strokeWidth="2"
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
                                 />
                                 <path
                                     d="M2 17L12 22L22 17"
-                                    stroke="white"
+                                    stroke={COLORS.textBright}
                                     strokeWidth="2"
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
                                 />
                                 <path
                                     d="M2 12L12 17L22 12"
-                                    stroke="white"
+                                    stroke={COLORS.textBright}
                                     strokeWidth="2"
                                     strokeLinecap="round"
                                     strokeLinejoin="round"

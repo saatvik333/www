@@ -32,7 +32,7 @@ export async function getPhotos(): Promise<Photo[]> {
   });
 
   const photos = await Promise.all(
-    filteredFiles.map(async (file, index) => {
+    filteredFiles.map(async (file) => {
       const filePath = path.join(picsDir, file);
       let width = 800;
       let height = 600;
@@ -53,9 +53,11 @@ export async function getPhotos(): Promise<Photo[]> {
       const alt = baseName.replace(/[-_]/g, ' ').replace(/\s+/g, ' ').trim();
 
       return {
-        id: `${index + 1}`,
+        // Filename as id: readdir order is filesystem-dependent, so index-based
+        // ids would shuffle React keys between machines/builds
+        id: file,
         src: file,
-        alt: alt || `Photo ${index + 1}`,
+        alt: alt || file,
         width,
         height,
       };

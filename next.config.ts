@@ -64,9 +64,10 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob:",
               // connect-src needs ws: in dev for HMR websocket
+              // (all GitHub API calls are server-side, so no api.github.com origin)
               isDev
-                ? "connect-src 'self' ws: wss: https://api.github.com"
-                : "connect-src 'self' https://api.github.com",
+                ? "connect-src 'self' ws: wss:"
+                : "connect-src 'self'",
               "font-src 'self'",
               "frame-ancestors 'self'",
               "base-uri 'self'",

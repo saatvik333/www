@@ -2,6 +2,8 @@
  * GitHub API utilities for fetching repository data
  */
 
+import { cache } from 'react';
+
 // Timeout for GitHub API requests (5 seconds)
 const GITHUB_TIMEOUT_MS = 5000;
 
@@ -101,7 +103,10 @@ export interface ContributionCalendar {
   weeks: ContributionWeek[];
 }
 
-export async function getContributions(username: string): Promise<ContributionCalendar | null> {
+// The POST fetch below cannot use the fetch data cache (GET only), so memoize
+// per-request and rely on page-level revalidate for cross-request caching
+export const getContributions = cache(
+  async (username: string): Promise<ContributionCalendar | null> => {
   // Skip if no token - return null silently for graceful degradation
   const token = process.env.GITHUB_TOKEN;
   if (!token) {
@@ -157,4 +162,5 @@ export async function getContributions(username: string): Promise<ContributionCa
     }
     return null;
   }
-}
+  }
+);

@@ -4,7 +4,9 @@ import { useState } from 'react';
 import { FaDiscord } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
 import { GoArrowRight } from 'react-icons/go';
-import { CopyButton } from '@/components/ui';
+// Deep import: the UI barrel re-exports embla-backed components that would
+// land in the client bundle
+import { CopyButton } from '@/components/ui/CopyButton';
 import { SITE_CONFIG, SOCIAL_LINKS } from '@/lib/config';
 import styles from './page.module.css';
 

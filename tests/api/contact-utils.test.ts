@@ -120,6 +120,16 @@ describe('createRateLimiter', () => {
     expect(blocked.retryAfter).toBeGreaterThan(0);
     expect(blocked.retryAfter).toBeLessThanOrEqual(60);
   });
+
+  it('keeps tracking distinct IPs correctly under many identities (bounded store with pruning)', () => {
+    const custom = createRateLimiter({ windowMs: 60_000, maxRequests: 2 });
+    for (let i = 0; i < 500; i++) {
+      expect(custom.check(`10.0.${i >> 8}.${i & 0xff}`).allowed).toBe(true);
+    }
+    // Earlier entries are still within their window and unaffected
+    expect(custom.check('10.0.0.0').allowed).toBe(true);
+    expect(custom.check('10.0.0.0').allowed).toBe(false);
+  });
 });
 
 describe('validateOrigin', () => {
@@ -178,12 +188,12 @@ describe('getClientIP', () => {
     expect(getClientIP(req)).toBe('1.2.3.4');
   });
 
-  it('returns first x-forwarded-for IP when x-vercel-id is present', () => {
+  it('returns the last x-forwarded-for hop when x-vercel-id is present (leftmost entries are spoofable)', () => {
     const req = makeRequest({
       'x-forwarded-for': '5.6.7.8, 10.0.0.1',
       'x-vercel-id': 'iad1::12345',
     });
-    expect(getClientIP(req)).toBe('5.6.7.8');
+    expect(getClientIP(req)).toBe('10.0.0.1');
   });
 
   it('returns x-real-ip as fallback when on Vercel without x-forwarded-for', () => {
@@ -209,6 +219,34 @@ describe('getClientIP', () => {
   it('ignores cf-connecting-ip without cf-ray (prevents spoofing)', () => {
     const req = makeRequest({
       'cf-connecting-ip': '1.2.3.4',
+    });
+    expect(getClientIP(req)).toBe('unknown');
+  });
+
+  it('trusts the last x-forwarded-for hop when TRUST_PROXY=1 (self-hosted behind own proxy)', () => {
+    vi.stubEnv('TRUST_PROXY', '1');
+    try {
+      const req = makeRequest({ 'x-forwarded-for': '1.2.3.4, 203.0.113.9' });
+      expect(getClientIP(req)).toBe('203.0.113.9');
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  it('trusts x-real-ip when TRUST_PROXY=1 and x-forwarded-for is absent', () => {
+    vi.stubEnv('TRUST_PROXY', '1');
+    try {
+      const req = makeRequest({ 'x-real-ip': '198.51.100.7' });
+      expect(getClientIP(req)).toBe('198.51.100.7');
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  it('ignores x-forwarded-for without TRUST_PROXY even with x-real-ip present', () => {
+    const req = makeRequest({
+      'x-forwarded-for': '1.2.3.4',
+      'x-real-ip': '203.0.113.9',
     });
     expect(getClientIP(req)).toBe('unknown');
   });

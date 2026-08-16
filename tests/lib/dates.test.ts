@@ -8,9 +8,10 @@ describe('formatDateShort', () => {
     expect(result).toMatch(/^\d{2}\/\d{2}\/\d{4}$/);
   });
 
-  it('handles different valid dates', () => {
-    expect(formatDateShort('2024-01-01')).toMatch(/^\d{2}\/\d{2}\/\d{4}$/);
-    expect(formatDateShort('2026-12-31')).toMatch(/^\d{2}\/\d{2}\/\d{4}$/);
+  it('formats deterministically in UTC regardless of runtime timezone', () => {
+    expect(formatDateShort('2025-03-15')).toBe('03/15/2025');
+    expect(formatDateShort('2024-01-01')).toBe('01/01/2024');
+    expect(formatDateShort('2026-12-31')).toBe('12/31/2026');
   });
 });
 
@@ -21,8 +22,8 @@ describe('formatDateLong', () => {
     expect(result).toMatch(/^[A-Z][a-z]+ \d+, \d{4}$/);
   });
 
-  it('includes full month name', () => {
-    const result = formatDateLong('2025-06-01');
-    expect(result).toContain('June');
+  it('formats deterministically in UTC regardless of runtime timezone', () => {
+    expect(formatDateLong('2025-03-15')).toBe('March 15, 2025');
+    expect(formatDateLong('2025-06-01')).toBe('June 1, 2025');
   });
 });

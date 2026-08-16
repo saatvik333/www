@@ -4,6 +4,9 @@ import { escapeXml } from '@/lib/xml-utils';
 
 const SITE_URL = SITE_CONFIG.url;
 
+// Content only changes on rebuild; no need to re-run fs reads per request
+export const dynamic = 'force-static';
+
 export async function GET() {
   const blogs = getAllBlogs();
 

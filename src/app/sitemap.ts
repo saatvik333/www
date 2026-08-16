@@ -14,7 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const dates = [
     ...blogs.map(b => new Date(b.date).getTime()),
     ...projects.map(p => (p.date ? new Date(p.date).getTime() : 0)),
-  ];
+  ].filter(t => !Number.isNaN(t)); // one invalid frontmatter date must not zero every timestamp
   const maxDate = Math.max(...dates, 0);
   const lastModified = maxDate > 0 ? new Date(maxDate) : new Date('2025-01-01');
 

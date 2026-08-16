@@ -1,9 +1,13 @@
 import type { Metadata } from 'next';
-import { ibmPlexMono } from '@/lib/fonts';
+import { jetbrainsMono } from '@/lib/fonts';
 import { SITE_CONFIG, SOCIAL_PROFILES, COLORS } from '@/lib/config';
 import { ClientLayout } from '@/components/layout/ClientLayout';
 import './globals.css';
 import './highlight.css';
+
+// Token-driven fallback OG image (robots.ts disallows /api/, but social
+// crawlers fetch og:image URLs directly and are unaffected)
+const FALLBACK_OG_IMAGE = `/api/og?title=${encodeURIComponent('Saatvik Sharma')}&description=${encodeURIComponent('I build software')}`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_CONFIG.url),
@@ -35,7 +39,7 @@ export const metadata: Metadata = {
     description: SITE_CONFIG.description,
     images: [
       {
-        url: '/og.png', // Fallback to a static generic OG image if no specific one
+        url: FALLBACK_OG_IMAGE,
         width: 1200,
         height: 630,
         alt: SITE_CONFIG.name,
@@ -47,7 +51,7 @@ export const metadata: Metadata = {
     title: SITE_CONFIG.name,
     description: SITE_CONFIG.description,
     creator: '@saatvik333',
-    images: ['/og.png'],
+    images: [FALLBACK_OG_IMAGE],
   },
   robots: {
     index: true,
@@ -60,15 +64,17 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  alternates: {
-    canonical: '/',
-  },
 
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
     title: SITE_CONFIG.name,
     // startUpImage: [], // valid startup images would go here if available
+  },
+
+  icons: {
+    icon: [{ url: '/icon.svg', type: 'image/svg+xml' }],
+    apple: [{ url: '/apple-icon' }],
   },
 };
 
@@ -78,7 +84,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={ibmPlexMono.variable}>
+    <html lang="en" className={jetbrainsMono.variable}>
       <head>
         {/* JSON-LD Structured Data */}
         <script
@@ -106,21 +112,15 @@ export default function RootLayout({
                   alternateName: 'saatvik333',
                   url: SITE_CONFIG.url,
                   email: SITE_CONFIG.email,
-                  image: `${SITE_CONFIG.url}/og.png`,
                   sameAs: SOCIAL_PROFILES,
                   jobTitle: 'Software Engineer',
                   description: 'Saatvik Sharma is a software engineer focused on building clean, scalable, and reliable applications. Works across the full stack with TypeScript, Go, and Rust.',
+                  image: `${SITE_CONFIG.url}${FALLBACK_OG_IMAGE}`,
                 },
               ],
             }),
           }}
         />
-
-        {/* DNS Prefetch for faster external resource loading */}
-        <link rel="dns-prefetch" href="https://api.github.com" />
-
-        {/* Preconnect for critical external domains */}
-        <link rel="preconnect" href="https://api.github.com" crossOrigin="anonymous" />
 
         {/* RSS Feed */}
         <link rel="alternate" type="application/rss+xml" title="Saatvik Sharma's Blog" href="/feed" />

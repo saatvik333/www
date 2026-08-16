@@ -7,6 +7,11 @@ import { FaXTwitter } from 'react-icons/fa6';
 import styles from './page.module.css';
 
 import { GitHubCalendar } from '@/components/ui/GitHubCalendar';
+import { getContributions } from '@/lib/github';
+
+// Contributions come from an uncached POST fetch; revalidate the whole page
+// instead of hitting the GitHub GraphQL API on every request
+export const revalidate = 21600; // 6 hours
 
 export const metadata: Metadata = {
   title: 'About',
@@ -64,7 +69,12 @@ const profilePageJsonLd = {
   },
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  // Memoized by React cache(); also fetched inside GitHubCalendar. When the
+  // token is missing this is null and the whole section (heading included)
+  // stays out of the page.
+  const contributions = await getContributions('saatvik333');
+
   return (
     <>
       <script
@@ -119,10 +129,12 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div className={styles.section}>
-            <h2 className={styles.sectionTitle}>github contributions</h2>
-            <GitHubCalendar username="saatvik333" />
-          </div>
+          {contributions && (
+            <div className={styles.section}>
+              <h2 className={styles.sectionTitle}>github contributions</h2>
+              <GitHubCalendar username="saatvik333" />
+            </div>
+          )}
 
           <div className={styles.section}>
             <h2 className={styles.sectionTitle}>colophon</h2>
@@ -144,7 +156,7 @@ export default function AboutPage() {
               <p className={styles.colophonRow}>
                 <span className={styles.colophonLabel}>fonts</span>
                 <span className={styles.colophonArrowSmall}>→</span>
-                <span className={styles.colophonValue}>ibm plex mono / sf mono</span>
+                <span className={styles.colophonValue}>jetbrains mono / bblack</span>
               </p>
               <div className={styles.colorPalette}>
                 <span

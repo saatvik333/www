@@ -67,7 +67,7 @@ function generateEmailHTML(name: string, email: string, message: string, timesta
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>New Message</title>
 </head>
-<body style="margin: 0; padding: 24px; background-color: ${COLORS.bg}; font-family: 'IBM Plex Mono', 'SF Mono', 'Fira Code', 'Consolas', monospace; font-size: 14px; line-height: 1.7; color: ${COLORS.textMuted};">
+<body style="margin: 0; padding: 24px; background-color: ${COLORS.bg}; font-family: 'JetBrains Mono', 'IBM Plex Mono', 'SF Mono', 'Consolas', monospace; font-size: 14px; line-height: 1.7; color: ${COLORS.textMuted};">
   <div style="max-width: 560px; margin: 0 auto;">
     
     <!-- Header -->
@@ -96,8 +96,13 @@ function generateEmailHTML(name: string, email: string, message: string, timesta
 }
 
 export async function POST(request: NextRequest) {
-  // Strict Content-Type check: reject non-JSON requests early
-  if (request.headers.get('content-type') !== 'application/json') {
+  // Strict Content-Type check: reject non-JSON requests early (accept
+  // parameters like "; charset=utf-8" that some clients/proxies append)
+  const contentType = request.headers.get('content-type');
+  if (
+    !contentType ||
+    contentType.split(';')[0].trim().toLowerCase() !== 'application/json'
+  ) {
     return NextResponse.json({ error: 'Invalid content type' }, { status: 400 });
   }
 

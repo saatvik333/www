@@ -7,6 +7,7 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }>) {
+  console.error(error);
   return (
     <div style={{ padding: '2rem', textAlign: 'center', fontFamily: 'var(--font-mono)' }}>
       <h2 style={{ color: 'var(--color-text)', marginBottom: '1rem' }}>something went wrong</h2>

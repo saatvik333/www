@@ -21,6 +21,13 @@ export function escapeHtml(text: string): string {
   return text.replace(/[&<>"']/g, (char) => htmlEntities[char]);
 }
 
+// The rightmost x-forwarded-for entry is the one appended by the nearest
+// trusted proxy; leftmost entries can be client-prepended and spoofed.
+function lastForwardedIP(forwarded: string): string {
+  const hops = forwarded.split(',').map((hop) => hop.trim()).filter(Boolean);
+  return hops.length > 0 ? hops[hops.length - 1] : 'unknown';
+}
+
 // Get client IP from request
 // Uses trusted platform headers only when behind a known proxy
 export function getClientIP(request: NextRequest): string {
@@ -30,18 +37,31 @@ export function getClientIP(request: NextRequest): string {
     return cfConnectingIP;
   }
 
-  // Only trust x-forwarded-for/x-real-ip when behind a trusted proxy
-  // Check for x-vercel-id header to verify we're on Vercel
-  const vercelId = request.headers.get('x-vercel-id');
-  if (vercelId) {
+  const forwardedFor = () => {
     const forwarded = request.headers.get('x-forwarded-for');
     if (forwarded) {
-      return forwarded.split(',')[0].trim();
+      return lastForwardedIP(forwarded);
     }
     const realIP = request.headers.get('x-real-ip');
     if (realIP) {
       return realIP;
     }
+    return null;
+  };
+
+  // Only trust x-forwarded-for/x-real-ip when behind a trusted proxy.
+  // x-vercel-id proves we're on Vercel, where the edge sets x-forwarded-for;
+  // x-vercel-forwarded-for is the client-supplied value and must not be used.
+  if (request.headers.get('x-vercel-id')) {
+    const ip = forwardedFor();
+    if (ip) return ip;
+  }
+
+  // Self-hosted behind our own reverse proxy (nginx/Caddy): opt in via
+  // TRUST_PROXY=1 so unproxied deployments don't trust spoofable headers.
+  if (process.env.TRUST_PROXY === '1') {
+    const ip = forwardedFor();
+    if (ip) return ip;
   }
 
   // Fall back to unknown when no trusted proxy is detected
@@ -107,6 +127,10 @@ export interface RateLimiter {
   reset(): void;
 }
 
+// Upper bound on tracked IPs so an attacker rotating identities cannot grow
+// the in-memory store without limit.
+export const RATE_LIMIT_MAX_TRACKED_IPS = 10_000;
+
 // Factory function that creates an in-memory rate limiter with
 // closure-scoped state (not module-scoped) for better testability.
 export function createRateLimiter(options: RateLimiterOptions): RateLimiter {
@@ -117,13 +141,24 @@ export function createRateLimiter(options: RateLimiterOptions): RateLimiter {
       const now = Date.now();
       const record = store.get(ip);
 
-      // Cleanup old entries periodically
-      if (store.size > 1000) {
-        for (const [key, value] of store.entries()) {
-          if (now > value.resetTime) {
-            store.delete(key);
-          }
+      // Drop expired entries on every check so the store cannot accumulate
+      // stale keys while the window is live
+      for (const [key, value] of store.entries()) {
+        if (now > value.resetTime) {
+          store.delete(key);
         }
+      }
+
+      if (!record || now > record.resetTime) {
+        // Evict the oldest entry when at capacity (Map iterates in
+        // insertion order)
+        while (store.size >= RATE_LIMIT_MAX_TRACKED_IPS) {
+          const oldest = store.keys().next().value;
+          if (oldest === undefined) break;
+          store.delete(oldest);
+        }
+        store.set(ip, { count: 1, resetTime: now + options.windowMs });
+        return { allowed: true };
       }
 
       if (!record || now > record.resetTime) {

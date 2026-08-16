@@ -1,8 +1,11 @@
-/* Syntax Highlighting Theme - Accent color only */
+/* Syntax Highlighting Theme - BBlack
+   Grayscale hierarchy only: the accent is reserved for UI, never syntax
+   (BBlack invariant). Diff deletion keeps danger red; addition stays
+   grayscale since green means confirmed success. */
 
 /* Base code styling for highlighted blocks */
 .hljs {
-  color: var(--color-text-muted);
+  color: var(--color-text);
   background: var(--color-bg-secondary);
 }
 
@@ -13,7 +16,7 @@
   font-style: italic;
 }
 
-/* All highlighted tokens use accent color */
+/* Primary tokens - brightest gray */
 .hljs-keyword,
 .hljs-selector-tag,
 .hljs-tag,
@@ -38,14 +41,14 @@
 .hljs-bullet,
 .hljs-link,
 .hljs-attr {
-  color: var(--color-accent);
+  color: var(--color-text);
 }
 
 /* Non-highlighted elements - subtle text colors */
 .hljs-variable,
 .hljs-attribute,
 .hljs-property {
-  color: var(--color-text);
+  color: var(--color-text-muted);
 }
 
 .hljs-meta,
@@ -66,8 +69,8 @@
 }
 
 .hljs-addition {
-  color: var(--color-accent);
-  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+  color: var(--color-text-muted);
+  background: color-mix(in srgb, var(--color-text-muted) 10%, transparent);
 }
 
 /* Emphasis and strong */

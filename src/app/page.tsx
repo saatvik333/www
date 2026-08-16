@@ -4,7 +4,8 @@ import { Logo } from '@/components/ui';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
-  title: 'Saatvik Sharma | I build software',
+  // absolute: the root layout template would otherwise append "| saatvik333"
+  title: { absolute: 'Saatvik Sharma | I build software' },
   description: 'Portfolio of Saatvik Sharma, a software engineer who enjoys linux and solving problems with software',
   alternates: {
     canonical: '/',

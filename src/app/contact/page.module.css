@@ -162,13 +162,13 @@
   }
 }
 
-/* Form feedback messages */
+/* Form feedback messages - BBlack: green = confirmed success, red = error */
 .successMessage {
   padding: var(--space-md);
   margin-bottom: var(--space-md);
-  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
-  border: 2px solid var(--color-accent);
-  color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-success) 15%, transparent);
+  border: 2px solid var(--color-success);
+  color: var(--color-success);
   font-family: var(--font-mono);
   font-size: var(--text-sm);
 }

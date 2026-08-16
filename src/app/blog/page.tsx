@@ -25,12 +25,8 @@ export default function BlogPage() {
     >
       <section className={styles.content}>
         <div className={styles.postList}>
-          {blogPosts.map((post, index) => (
-            <article
-              key={post.slug}
-              className={styles.postCard}
-              style={{ animationDelay: `${index * 0.05}s` }}
-            >
+          {blogPosts.map((post) => (
+            <article key={post.slug} className={styles.postCard}>
               <div className={styles.postContent}>
                 <div className={styles.meta}>
                   <time dateTime={post.date} className={styles.date}>
