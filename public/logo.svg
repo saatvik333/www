@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250">
+  <!-- saatvik333 logo: the site's petal mark, one bud facing down and two
+       out upwards. Vector = resolution-independent; colors synced from
+       ~/.bblack/colors.json -->
+  <g fill="none" stroke="#3584e4" stroke-width="16"
+     stroke-linecap="butt" stroke-linejoin="bevel">
+    <path d="M 35 40 A 35 35 0 1 1 55 100 A 35 35 0 1 1 35 160" transform="translate(85.8 0)"/>
+    <path d="M 35 40 A 35 35 0 1 1 55 100 A 35 35 0 1 1 35 160" transform="rotate(120 125 125) translate(85.8 0)"/>
+    <path d="M 35 40 A 35 35 0 1 1 55 100 A 35 35 0 1 1 35 160" transform="rotate(-120 125 125) translate(85.8 0)"/>
+  </g>
+</svg>
