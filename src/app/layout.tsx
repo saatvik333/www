@@ -75,7 +75,8 @@ export const metadata: Metadata = {
   },
 
   icons: {
-    icon: [{ url: '/icon.svg', type: 'image/svg+xml' }],
+    // ?v=2 cache-busts the immutable 1-year favicon cache when the mark changes
+    icon: [{ url: '/icon.svg?v=2', type: 'image/svg+xml' }],
     apple: [{ url: '/apple-icon' }],
   },
 
