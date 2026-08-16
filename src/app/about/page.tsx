@@ -84,9 +84,16 @@ export default async function AboutPage() {
       <PageLayout title="about">
         <section className={styles.content}>
           <p className={styles.bio}>
-            an ai-forward software engineer focused on building clean, scalable, and reliable
-            applications. works across the full stack, building performant systems and intuitive
-            experiences that solve real problems.
+            i ship software where the problem lives — small teams, real constraints, systems
+            that have to work the first time. comfortable anywhere in the stack: wayland
+            internals and C daemons one week, react frontends and the pipelines that ship
+            them the next. my favorite problems arrive underspecified and leave documented.
+          </p>
+          <p className={styles.bio}>
+            daily driver is linux + wayland + neovim. i maintain things people actually
+            install — an aur package, a vscode marketplace theme, a firefox add-on — and
+            wherever a manual step survives twice, it gets automated. ai is a lever, not a
+            crutch: it reads the logs while i read the room.
           </p>
 
           <div className={styles.section}>
