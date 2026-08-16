@@ -70,12 +70,12 @@ No test framework is configured.
 
 **Key files:**
 
-- `src/lib/config.ts` - Site-wide constants (URLs, social links, colors with `as const`). Colors must stay in sync with `src/app/globals.css` CSS variables.
+- `src/lib/config.ts` - Site-wide constants (URLs, social links, colors with `as const`). Colors follow the **BBlack** design system (~/.bblack/colors.json) and must stay in sync with `src/app/globals.css` CSS variables, `public/manifest.json`, and `public/icon.svg`.
 - `src/lib/content.ts` - All content loading/parsing logic. Exports types: `ProjectMeta`, `Project`, `BlogMeta`, `BlogPost`.
 - `src/lib/github.ts` - GitHub API helpers (contribution calendar, stars).
 - `src/lib/photos.ts` - Photo loading for /pics page.
 - `src/lib/navLinks.ts` - Navigation link definitions.
-- `src/lib/fonts.ts` - Font configuration (IBM Plex Mono).
+- `src/lib/fonts.ts` - Font configuration (JetBrains Mono, the BBlack monospace choice for the web).
 - `src/components/layout/` - ClientLayout, Navbar, Navigation, MobileBottomNav, PageLayout.
 - `src/components/ui/` - Reusable components (ProjectCard, ImageCarousel, GitHubCalendar, etc.).
 
