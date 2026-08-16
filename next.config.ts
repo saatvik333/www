@@ -130,13 +130,38 @@ const nextConfig: NextConfig = {
   productionBrowserSourceMaps: false,
 };
 
+// Precache only code and small assets; photos and optimized images are large
+// and belong in runtime caches instead of the install bundle. (Declared as a
+// variable: the plugin's WorkboxOptions union over-rejects these keys on
+// inline literals.)
+const workboxOptions = {
+  skipWaiting: true,
+  globPatterns: ["**/*.{js,css,svg,woff2,ico}"],
+  runtimeCaching: [
+    {
+      urlPattern: /^https?:\/\/.*\/_next\/image(.*)/,
+      handler: "CacheFirst" as const,
+      options: {
+        cacheName: "next-image",
+        expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 * 30 },
+      },
+    },
+    {
+      urlPattern: /^https?:\/\/.*\/pics\/(.*)/,
+      handler: "CacheFirst" as const,
+      options: {
+        cacheName: "pics",
+        expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 30 },
+      },
+    },
+  ],
+};
+
 const pwaConfig = withPWA({
   dest: "public",
   disable: process.env.NODE_ENV === "development",
   register: true,
-  workboxOptions: {
-    skipWaiting: true,
-  },
+  workboxOptions,
 });
 
 export default pwaConfig(nextConfig);

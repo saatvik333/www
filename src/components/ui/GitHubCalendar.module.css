@@ -61,22 +61,9 @@
 }
 
 .graph {
-  display: flex;
-  gap: 2px; /* Pixel-perfect gap */
-  width: fit-content; /* Natural width allows scroll on mobile */
-  min-width: 100%; /* But fill container when space is available */
-  justify-content: space-between; /* Spread columns evenly across width */
-}
-
-.column {
-  display: flex;
-  flex-direction: column;
-  gap: 2px; /* Pixel-perfect gap */
-}
-
-.cell {
-  width: 10px; /* Always crisp */
-  height: 10px;
+  display: block;
+  direction: ltr;
+  flex: 0 0 auto;
 }
 
 .footer {

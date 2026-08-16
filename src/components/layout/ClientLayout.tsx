@@ -1,7 +1,6 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { LazyMotion, domAnimation, m, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Navbar } from './Navbar';
 import { MobileBottomNav } from './MobileBottomNav';
 import { ReactNode } from 'react';
@@ -13,51 +12,28 @@ interface ClientLayoutProps {
 
 export function ClientLayout({ children }: ClientLayoutProps) {
   const pathname = usePathname();
-  const prefersReduced = useReducedMotion();
 
   // Simple pathname check is sufficient now that layout structure is fixed
   const isHomepage = pathname === '/';
 
   return (
-    <LazyMotion features={domAnimation}>
-      <div className={styles.layoutWrapper}>
-        <header
-          className={`${styles.header} ${isHomepage ? styles.home : ''}`}
-          inert={isHomepage ? true : undefined}
-        >
-          <Navbar />
-        </header>
+    <div className={styles.layoutWrapper}>
+      <header
+        className={`${styles.header} ${isHomepage ? styles.home : ''}`}
+        inert={isHomepage ? true : undefined}
+      >
+        <Navbar />
+      </header>
 
-        <div className={styles.container}>
-          <AnimatePresence initial={false} mode="wait">
-            <m.div
-              key={pathname}
-              className={styles.transition}
-              initial={{ opacity: 0 }}
-              animate={{
-                opacity: 1,
-                transition: {
-                  duration: prefersReduced ? 0 : 0.6,
-                  ease: [0.22, 1, 0.36, 1]
-                }
-              }}
-              exit={{
-                opacity: 0,
-                transition: {
-                  duration: 0
-                }
-              }}
-            >
-              {children}
-            </m.div>
-          </AnimatePresence>
+      <div className={styles.container}>
+        {/* key={pathname} remounts on navigation so the CSS fade-in replays */}
+        <div key={pathname} className={`${styles.transition} ${styles.pageEnter}`}>
+          {children}
         </div>
-
-        {/* Mobile bottom navigation - hidden on homepage */}
-        <AnimatePresence>
-          {!isHomepage && <MobileBottomNav key="mobile-nav" />}
-        </AnimatePresence>
       </div>
-    </LazyMotion>
+
+      {/* Mobile bottom navigation - hidden on homepage */}
+      {!isHomepage && <MobileBottomNav key="mobile-nav" />}
+    </div>
   );
 }

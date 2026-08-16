@@ -37,6 +37,23 @@
 @media (max-width: 48rem) {
   .bottomNav {
     display: flex;
+    /* Slide-up on mount (replaces framer-motion) */
+    animation: navEnter 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+@keyframes navEnter {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bottomNav {
+    animation: none;
   }
 }
 

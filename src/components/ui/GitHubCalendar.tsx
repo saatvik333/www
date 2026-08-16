@@ -5,6 +5,12 @@ interface GitHubCalendarProps {
   username: string;
 }
 
+// Cell geometry in SVG units; the graph is one inline SVG (one rect per day)
+// instead of hundreds of DOM nodes, which keeps the /about HTML small
+const CELL = 10;
+const GAP = 2;
+const STEP = CELL + GAP;
+
 export async function GitHubCalendar({ username }: GitHubCalendarProps) {
   const data = await getContributions(username);
 
@@ -26,25 +32,36 @@ export async function GitHubCalendar({ username }: GitHubCalendarProps) {
     }
   };
 
+  const width = weeks.length * STEP - GAP;
+  const height = 7 * STEP - GAP;
+
   return (
     <div className={styles.calendarWrapper}>
       <div className={styles.graphContainer}>
-        <div className={styles.graph}>
-          {weeks.map((week, wIndex) => (
-            <div key={wIndex} className={styles.column}>
-              {week.contributionDays.map((day, dIndex) => (
-                <div
-                  key={`${wIndex}-${dIndex}`}
-                  className={styles.cell}
-                  style={{ backgroundColor: getThemeColor(day.contributionLevel) }}
-                  title={`${day.contributionCount} on ${day.date}`}
-                  role="img"
-                  aria-label={`${day.contributionCount} contributions on ${day.date}`}
-                />
-              ))}
-            </div>
-          ))}
-        </div>
+        <svg
+          className={styles.graph}
+          viewBox={`0 0 ${width} ${height}`}
+          width={width}
+          height={height}
+          shapeRendering="crispEdges"
+          role="img"
+          aria-label={`${totalContributions} contributions in the last year`}
+        >
+          {weeks.map((week, wIndex) =>
+            week.contributionDays.map((day, dIndex) => (
+              <rect
+                key={`${wIndex}-${dIndex}`}
+                x={wIndex * STEP}
+                y={dIndex * STEP}
+                width={CELL}
+                height={CELL}
+                fill={getThemeColor(day.contributionLevel)}
+              >
+                <title>{`${day.contributionCount} contributions on ${day.date}`}</title>
+              </rect>
+            ))
+          )}
+        </svg>
       </div>
 
       <div className={styles.footer}>
