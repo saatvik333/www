@@ -19,6 +19,8 @@ export const metadata: Metadata = {
   keywords: [
     'Saatvik Sharma',
     'saatvik333',
+    'forward deployed engineer',
+    'forward-deployed engineer',
     'software engineer',
     'linux',
     'full-stack developer',
@@ -76,6 +78,13 @@ export const metadata: Metadata = {
     icon: [{ url: '/icon.svg', type: 'image/svg+xml' }],
     apple: [{ url: '/apple-icon' }],
   },
+
+  // Machine-readable feed discovery for crawlers/readers
+  alternates: {
+    types: {
+      'application/rss+xml': '/feed',
+    },
+  },
 };
 
 export default function RootLayout({
@@ -113,8 +122,23 @@ export default function RootLayout({
                   url: SITE_CONFIG.url,
                   email: SITE_CONFIG.email,
                   sameAs: SOCIAL_PROFILES,
-                  jobTitle: 'Software Engineer',
-                  description: 'Saatvik Sharma is a software engineer focused on building clean, scalable, and reliable applications. Works across the full stack with TypeScript, Go, and Rust.',
+                  jobTitle: 'Forward Deployed Engineer',
+                  description:
+                    'Saatvik Sharma is a forward deployed engineer who builds and ships software in the field — full-stack systems, Linux tooling, and automation that solve real problems.',
+                  knowsAbout: [
+                    'TypeScript',
+                    'Go',
+                    'Rust',
+                    'C',
+                    'Linux',
+                    'Wayland',
+                    'Next.js',
+                    'Node.js',
+                    'Docker',
+                    'CI/CD',
+                    'Neovim',
+                    'automation',
+                  ],
                   image: `${SITE_CONFIG.url}${FALLBACK_OG_IMAGE}`,
                 },
               ],

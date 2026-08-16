@@ -5,8 +5,9 @@ import styles from './page.module.css';
 
 export const metadata: Metadata = {
   // absolute: the root layout template would otherwise append "| saatvik333"
-  title: { absolute: 'Saatvik Sharma | I build software' },
-  description: 'Portfolio of Saatvik Sharma, a software engineer who enjoys linux and solving problems with software',
+  title: { absolute: 'Saatvik Sharma | Forward Deployed Engineer' },
+  description:
+    'Forward deployed engineer building and shipping software in the field — full-stack systems, Linux tooling, and automation that solve real problems.',
   alternates: {
     canonical: '/',
   },

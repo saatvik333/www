@@ -16,16 +16,16 @@ export const revalidate = 21600; // 6 hours
 export const metadata: Metadata = {
   title: 'About',
   description:
-    'Learn more about Saatvik Sharma, a full-stack developer passionate about open source, design mechanics, and high-performance web apps.',
+    'About Saatvik Sharma — forward deployed engineer working across the full stack with TypeScript, Go, Rust, and Linux. Open source, Wayland tooling, and automation.',
   openGraph: {
     type: 'profile',
     firstName: 'Saatvik',
     lastName: 'Sharma',
     username: 'saatvik333',
     url: `${SITE_CONFIG.url}/about`,
-    title: 'About Saatvik Sharma',
+    title: 'About Saatvik Sharma, Forward Deployed Engineer',
     description:
-      'Learn more about Saatvik Sharma, a full-stack developer passionate about open source, design mechanics, and high-performance web apps.',
+      'Forward deployed engineer working across the full stack with TypeScript, Go, Rust, and Linux. Open source, Wayland tooling, and automation.',
     images: [
       {
         url: `/api/og?title=${encodeURIComponent('Saatvik Sharma')}&description=${encodeURIComponent('Software Engineer')}`,
@@ -63,7 +63,7 @@ const profilePageJsonLd = {
     '@type': 'Person',
     '@id': `${SITE_CONFIG.url}/#person`,
     name: 'Saatvik Sharma',
-    jobTitle: 'Software Engineer',
+    jobTitle: 'Forward Deployed Engineer',
     url: SITE_CONFIG.url,
     sameAs: [...SOCIAL_PROFILES],
   },

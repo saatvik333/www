@@ -41,6 +41,7 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
   return {
     title: project.title,
     description: project.description,
+    keywords: [...(project.tags ?? []), ...(project.stack ?? [])],
     openGraph: {
       title: project.title,
       description: project.description,

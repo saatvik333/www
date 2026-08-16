@@ -5,7 +5,8 @@ export const SITE_CONFIG = {
   name: 'saatvik333',
   url: 'https://saatvik.me',
   email: 'saatvik333sharma@gmail.com',
-  description: 'Portfolio of Saatvik Sharma, a software engineer who enjoys linux and solving problems with software.',
+  description:
+    'Saatvik Sharma — forward deployed engineer building and shipping software in the field: full-stack systems, Linux, and automation that solve real problems.',
 } as const;
 
 export const SOCIAL_LINKS = {
