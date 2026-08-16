@@ -25,9 +25,11 @@ const nextConfig: NextConfig = {
     const isDev = process.env.NODE_ENV === 'development';
     // React dev mode needs 'unsafe-eval' for HMR, fast refresh, and callstack reconstruction.
     // In production, it is omitted for stronger XSS defense.
+    // Cloudflare injects its Web Analytics beacon in front of the origin;
+    // allow it and its rum endpoint or the browser blocks the script/POSTs.
     const scriptSrc = isDev
       ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
-      : "script-src 'self' 'unsafe-inline'";
+      : "script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com";
 
     return [
       // HTML pages - enable bfcache with private caching
@@ -63,11 +65,11 @@ const nextConfig: NextConfig = {
               scriptSrc,
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob:",
-              // connect-src needs ws: in dev for HMR websocket
-              // (all GitHub API calls are server-side, so no api.github.com origin)
+              // connect-src needs ws: in dev for HMR websocket; the
+              // cloudflareinsights beacon POSTs its metrics
               isDev
                 ? "connect-src 'self' ws: wss:"
-                : "connect-src 'self'",
+                : "connect-src 'self' https://cloudflareinsights.com",
               "font-src 'self'",
               "frame-ancestors 'self'",
               "base-uri 'self'",
