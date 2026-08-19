@@ -99,6 +99,14 @@
   border-color: var(--color-text-muted);
 }
 
+.input:focus-visible,
+.textarea:focus-visible,
+.submitButton:focus-visible,
+.copyButton:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
 .input::placeholder,
 .textarea::placeholder {
   color: var(--color-text-muted);

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { PageLayout } from '@/components/layout';
-import { ProjectCard } from '@/components/ui';
+import { ProjectCard } from '@/components/ui/ProjectCard';
 import { getAllProjects } from '@/lib/content';
 import styles from './page.module.css';
 
@@ -26,6 +26,7 @@ export default function ProjectsPage() {
               title={project.title}
               description={project.description}
               thumbnail={project.thumbnail}
+              tags={project.tags}
               index={index}
             />
           ))}

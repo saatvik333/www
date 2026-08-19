@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
 import { GoArrowLeft } from 'react-icons/go';
 import { PageLayout } from '@/components/layout';
-import { ArrowLink } from '@/components/ui';
+import { ArrowLink } from '@/components/ui/ArrowLink';
 import { GitHubStars } from '@/components/ui/GitHubStars';
 import { cache } from 'react';
 import { getProject, getProjectSlugs } from '@/lib/content';

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Logo } from '@/components/ui';
+import { Logo } from '@/components/ui/Logo';
 import { isLinkActive, navLinks } from '@/lib/navLinks';
 import styles from './MobileBottomNav.module.css';
 

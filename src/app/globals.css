@@ -16,7 +16,9 @@
   --color-text-bright: #ffffff;
   --color-accent: #3584e4; /* colors.accent */
   --color-accent-hover: color-mix(in oklch, var(--color-accent) 75%, white);
+  --color-accent-soft: color-mix(in srgb, var(--color-accent) 14%, transparent);
   --color-border: #2f2f2f; /* colors.border */
+  --color-border-strong: #4a4a4a;
   --color-error: #ef4444; /* colors.danger */
   --color-success: #22c55e; /* colors.success */
   --color-focus: #8e8e8e; /* colors.focus */
@@ -96,10 +98,12 @@
 }
 
 html {
+  color-scheme: dark;
   font-size: 16px;
   /* Smooth scroll handled by JS where needed - avoiding conflicts with animated transitions */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   min-height: 100%;
 }
 
@@ -111,6 +115,13 @@ body {
   background-color: var(--color-bg);
   min-height: 100%;
   overflow-y: auto;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
 }
 
 /* ========================================

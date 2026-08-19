@@ -71,7 +71,7 @@ function generateEmailHTML(name: string, email: string, message: string, timesta
   <div style="max-width: 560px; margin: 0 auto;">
     
     <!-- Header -->
-    <div style="margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid ${COLORS.border};">
+    <div style="margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid ${COLORS.border};">
       <h1 style="margin: 0 0 4px 0; font-size: 20px; font-weight: 600; color: ${COLORS.text};">${name}</h1>
       <p style="margin: 0; font-size: 13px; color: ${COLORS.textDim};">${email !== 'Not provided' ? `<a href="mailto:${email}" style="color: ${COLORS.accent}; text-decoration: none;">${email}</a>` : '<span style="color: ' + COLORS.textDim + ';">no email provided</span>'}</p>
     </div>
@@ -82,7 +82,7 @@ function generateEmailHTML(name: string, email: string, message: string, timesta
     </div>
     
     <!-- Footer -->
-    <div style="padding-top: 16px; border-top: 1px solid ${COLORS.border}; font-size: 12px; color: ${COLORS.textDim};">
+    <div style="padding-top: 16px; border-top: 2px solid ${COLORS.border}; font-size: 12px; color: ${COLORS.textDim};">
       <span>${timestamp}</span>
       <span style="margin: 0 8px;">·</span>
       <span>saatvik.me/contact</span>

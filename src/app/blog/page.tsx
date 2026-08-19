@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { PageLayout } from '@/components/layout';
-import { ArrowLink } from '@/components/ui';
+import { ArrowLink } from '@/components/ui/ArrowLink';
 import { getAllBlogs } from '@/lib/content';
 import { formatDateShort } from '@/lib/dates';
 import { TbPinFilled } from 'react-icons/tb';

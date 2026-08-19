@@ -1,5 +1,7 @@
 /* Shared typography for markdown content */
 .prose {
+  max-width: 72ch;
+  margin-inline: auto;
   color: var(--color-text-muted);
   font-size: var(--text-base);
   line-height: 1.8;
@@ -87,7 +89,7 @@
 
 .prose hr {
   border: none;
-  border-top: 1px solid var(--color-border);
+  border-top: 2px solid var(--color-border);
   margin: var(--space-xl) 0;
 }
 
@@ -102,7 +104,7 @@
 .prose td {
   padding: var(--space-sm) var(--space-md);
   text-align: left;
-  border: 1px solid var(--color-border);
+  border: 2px solid var(--color-border);
 }
 
 .prose th {
@@ -118,7 +120,7 @@
   height: auto;
   display: block;
   margin: var(--space-lg) auto;
-  border: 1px solid var(--color-border);
+  border: 2px solid var(--color-border);
   border-radius: var(--border-radius);
 }
 

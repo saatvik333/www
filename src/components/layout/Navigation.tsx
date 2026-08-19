@@ -17,18 +17,21 @@ export function Navigation({ horizontal = false }: NavigationProps) {
   return (
     <nav className={`${styles.nav} ${horizontal ? styles.horizontal : ''}`} aria-label="Main navigation">
       <ul className={`${styles.navList} ${horizontal ? styles.horizontalList : ''}`}>
-        {navLinks.map((link) => (
+        {navLinks.map((link) => {
+          const isActive = isLinkActive(pathname, link.href);
+          return (
           <li key={link.href}>
             <Link
               href={link.href}
-              className={`${styles.navLink} ${linkStyles.navLink} ${isLinkActive(pathname, link.href) ? linkStyles.active : ''
-                }`}
+              className={`${styles.navLink} ${linkStyles.navLink} ${isActive ? linkStyles.active : ''}`}
+              aria-current={isActive ? 'page' : undefined}
             >
               <NavSymbol />
               {link.label}
             </Link>
           </li>
-        ))}
+          );
+        })}
       </ul>
     </nav>
   );

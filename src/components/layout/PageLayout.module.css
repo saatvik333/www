@@ -40,9 +40,10 @@
   color: var(--color-text-muted);
 }
 
-/* Mobile: extra bottom padding to avoid navigation bar */
+/* Mobile: reserve only the space not already supplied by ClientLayout's
+   fixed bottom navigation padding. */
 @media (max-width: 48rem) {
   .main {
-    padding-bottom: 6rem;
+    padding-bottom: var(--space-xl);
   }
 }

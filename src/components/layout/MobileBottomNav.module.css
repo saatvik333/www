@@ -10,7 +10,7 @@
 
   /* tmux-style appearance */
   background-color: var(--color-bg);
-  border-top: 1px solid var(--color-border);
+  border-top: 2px solid var(--color-border);
 
   /* Layout - compact padding to fit all items */
   align-items: center;
@@ -130,7 +130,7 @@
 
 .navLink:focus-visible {
   color: var(--color-text);
-  outline: 1px solid var(--color-accent);
+  outline: 2px solid var(--color-accent);
   outline-offset: 1px;
 }
 

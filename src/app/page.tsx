@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Navigation } from '@/components/layout';
-import { Logo } from '@/components/ui';
+import { Logo } from '@/components/ui/Logo';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
@@ -19,7 +19,7 @@ export default function HomePage() {
       <div className={styles.container}>
         <div className={styles.hero}>
           <div className={styles.headerWrapper}>
-            <h1 className={styles.title} style={{ marginBottom: 0 }}>Saatvik Sharma</h1>
+            <h1 className={styles.title}>Saatvik Sharma</h1>
             <Logo />
           </div>
           <p className={styles.greeting}>
