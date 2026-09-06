@@ -75,8 +75,8 @@ export const metadata: Metadata = {
   },
 
   icons: {
-    // ?v=3 cache-busts previously cached red favicon variants
-    icon: [{ url: '/icon.svg?v=3', type: 'image/svg+xml' }],
+    // Versioned filename forces a fresh favicon fetch across browser favicon caches
+    icon: [{ url: '/icon-v3.svg', type: 'image/svg+xml' }],
     apple: [{ url: '/apple-icon' }],
   },
 
