@@ -3,17 +3,22 @@
   width: 100vw;
   margin-left: calc(-50vw + 50%);
   height: clamp(17.5rem, 35vw + 6.25rem, 31.25rem);
-  opacity: 0;
-  transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.carousel.ready {
-  opacity: 1;
+.carousel:not(.ready) .navZoneLeft,
+.carousel:not(.ready) .navZoneRight {
+  display: none;
 }
 
 .viewport {
-  overflow: hidden;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
   height: 100%;
+}
+
+.ready .viewport {
+  overflow: hidden;
+  scroll-snap-type: none;
 }
 
 .container {
@@ -29,6 +34,7 @@
   align-items: center;
   justify-content: center;
   margin-right: var(--space-lg);
+  scroll-snap-align: center;
 }
 
 .image {
@@ -36,12 +42,6 @@
   width: auto;
   max-width: clamp(17.5rem, 85vw, 90vw);
   object-fit: contain;
-  opacity: 0;
-  transition: opacity 0.4s ease-out;
-}
-
-.image.imageLoaded {
-  opacity: 1;
 }
 
 /* Navigation Zones */

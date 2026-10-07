@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 import {
   escapeHtml,
@@ -180,15 +180,19 @@ describe('validateOrigin', () => {
 });
 
 describe('getClientIP', () => {
-  it('returns cf-connecting-ip when cf-ray is present', () => {
+  afterEach(() => vi.unstubAllEnvs());
+  it('returns cf-connecting-ip only behind a verified Cloudflare peer', () => {
+    vi.stubEnv('VERCEL', '1');
     const req = makeRequest({
       'cf-connecting-ip': '1.2.3.4',
       'cf-ray': 'abc123',
+      'x-forwarded-for': '104.16.0.1',
     });
     expect(getClientIP(req)).toBe('1.2.3.4');
   });
 
-  it('returns the last x-forwarded-for hop when x-vercel-id is present (leftmost entries are spoofable)', () => {
+  it('returns the last x-forwarded-for hop on a configured Vercel deployment', () => {
+    vi.stubEnv('VERCEL', '1');
     const req = makeRequest({
       'x-forwarded-for': '5.6.7.8, 10.0.0.1',
       'x-vercel-id': 'iad1::12345',
@@ -197,11 +201,29 @@ describe('getClientIP', () => {
   });
 
   it('returns x-real-ip as fallback when on Vercel without x-forwarded-for', () => {
+    vi.stubEnv('VERCEL', '1');
     const req = makeRequest({
       'x-real-ip': '9.9.9.9',
       'x-vercel-id': 'iad1::12345',
     });
     expect(getClientIP(req)).toBe('9.9.9.9');
+  });
+
+  it('ignores forged platform headers outside a configured proxy deployment', () => {
+    vi.stubEnv('VERCEL', '');
+    vi.stubEnv('TRUST_PROXY', '');
+    expect(getClientIP(makeRequest({ 'cf-ray': 'fake', 'cf-connecting-ip': '1.2.3.4', 'x-vercel-id': 'fake', 'x-forwarded-for': '5.6.7.8' }))).toBe('unknown');
+  });
+
+  it('ignores forged Cloudflare headers when the verified peer is not Cloudflare', () => {
+    vi.stubEnv('VERCEL', '1');
+    expect(getClientIP(makeRequest({ 'cf-connecting-ip': '1.2.3.4', 'x-forwarded-for': '203.0.113.9' }))).toBe('203.0.113.9');
+  });
+
+  it('recognizes IPv6 Cloudflare peers and rejects malformed IPs', () => {
+    vi.stubEnv('VERCEL', '1');
+    expect(getClientIP(makeRequest({ 'cf-connecting-ip': '2001:db8::1', 'x-forwarded-for': '2606:4700::1' }))).toBe('2001:db8::1');
+    expect(getClientIP(makeRequest({ 'x-forwarded-for': 'not-an-ip' }))).toBe('unknown');
   });
 
   it('returns unknown when no trusted proxy headers', () => {
@@ -249,5 +271,38 @@ describe('getClientIP', () => {
       'x-real-ip': '203.0.113.9',
     });
     expect(getClientIP(req)).toBe('unknown');
+  });
+});
+
+describe('contact origin and limiter regressions', () => {
+  afterEach(() => { vi.unstubAllEnvs(); vi.useRealTimers(); });
+  it('rejects unexpected subdomains, schemes and ports', () => {
+    for (const origin of ['https://other.saatvik.me', 'http://saatvik.me', 'https://saatvik.me:444', 'null']) {
+      expect(validateOrigin(makeRequest({ origin }))).toBe(false);
+    }
+  });
+  it('does not accept local development origins in production', () => {
+    vi.stubEnv('NODE_ENV', 'production');
+    expect(validateOrigin(makeRequest({ origin: 'http://localhost:3000' }))).toBe(false);
+  });
+  it('allows only the configured custom origin, without implicitly trusting subdomains', () => {
+    vi.stubEnv('ALLOWED_CONTACT_ORIGINS', 'https://preview.example:444');
+    expect(validateOrigin(makeRequest({ origin: 'https://preview.example:444' }))).toBe(true);
+    expect(validateOrigin(makeRequest({ origin: 'https://sub.preview.example:444' }))).toBe(false);
+    expect(validateOrigin(makeRequest({ origin: 'https://preview.example' }))).toBe(false);
+  });
+  it('starts a new window exactly at expiry', () => {
+    vi.useFakeTimers(); vi.setSystemTime(0);
+    const limiter = createRateLimiter({ windowMs: 1000, maxRequests: 1 });
+    expect(limiter.check('first').allowed).toBe(true);
+    expect(limiter.check('first').allowed).toBe(false);
+    vi.advanceTimersByTime(1000);
+    expect(limiter.check('first').allowed).toBe(true);
+  });
+  it('does not let rotating identities evict existing limits', () => {
+    const limiter = createRateLimiter({ windowMs: 60000, maxRequests: 1 });
+    for (let i = 0; i < 10000; i++) expect(limiter.check(String(i)).allowed).toBe(true);
+    expect(limiter.check('overflow').allowed).toBe(false);
+    expect(limiter.check('0').allowed).toBe(false);
   });
 });

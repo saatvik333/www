@@ -13,11 +13,12 @@ export async function GET() {
   // getAllBlogs already filters invalid dates, but extra safety check
   const validBlogs = blogs.filter(blog => !isNaN(new Date(blog.date).getTime()));
 
-  // Blogs are already sorted by date (newest first). Use the most recent
-  // blog date as the feed lastBuildDate to prevent timestamp churn when
-  // content hasn't changed.
+  // Feed chronology is independent of pinned ordering on the listing page.
+  validBlogs.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  const modifiedDates = validBlogs.flatMap(blog => [blog.date, blog.updatedAt])
+    .filter((date): date is string => !!date && !isNaN(new Date(date).getTime()));
   const lastBuildDate =
-    validBlogs.length > 0 ? new Date(validBlogs[0].date) : new Date('2025-01-01');
+    modifiedDates.length > 0 ? new Date(Math.max(...modifiedDates.map(date => new Date(date).getTime()))) : new Date('2025-01-01');
 
   const rssItems = validBlogs
     .map((blog) => {

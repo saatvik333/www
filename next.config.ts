@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import withPWA from "@ducanh2912/next-pwa";
+import { getLocalImagePatterns } from './src/lib/image-patterns';
 
 const nextConfig: NextConfig = {
   // React Compiler for automatic memoization
@@ -11,13 +12,14 @@ const nextConfig: NextConfig = {
   // Experimental features for maximum speed
   experimental: {
     // Optimize package imports - reduce bundle size
-    optimizePackageImports: ['framer-motion', 'react-icons', 'embla-carousel-react'],
+    optimizePackageImports: ['react-icons', 'embla-carousel-react'],
   },
 
   // Image optimization
   images: {
     formats: ['image/avif', 'image/webp'],
-    minimumCacheTTL: 31536000, // 1 year cache
+    minimumCacheTTL: 3600,
+    localPatterns: getLocalImagePatterns(),
   },
 
   // Headers for caching and security
@@ -43,16 +45,9 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-      // Static asset caching
-      {
-        source: '/:all*(svg|jpg|png|webp|avif|woff|woff2|ico)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
+      // Public filenames can change, and missing assets must not be immutable.
+      // Let Next.js set public-file/error caching. Hashed _next assets retain
+      // the framework's immutable cache headers.
       // Security headers for all pages
       {
         source: '/:path*',
@@ -132,28 +127,27 @@ const nextConfig: NextConfig = {
   productionBrowserSourceMaps: false,
 };
 
-// Precache only code and small assets; photos and optimized images are large
-// and belong in runtime caches instead of the install bundle. (Declared as a
-// variable: the plugin's WorkboxOptions union over-rejects these keys on
-// inline literals.)
+// Photos and optimized images belong in runtime caches, not the install bundle.
 const workboxOptions = {
   skipWaiting: true,
-  globPatterns: ["**/*.{js,css,svg,woff2,ico}"],
+  cleanupOutdatedCaches: true,
   runtimeCaching: [
     {
       urlPattern: /^https?:\/\/.*\/_next\/image(.*)/,
-      handler: "CacheFirst" as const,
+      handler: "StaleWhileRevalidate" as const,
       options: {
-        cacheName: "next-image",
-        expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 * 30 },
+        cacheName: "next-image-v2",
+        cacheableResponse: { statuses: [200] },
+        expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 },
       },
     },
     {
       urlPattern: /^https?:\/\/.*\/pics\/(.*)/,
-      handler: "CacheFirst" as const,
+      handler: "StaleWhileRevalidate" as const,
       options: {
-        cacheName: "pics",
-        expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 30 },
+        cacheName: "pics-v2",
+        cacheableResponse: { statuses: [200] },
+        expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 },
       },
     },
   ],
@@ -163,6 +157,7 @@ const pwaConfig = withPWA({
   dest: "public",
   disable: process.env.NODE_ENV === "development",
   register: true,
+  publicExcludes: ['!noprecache/**/*', '!pics/**/*'],
   workboxOptions,
 });
 

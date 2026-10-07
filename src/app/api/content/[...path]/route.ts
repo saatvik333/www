@@ -30,12 +30,13 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ path: string[] }> }
 ) {
+  const errorResponse = (message: string, status: number) => new NextResponse(message, { status, headers: { 'Cache-Control': 'no-store' } });
   const { path: pathSegments } = await params;
 
   // Security: block any path containing hidden segments
   for (const segment of pathSegments) {
     if (segment.startsWith('.') || segment.includes('/.')) {
-      return new NextResponse('Forbidden', { status: 403 });
+      return errorResponse('Forbidden', 403);
     }
   }
 
@@ -49,28 +50,42 @@ export async function GET(
   // This prevents bypasses like requesting `/content-secrets/file.png` which would otherwise
   // satisfy `.startsWith('/content')`
   if (!resolvedPath.startsWith(contentDir + path.sep) && resolvedPath !== contentDir) {
-    return new NextResponse('Forbidden', { status: 403 });
+    return errorResponse('Forbidden', 403);
   }
 
   // Check if file exists and is actually a file, not a directory
+  let stats;
   try {
-    const stats = await stat(resolvedPath);
+    stats = await stat(resolvedPath);
     if (!stats.isFile()) {
-      return new NextResponse('Forbidden (Is a Directory)', { status: 403 });
+      return errorResponse('Forbidden (Is a Directory)', 403);
     }
   } catch {
     // stat() throws if the file does not exist
-    return new NextResponse('Not Found', { status: 404 });
+    return errorResponse('Not Found', 404);
   }
 
   // Security: only allow explicit asset extensions
   const ext = path.extname(resolvedPath).toLowerCase();
   if (!ALLOWED_EXTENSIONS.has(ext)) {
-    return new NextResponse('Forbidden', { status: 403 });
+    return errorResponse('Forbidden', 403);
   }
 
   // Read file
-  const fileBuffer = await readFile(resolvedPath);
+  // A weak stat-derived validator avoids reading/sending the file on repeat requests.
+  const etag = `W/"${stats.size}-${stats.mtimeMs}"`;
+  const cacheControl = process.env.NODE_ENV === 'development'
+    ? 'no-cache, no-store, must-revalidate'
+    : 'public, max-age=0, must-revalidate';
+  if (request.headers.get('if-none-match')?.split(',').map(value => value.trim()).includes(etag)) {
+    return new NextResponse(null, { status: 304, headers: { ETag: etag, 'Cache-Control': cacheControl } });
+  }
+  let fileBuffer;
+  try {
+    fileBuffer = await readFile(resolvedPath);
+  } catch {
+    return errorResponse('Not Found', 404);
+  }
 
   // Determine content type
   const contentTypes: Record<string, string> = {
@@ -86,14 +101,10 @@ export async function GET(
   const contentType = contentTypes[ext] || 'application/octet-stream';
 
   // Use no-cache in development for hot-reload to work
-  const isDev = process.env.NODE_ENV === 'development';
-  const cacheControl = isDev
-    ? 'no-cache, no-store, must-revalidate'
-    : 'public, max-age=31536000, immutable';
-
   const headers: Record<string, string> = {
     'Content-Type': contentType,
     'Cache-Control': cacheControl,
+    'ETag': etag,
   };
 
   // SVGs can contain executable scripts -- serve with restrictive CSP

@@ -8,6 +8,7 @@ import remarkRehype from 'remark-rehype';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeSanitize, { defaultSchema, type Options } from 'rehype-sanitize';
 import rehypeStringify from 'rehype-stringify';
+import { getImageCollectionVersion } from './asset-version';
 
 /**
  * Content system for blogs and projects.
@@ -118,7 +119,7 @@ function getProjectImages(slug: string): string[] {
     .sort()
     // /content/ rewrite instead of /api/content/ — robots.ts disallows /api/,
     // which would hide these images from crawlers that fetch metadata images
-    .map((file) => `/content/projects/${slug}/images/${file}`);
+    .map((file) => `/content/projects/${slug}/images/${file}?v=${getImageCollectionVersion(contentDirectory)}`);
 }
 
 // Check if project has a thumbnail (from content/projects/[slug]/)
@@ -130,7 +131,7 @@ function getProjectThumbnail(slug: string): string | undefined {
     const thumbnailPath = path.join(projectDir, `thumbnail.${ext}`);
     if (fs.existsSync(thumbnailPath)) {
       // Crawlable /content/ rewrite (see getProjectImages)
-      return `/content/projects/${slug}/thumbnail.${ext}`;
+      return `/content/projects/${slug}/thumbnail.${ext}?v=${getImageCollectionVersion(contentDirectory)}`;
     }
   }
   return undefined;

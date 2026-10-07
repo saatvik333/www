@@ -5,27 +5,25 @@ import {
   escapeHtml,
   getClientIP,
   validateOrigin,
-  createRateLimiter,
-  RATE_LIMIT_WINDOW_MS,
-  RATE_LIMIT_MAX_REQUESTS,
   MAX_NAME_LENGTH,
   MAX_EMAIL_LENGTH,
   MAX_MESSAGE_LENGTH,
 } from '@/lib/contact-utils';
+import { BodyTooLargeError, readContactBody } from '@/lib/contact-body';
+import { checkContactRateLimit } from '@/lib/contact-rate-limit';
 
 /**
  * Contact form handler with multi-layer anti-abuse:
  *
  * 1. Strict Content-Type check (rejects non-JSON)
- * 2. Rate limiting (3 requests per 5 minutes per IP)
- *    Note: in-memory store is best-effort -- resets on serverless cold start
- * 3. Origin validation (requires Origin or Referer from allowed domains)
+ * 2. Exact Origin validation (Referer fallback only when Origin is absent)
+ * 3. Rate limiting (3 requests per 5 minutes per verified IP; shared on Vercel)
  * 4. Honeypot field (silently rejects bot submissions)
- * 5. Runtime input validation with length caps and type checks
+ * 5. Bounded JSON body and normalized input validation with length caps
  * 6. HTML escaping for email output
  *
  * Nodemailer transport is lazily initialized at module scope to reuse
- * connection pools across requests.
+ * transport configuration across requests.
  */
 
 let _transporter: nodemailer.Transporter | null = null;
@@ -48,12 +46,6 @@ interface ContactFormData {
   message: string;
   website?: string; // Honeypot field
 }
-
-// Module-scoped rate limiter instance
-const rateLimiter = createRateLimiter({
-  windowMs: RATE_LIMIT_WINDOW_MS,
-  maxRequests: RATE_LIMIT_MAX_REQUESTS,
-});
 
 // Generate clean HTML email matching site's markdown aesthetic
 function generateEmailHTML(name: string, email: string, message: string, timestamp: string, ip: string): string {
@@ -114,29 +106,21 @@ export async function POST(request: NextRequest) {
     clientIP = 'unknown';
   }
 
-  // Check rate limit
-  const rateLimit = rateLimiter.check(clientIP);
+  // Reject untrusted origins before spending the sender's rate-limit budget.
+  if (!validateOrigin(request)) {
+    return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 });
+  }
+  let rateLimit;
+  try {
+    rateLimit = await checkContactRateLimit(request, clientIP);
+  } catch {
+    console.error('Contact rate-limit service unavailable');
+    return NextResponse.json({ error: 'Message service temporarily unavailable. Please try again later.' }, { status: 503, headers: { 'Retry-After': '60' } });
+  }
   if (!rateLimit.allowed) {
     return NextResponse.json(
       { error: `Too many requests. Please try again in ${rateLimit.retryAfter} seconds.` },
-      { status: 429 }
-    );
-  }
-
-  // Validate origin
-  if (!validateOrigin(request)) {
-    return NextResponse.json(
-      { error: 'Invalid request origin' },
-      { status: 403 }
-    );
-  }
-
-  const transporter = getTransporter();
-  if (!transporter) {
-    console.error('SMTP_EMAIL or SMTP_PASSWORD environment variables are not set');
-    return NextResponse.json(
-      { error: 'Email service is not configured' },
-      { status: 500 }
+      { status: 429, headers: { 'Retry-After': String(rateLimit.retryAfter) } }
     );
   }
 
@@ -144,8 +128,11 @@ export async function POST(request: NextRequest) {
   // This ensures malformed JSON returns 400, not 500
   let body: Record<string, unknown>;
   try {
-    body = await request.json();
-  } catch {
+    body = await readContactBody(request) as Record<string, unknown>;
+  } catch (error) {
+    if (error instanceof BodyTooLargeError) {
+      return NextResponse.json({ error: 'Request body is too large' }, { status: 413 });
+    }
     return NextResponse.json(
       { error: 'Invalid JSON in request body' },
       { status: 400 }
@@ -153,7 +140,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Validate body structure and field types at runtime
-  if (!body || typeof body !== 'object') {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
     return NextResponse.json(
       { error: 'Invalid request format' },
       { status: 400 }
@@ -174,9 +161,9 @@ export async function POST(request: NextRequest) {
   }
 
   const safeBody: ContactFormData = {
-    name: body.name as string,
-    message: body.message as string,
-    ...(body.email !== undefined && { email: body.email as string }),
+    name: (body.name as string | undefined)?.trim() ?? '',
+    message: (body.message as string | undefined)?.trim() ?? '',
+    ...(body.email !== undefined && { email: (body.email as string).trim() }),
     ...(body.website !== undefined && { website: body.website as string }),
   };
 
@@ -254,6 +241,11 @@ export async function POST(request: NextRequest) {
   };
 
   // Send email - wrap in try-catch to distinguish SMTP errors from other failures
+  const transporter = getTransporter();
+  if (!transporter) {
+    console.error('SMTP_EMAIL or SMTP_PASSWORD environment variables are not set');
+    return NextResponse.json({ error: 'Email service is not configured' }, { status: 500 });
+  }
   try {
     await transporter.sendMail(mailOptions);
   } catch (error) {

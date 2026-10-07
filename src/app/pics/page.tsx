@@ -1,13 +1,8 @@
 import type { Metadata } from 'next';
-import dynamic from 'next/dynamic';
 import { PageLayout } from '@/components/layout';
 import { getPhotos } from '@/lib/photos';
+import { PhotoItem } from '@/components/ui/PhotoItem';
 import styles from './page.module.css';
-
-// Dynamic import - defers loading until Pics page is visited
-const PhotoItem = dynamic(
-  () => import('@/components/ui/PhotoItem').then(mod => mod.PhotoItem)
-);
 
 export const metadata: Metadata = {
   title: 'Photography',

@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { imageSizeFromFile } from 'image-size/fromFile';
+import { getImageCollectionVersion } from './asset-version';
 
 export interface Photo {
   id: string;
@@ -8,6 +9,7 @@ export interface Photo {
   alt: string;
   width: number;
   height: number;
+  version: string;
 }
 
 const SUPPORTED_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.avif'];
@@ -28,7 +30,7 @@ export async function getPhotos(): Promise<Photo[]> {
 
   const filteredFiles = files.filter((file) => {
     const ext = path.extname(file).toLowerCase();
-    return SUPPORTED_EXTENSIONS.includes(ext);
+    return SUPPORTED_EXTENSIONS.includes(ext) && fs.statSync(path.join(picsDir, file)).isFile();
   });
 
   const photos = await Promise.all(
@@ -60,6 +62,7 @@ export async function getPhotos(): Promise<Photo[]> {
         alt: alt || file,
         width,
         height,
+        version: getImageCollectionVersion(picsDir),
       };
     })
   );

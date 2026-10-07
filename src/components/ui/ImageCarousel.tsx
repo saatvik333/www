@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import Image from 'next/image';
 import { GoArrowLeft, GoArrowRight } from 'react-icons/go';
 import useEmblaCarousel from 'embla-carousel-react';
@@ -22,12 +21,6 @@ export function ImageCarousel({ images, alt }: ImageCarouselProps) {
   });
 
   const isReady = !!emblaApi;
-  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
-
-  const handleImageLoad = (index: number) => {
-    setLoadedImages(prev => new Set(prev).add(index));
-  };
-
   const scrollPrev = () => {
     if (emblaApi) emblaApi.scrollPrev();
   };
@@ -49,9 +42,9 @@ export function ImageCarousel({ images, alt }: ImageCarouselProps) {
                 alt={`${alt} - image ${index + 1}`}
                 width={1200}
                 height={700}
-                className={`${styles.image} ${loadedImages.has(index) ? styles.imageLoaded : ''}`}
+                className={styles.image}
+                sizes="(max-width: 48rem) 85vw, 90vw"
                 loading={index === 0 ? "eager" : "lazy"}
-                onLoad={() => handleImageLoad(index)}
               />
             </div>
           ))}

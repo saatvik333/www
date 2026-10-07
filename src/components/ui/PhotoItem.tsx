@@ -1,8 +1,4 @@
-'use client';
-
 import Image from 'next/image';
-import { useRef, useState } from 'react';
-import { useIntersectionObserver } from '@/lib/useIntersectionObserver';
 import styles from './PhotoItem.module.css';
 import type { Photo } from '@/lib/photos';
 
@@ -11,45 +7,31 @@ interface PhotoItemProps {
 }
 
 export function PhotoItem({ photo }: PhotoItemProps) {
-    const [isLoaded, setIsLoaded] = useState(false);
-    const ref = useRef<HTMLDivElement>(null);
-
-    // Use shared observer for better performance with many photos
-    const isVisible = useIntersectionObserver(ref);
-
-    const imagePath = `/pics/${photo.src}`;
+    const imagePath = `/pics/${encodeURIComponent(photo.src)}?v=${photo.version}`;
 
     return (
         <div
-            ref={ref}
-            className={`${styles.photoWrapper} ${isVisible ? styles.visible : ''} ${isLoaded ? styles.loaded : ''}`}
+            className={styles.photoWrapper}
             style={{ aspectRatio: `${photo.width} / ${photo.height}` }}
         >
-            {/* Placeholder */}
-            <div className={styles.placeholder} />
-
-            {/* Image - only render when in viewport */}
-            {isVisible && (
-                <a
-                    href={imagePath}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.imageLink}
-                    title="View full resolution"
-                >
-                    <Image
-                        src={imagePath}
-                        alt={photo.alt}
-                        width={photo.width}
-                        height={photo.height}
-                        className={styles.image}
-                        onLoad={() => setIsLoaded(true)}
-                        sizes="(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, 33vw"
-                        loading="lazy"
-                    />
-                </a>
-            )}
+            {/* Native lazy loading works before hydration and without JavaScript. */}
+            <a
+                href={imagePath}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.imageLink}
+                title="View full resolution"
+            >
+                <Image
+                    src={imagePath}
+                    alt={photo.alt}
+                    width={photo.width}
+                    height={photo.height}
+                    className={styles.image}
+                    sizes="(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, 33vw"
+                    loading="lazy"
+                />
+            </a>
         </div>
     );
 }
-

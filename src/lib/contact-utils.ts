@@ -1,13 +1,11 @@
 import type { NextRequest } from 'next/server';
+import { isIP } from 'node:net';
+import { isCloudflareProxy } from './trusted-proxies';
+export { MAX_NAME_LENGTH, MAX_EMAIL_LENGTH, MAX_MESSAGE_LENGTH } from './contact-limits';
 
 // Rate limiting defaults
 export const RATE_LIMIT_WINDOW_MS = 5 * 60 * 1000; // 5 minutes
 export const RATE_LIMIT_MAX_REQUESTS = 3;
-
-// Input length limits
-export const MAX_NAME_LENGTH = 100;
-export const MAX_EMAIL_LENGTH = 254;
-export const MAX_MESSAGE_LENGTH = 5000;
 
 // Escape HTML entities to prevent XSS in emails
 export function escapeHtml(text: string): string {
@@ -31,42 +29,15 @@ function lastForwardedIP(forwarded: string): string {
 // Get client IP from request
 // Uses trusted platform headers only when behind a known proxy
 export function getClientIP(request: NextRequest): string {
-  // Only trust CF-Connecting-IP when behind Cloudflare (check for CF-specific headers)
-  const cfConnectingIP = request.headers.get('cf-connecting-ip');
-  if (cfConnectingIP && request.headers.get('cf-ray')) {
-    return cfConnectingIP;
-  }
-
-  const forwardedFor = () => {
-    const forwarded = request.headers.get('x-forwarded-for');
-    if (forwarded) {
-      return lastForwardedIP(forwarded);
-    }
-    const realIP = request.headers.get('x-real-ip');
-    if (realIP) {
-      return realIP;
-    }
-    return null;
-  };
-
-  // Only trust x-forwarded-for/x-real-ip when behind a trusted proxy.
-  // x-vercel-id proves we're on Vercel, where the edge sets x-forwarded-for;
-  // x-vercel-forwarded-for is the client-supplied value and must not be used.
-  if (request.headers.get('x-vercel-id')) {
-    const ip = forwardedFor();
-    if (ip) return ip;
-  }
-
-  // Self-hosted behind our own reverse proxy (nginx/Caddy): opt in via
-  // TRUST_PROXY=1 so unproxied deployments don't trust spoofable headers.
-  if (process.env.TRUST_PROXY === '1') {
-    const ip = forwardedFor();
-    if (ip) return ip;
-  }
-
-  // Fall back to unknown when no trusted proxy is detected
-  // This prevents IP spoofing in development or untrusted environments
-  return 'unknown';
+  // Trust deployment configuration, never a client-supplied "proof" header.
+  // Vercel overwrites x-forwarded-for with the address connecting to its edge.
+  if (process.env.VERCEL !== '1' && process.env.TRUST_PROXY !== '1') return 'unknown';
+  const forwarded = request.headers.get('x-forwarded-for');
+  const peer = forwarded ? lastForwardedIP(forwarded) : request.headers.get('x-real-ip')?.trim();
+  if (!peer || !isIP(peer)) return 'unknown';
+  // CF-Connecting-IP is authoritative only when the verified peer is Cloudflare.
+  const client = request.headers.get('cf-connecting-ip')?.trim();
+  return isCloudflareProxy(peer) && client && isIP(client) ? client : peer;
 }
 
 // Validate origin/referer against allowlist
@@ -74,13 +45,11 @@ export function validateOrigin(request: NextRequest): boolean {
   const referer = request.headers.get('referer');
   const origin = request.headers.get('origin');
 
-  // Base allowed domains
-  const allowedDomains = [
-    'saatvik.me',
-    'www.saatvik.me',
-    'localhost',
-    '127.0.0.1',
-  ];
+  const allowedOrigins = new Set(['https://saatvik.me', 'https://www.saatvik.me']);
+  if (process.env.NODE_ENV !== 'production') {
+    allowedOrigins.add('http://localhost:3000');
+    allowedOrigins.add('http://127.0.0.1:3000');
+  }
 
   // Add custom allowed domains from environment variable (comma-separated).
   // NOTE: Vercel preview deployments should be configured via ALLOWED_CONTACT_ORIGINS
@@ -89,17 +58,20 @@ export function validateOrigin(request: NextRequest): boolean {
   // and allows other Vercel projects to pass origin validation.
   const customDomains = process.env.ALLOWED_CONTACT_ORIGINS;
   if (customDomains) {
-    allowedDomains.push(...customDomains.split(',').map((d) => d.trim()).filter(Boolean));
+    for (const value of customDomains.split(',').map((d) => d.trim()).filter(Boolean)) {
+      try {
+        // Accept existing hostname configuration as HTTPS, or an exact full origin.
+        const url = new URL(value.includes('://') ? value : `https://${value}`);
+        if (url.protocol === 'https:' || url.protocol === 'http:') allowedOrigins.add(url.origin);
+      } catch { /* Ignore invalid configuration entries. */ }
+    }
   }
 
   const checkDomain = (url: string | null): boolean => {
     if (!url) return false; // Reject if header is missing
     try {
       const parsedUrl = new URL(url);
-      return allowedDomains.some(
-        (domain) =>
-          parsedUrl.hostname === domain || parsedUrl.hostname.endsWith(`.${domain}`),
-      );
+      return !parsedUrl.username && !parsedUrl.password && allowedOrigins.has(parsedUrl.origin);
     } catch {
       return false;
     }
@@ -108,8 +80,8 @@ export function validateOrigin(request: NextRequest): boolean {
   // Require at least one of origin/referer to be present and valid
   if (!referer && !origin) return false;
 
-  // Allow if either referer or origin is from an allowed domain
-  return checkDomain(referer) || checkDomain(origin);
+  // A present Origin is authoritative; Referer is only a fallback.
+  return checkDomain(origin !== null ? origin : referer);
 }
 
 export interface RateLimiterOptions {
@@ -139,29 +111,19 @@ export function createRateLimiter(options: RateLimiterOptions): RateLimiter {
   return {
     check(ip: string): RateLimitResult {
       const now = Date.now();
-      const record = store.get(ip);
-
-      // Drop expired entries on every check so the store cannot accumulate
-      // stale keys while the window is live
+      // Fixed windows are inserted in expiry order. Stop at the first live
+      // entry rather than scanning every active IP on every request.
       for (const [key, value] of store.entries()) {
-        if (now > value.resetTime) {
-          store.delete(key);
-        }
+        if (now < value.resetTime) break;
+        store.delete(key);
       }
-
-      if (!record || now > record.resetTime) {
-        // Evict the oldest entry when at capacity (Map iterates in
-        // insertion order)
-        while (store.size >= RATE_LIMIT_MAX_TRACKED_IPS) {
-          const oldest = store.keys().next().value;
-          if (oldest === undefined) break;
-          store.delete(oldest);
+      const record = store.get(ip);
+      if (!record) {
+        // Do not let rotating identities evict the limits on existing senders.
+        if (store.size >= RATE_LIMIT_MAX_TRACKED_IPS) {
+          const oldest = store.values().next().value;
+          return { allowed: false, retryAfter: Math.max(1, Math.ceil(((oldest?.resetTime ?? now) - now) / 1000)) };
         }
-        store.set(ip, { count: 1, resetTime: now + options.windowMs });
-        return { allowed: true };
-      }
-
-      if (!record || now > record.resetTime) {
         store.set(ip, { count: 1, resetTime: now + options.windowMs });
         return { allowed: true };
       }

@@ -94,3 +94,9 @@ jobs:
       - run: bun run build
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: Smoke test production server
+        run: |
+          bun run start > /tmp/www-smoke-server.log 2>&1 &
+          smoke_server_pid=$!
+          trap 'kill "$smoke_server_pid"' EXIT
+          bun run smoke http://localhost:3000

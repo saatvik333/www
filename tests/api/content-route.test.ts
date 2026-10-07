@@ -120,3 +120,28 @@ describe('Content API route', () => {
     expect(res.headers.get('Cache-Control')).toBeTruthy();
   });
 });
+
+describe('content cache regressions', () => {
+  beforeEach(() => vi.clearAllMocks());
+  it('never caches a missing asset', async () => {
+    vi.mocked(stat).mockRejectedValue(new Error('ENOENT'));
+    const response = await GET(makeRequest('missing.png'), { params: Promise.resolve({ path: ['missing.png'] }) });
+    expect(response.status).toBe(404); expect(response.headers.get('cache-control')).toBe('no-store');
+  });
+  it('revalidates mutable filenames and returns a validator', async () => {
+    vi.stubEnv('NODE_ENV', 'production');
+    try {
+      vi.mocked(stat).mockResolvedValue({ isFile: () => true, size: 123, mtimeMs: 456 } as never);
+      vi.mocked(readFile).mockResolvedValue(Buffer.from('image') as never);
+      const response = await GET(makeRequest('photo.png'), { params: Promise.resolve({ path: ['photo.png'] }) });
+      expect(response.headers.get('cache-control')).toBe('public, max-age=0, must-revalidate');
+      expect(response.headers.get('etag')).toBe('W/"123-456"');
+    } finally { vi.unstubAllEnvs(); }
+  });
+  it('skips reading and transmitting an unchanged file', async () => {
+    vi.mocked(stat).mockResolvedValue({ isFile: () => true, size: 123, mtimeMs: 456 } as never);
+    const req = new NextRequest('http://localhost:3000/api/content/photo.png', { headers: { 'if-none-match': 'W/"123-456"' } });
+    const response = await GET(req, { params: Promise.resolve({ path: ['photo.png'] }) });
+    expect(response.status).toBe(304); expect(vi.mocked(readFile)).not.toHaveBeenCalled();
+  });
+});

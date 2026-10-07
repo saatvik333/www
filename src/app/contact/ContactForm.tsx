@@ -8,6 +8,7 @@ import { GoArrowRight } from 'react-icons/go';
 // land in the client bundle
 import { CopyButton } from '@/components/ui/CopyButton';
 import { SITE_CONFIG, SOCIAL_LINKS } from '@/lib/config';
+import { MAX_NAME_LENGTH, MAX_EMAIL_LENGTH, MAX_MESSAGE_LENGTH } from '@/lib/contact-limits';
 import styles from './page.module.css';
 
 type FormStatus = 'idle' | 'submitting' | 'success' | 'error';
@@ -19,24 +20,31 @@ export function ContactForm() {
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
+        if (status === 'submitting') return;
         const form = e.currentTarget;
         setStatus('submitting');
         setErrorMessage('');
 
         const formData = new FormData(form);
-        const email = formData.get('email')?.toString() ?? '';
+        const email = formData.get('email')?.toString().trim() ?? '';
         const data = {
-            name: formData.get('name')?.toString() ?? '',
+            name: formData.get('name')?.toString().trim() ?? '',
             email,
-            message: formData.get('message')?.toString() ?? '',
+            message: formData.get('message')?.toString().trim() ?? '',
             website: formData.get('website')?.toString() ?? '', // Honeypot field
         };
+        if (!data.name || !data.message) {
+            setStatus('error');
+            setErrorMessage('Name and message are required.');
+            return;
+        }
 
         try {
             const response = await fetch('/api/contact', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),
+                signal: AbortSignal.timeout(15000),
             });
 
             const result = await response.json();
@@ -50,7 +58,9 @@ export function ContactForm() {
             form.reset();
         } catch (error) {
             setStatus('error');
-            setErrorMessage(error instanceof Error ? error.message : 'Something went wrong');
+            setErrorMessage(error instanceof Error && error.name === 'TimeoutError'
+                ? 'Sending took too long. Please try again.'
+                : error instanceof Error ? error.message : 'Something went wrong');
         }
     }
 
@@ -108,6 +118,8 @@ export function ContactForm() {
                             className={styles.input}
                             placeholder="name"
                             required
+                            maxLength={MAX_NAME_LENGTH}
+                            autoComplete="name"
                             disabled={status === 'submitting'}
                         />
                     </div>
@@ -132,6 +144,8 @@ export function ContactForm() {
                             name="email"
                             className={styles.input}
                             placeholder="email (optional)"
+                            maxLength={MAX_EMAIL_LENGTH}
+                            autoComplete="email"
                             disabled={status === 'submitting'}
                         />
                     </div>
@@ -144,6 +158,7 @@ export function ContactForm() {
                             className={styles.textarea}
                             placeholder="your message..."
                             rows={5}
+                            maxLength={MAX_MESSAGE_LENGTH}
                             required
                             disabled={status === 'submitting'}
                         />
