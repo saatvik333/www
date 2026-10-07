@@ -51,4 +51,8 @@ for (const path of ['/content/smoke-missing.png', '/smoke-missing.svg']) {
 const contact = await fetchSite('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: 'https://untrusted.example', Referer: `${base}/contact` }, body: '{}' });
 assert.equal(contact.status, 403); console.log('PASS contact rejects untrusted Origin without sending email');
 const worker = await fetchSite('/sw.js'); assert.equal(worker.status, 200);
-assert.ok((await worker.text()).includes('precacheAndRoute')); console.log('PASS generated PWA service worker');
+const workerSource = await worker.text();
+assert.ok(workerSource.includes('precacheAndRoute'));
+assert.ok(workerSource.includes('/icon-v5.svg?v=5'), 'worker must precache the functioning favicon URL');
+assert.ok(!workerSource.includes('url:"/icon-v5.svg"'), 'worker must not fetch the cached bare-path 404');
+console.log('PASS generated PWA service worker uses working favicon URL');

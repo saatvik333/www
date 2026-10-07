@@ -131,6 +131,14 @@ const nextConfig: NextConfig = {
 const workboxOptions = {
   skipWaiting: true,
   cleanupOutdatedCaches: true,
+  // Fetch the same cache-busting favicon URL used by the page. The old bare
+  // path can still have a cached 404 at the CDN and would abort SW installation.
+  manifestTransforms: [(entries: { url: string; revision: string | null; size: number }[]) => ({
+    manifest: entries.map(entry => entry.url === '/icon-v5.svg'
+      ? { ...entry, url: '/icon-v5.svg?v=5' }
+      : entry),
+    warnings: [],
+  })],
   runtimeCaching: [
     {
       urlPattern: /^https?:\/\/.*\/_next\/image(.*)/,
@@ -142,10 +150,10 @@ const workboxOptions = {
       },
     },
     {
-      urlPattern: /^https?:\/\/.*\/pics\/(.*)/,
+      urlPattern: /^https?:\/\/.*\/(?:pics|images)\/(.*)/,
       handler: "StaleWhileRevalidate" as const,
       options: {
-        cacheName: "pics-v2",
+        cacheName: "site-images-v2",
         cacheableResponse: { statuses: [200] },
         expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 },
       },
@@ -157,7 +165,7 @@ const pwaConfig = withPWA({
   dest: "public",
   disable: process.env.NODE_ENV === "development",
   register: true,
-  publicExcludes: ['!noprecache/**/*', '!pics/**/*'],
+  publicExcludes: ['!noprecache/**/*', '!pics/**/*', '!images/**/*', '!icon.svg', '!icon-v3.svg', '!icon-v4.svg'],
   workboxOptions,
 });
 
