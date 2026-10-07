@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 import withPWA from "@ducanh2912/next-pwa";
 import { getLocalImagePatterns } from './src/lib/image-patterns';
+import { getAssetVersion } from './src/lib/asset-version';
 
 const nextConfig: NextConfig = {
   // React Compiler for automatic memoization
@@ -133,12 +134,12 @@ const workboxOptions = {
   cleanupOutdatedCaches: true,
   // Fetch the same cache-busting favicon URL used by the page. The old bare
   // path can still have a cached 404 at the CDN and would abort SW installation.
-  manifestTransforms: [(entries: { url: string; revision: string | null; size: number }[]) => ({
-    manifest: entries.map(entry => entry.url === '/icon-v5.svg'
-      ? { ...entry, url: '/icon-v5.svg?v=5' }
-      : entry),
-    warnings: [],
-  })],
+  // Explicit public entries also keep large originals out of the install bundle.
+  // Workbox adds these after manifest transforms, so set their URLs here.
+  additionalManifestEntries: [
+    { url: '/icon-v5.svg?v=5', revision: getAssetVersion('public/icon-v5.svg') },
+    { url: '/manifest.json', revision: getAssetVersion('public/manifest.json') },
+  ],
   runtimeCaching: [
     {
       urlPattern: /^https?:\/\/.*\/_next\/image(.*)/,
@@ -165,7 +166,6 @@ const pwaConfig = withPWA({
   dest: "public",
   disable: process.env.NODE_ENV === "development",
   register: true,
-  publicExcludes: ['!noprecache/**/*', '!pics/**/*', '!images/**/*', '!icon.svg', '!icon-v3.svg', '!icon-v4.svg'],
   workboxOptions,
 });
 
