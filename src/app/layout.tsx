@@ -75,8 +75,8 @@ export const metadata: Metadata = {
   },
 
   icons: {
-    // Versioned filename forces a fresh favicon fetch across browser favicon caches
-    icon: [{ url: '/icon-v5.svg', type: 'image/svg+xml' }],
+    // Version the path and query to bypass browser icons and cached CDN 404s.
+    icon: [{ url: '/icon-v5.svg?v=5', type: 'image/svg+xml' }],
     apple: [{ url: '/apple-icon' }],
   },
 
